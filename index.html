@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
@@ -29,9 +29,9 @@
         .form-check-input {
             width: 0.85rem; 
             height: 0.85rem; 
-            min-width: 0.85rem; /* Impedisce il rimpicciolimento automatico */
+            min-width: 0.85rem; 
             min-height: 0.85rem;
-            flex-shrink: 0; /* Forza la dimensione esatta ovunque */
+            flex-shrink: 0; 
             margin-top: 0.2rem;
             border-radius: 2px !important; 
             border: 1px solid #8da6c9;
@@ -283,54 +283,64 @@
 
         <div class="section-header bg-dark-green mt-2">Esame a Vista:</div>
         <div class="bg-light-grey box-border pb-1">
-            <div class="row bg-light border-bottom border-white align-items-center py-1">
-                <div class="col-12 col-md-3 fw-bold mb-1 mb-md-0">Sistema disperdente</div>
-                <div class="col-12 col-md-9 d-flex flex-wrap justify-content-between gap-2">
+            
+            <div class="row g-1 align-items-center py-1 bg-light border-bottom border-white text-center flex-wrap">
+                <div class="col-12 col-md-3 d-flex justify-content-center justify-content-md-start align-items-center mb-1 mb-md-0">
+                    <span class="fw-bold px-md-2 ms-md-2">Sistema disperdente</span>
+                </div>
+                <div class="col-12 col-md-4 d-flex justify-content-center align-items-center mb-1 mb-md-0 gap-3">
                     <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="sist_disp_ispez" value="Ispezionabile" class="form-check-input bg-light-green"><label class="form-check-label">Ispezionabile</label></div>
                     <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="sist_disp_ispez" value="Non Ispezionabile" class="form-check-input"><label class="form-check-label text-muted">Non Ispezionabile</label></div>
-</div>
-<div class="col-12 col-md-9 d-flex flex-wrap justify-content-between gap-2">
+                </div>
+                <div class="col-12 col-md-5 d-flex justify-content-center justify-content-md-start align-items-center gap-3">
                     <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="sist_disp_regol" value="Regolamentare" class="form-check-input bg-light-blue"><label class="form-check-label">Regolamentare</label></div>
                     <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="sist_disp_regol" value="Non Regolamentare" class="form-check-input"><label class="form-check-label text-muted">Non Regolamentare</label></div>
                 </div>
             </div>
-            <div class="row align-items-center py-1 bg-white">
-                <div class="col-12 d-flex flex-wrap align-items-center gap-2">
-                    <span class="bg-warning px-2 rounded" style="width: 100px; text-align: center;">Picchetto</span>
-                    <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_tubo" class="form-check-input"><label class="form-check-label text-primary">Tubo</label></div>
-                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_profilo" class="form-check-input"><label class="form-check-label text-primary">Profilato</label></div>
-                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_mass" class="form-check-input"><label class="form-check-label text-primary">Massiccio</label></div>
-                    </div>
-                    <div class="border-md-start ps-md-2 border-sm-top pt-1 pt-md-0 d-flex flex-wrap gap-2 align-items-center w-100 w-md-auto mt-1 mt-md-0">
-                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_inf_zinc" class="form-check-input"><label class="form-check-label">Acciaio Zincato</label></div>
-                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_inf_rame" class="form-check-input"><label class="form-check-label">Rame</label></div>
-                    </div>
-                    
-                    <div class="ms-md-auto bg-primary text-white px-2 py-1 rounded d-flex flex-wrap align-items-center gap-2 mt-1 mt-md-0">
-                        <span class="fw-bold">Picchetti N°</span>
+
+            <div class="row g-1 align-items-center py-1 bg-white border-bottom border-light text-center flex-wrap">
+                <div class="col-12 col-md-3 d-flex justify-content-center justify-content-md-start align-items-center mb-1 mb-md-0">
+                    <span class="bg-warning px-2 rounded fw-bold ms-md-2">Picchetto</span>
+                </div>
+                <div class="col-12 col-md-4 d-flex flex-wrap justify-content-center align-items-center mb-1 mb-md-0 gap-3">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_tubo" class="form-check-input"><label class="form-check-label text-primary">Tubo</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_profilo" class="form-check-input"><label class="form-check-label text-primary">Profilato</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_mass" class="form-check-input"><label class="form-check-label text-primary">Massiccio</label></div>
+                </div>
+                <div class="col-12 col-md-5 d-flex flex-wrap justify-content-center justify-content-md-start align-items-center gap-3">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_inf_zinc" class="form-check-input"><label class="form-check-label">Acciaio Zincato</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_inf_rame" class="form-check-input"><label class="form-check-label">Rame</label></div>
+                </div>
+            </div>
+            
+            <div class="row g-1 align-items-center py-1 bg-white border-bottom border-light text-center flex-wrap">
+                <div class="col-12 d-flex justify-content-center justify-content-md-end px-md-3">
+                    <div class="bg-primary text-white px-3 py-1 rounded d-flex flex-wrap justify-content-center align-items-center gap-2">
+                        <span class="fw-bold me-1">Picchetti N°</span>
                         <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="picchetti_num" value="1" class="form-check-input mt-0"><label class="form-check-label text-white">1</label></div>
                         <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="picchetti_num" value="2" class="form-check-input mt-0"><label class="form-check-label text-white">2</label></div>
                         <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="picchetti_num" value="3" class="form-check-input mt-0"><label class="form-check-label text-white">3</label></div>
-                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="picchetti_num" value="3" class="form-check-input mt-0"><label class="form-check-label text-white">4</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="picchetti_num" value="4" class="form-check-input mt-0"><label class="form-check-label text-white">4</label></div>
                         <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="picchetti_num" value="vari" class="form-check-input mt-0"><label class="form-check-label text-white">vari</label></div>
                     </div>
                 </div>
             </div>
-            <div class="row align-items-center py-1 bg-white border-top">
-                <div class="col-12 d-flex flex-wrap align-items-center gap-2">
-                    <span class="bg-warning px-2 rounded" style="width: 100px; text-align: center;">Per posa</span>
-                    <div class="d-flex flex-wrap gap-3 align-items-center">
-                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_nastro" class="form-check-input"><label class="form-check-label text-primary">Nastro</label></div>
-                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_tondino" class="form-check-input"><label class="form-check-label text-primary">Tondino</label></div>
-                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_cordato" class="form-check-input"><label class="form-check-label text-primary">Cordato</label></div>
-                    </div>
-                    <div class="border-md-start ps-md-2 border-sm-top pt-1 pt-md-0 d-flex flex-wrap gap-2 align-items-center w-100 w-md-auto mt-1 mt-md-0">
-                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_posa_zinc" class="form-check-input"><label class="form-check-label">Acciaio Zincato</label></div>
-                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_posa_rame" class="form-check-input"><label class="form-check-label">Rame</label></div>
-                    </div>
+
+            <div class="row g-1 align-items-center py-1 bg-white text-center flex-wrap">
+                <div class="col-12 col-md-3 d-flex justify-content-center justify-content-md-start align-items-center mb-1 mb-md-0">
+                    <span class="bg-warning px-2 rounded fw-bold ms-md-2">Per posa</span>
+                </div>
+                <div class="col-12 col-md-4 d-flex flex-wrap justify-content-center align-items-center mb-1 mb-md-0 gap-3">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_nastro" class="form-check-input"><label class="form-check-label text-primary">Nastro</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_tondino" class="form-check-input"><label class="form-check-label text-primary">Tondino</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_cordato" class="form-check-input"><label class="form-check-label text-primary">Cordato</label></div>
+                </div>
+                <div class="col-12 col-md-5 d-flex flex-wrap justify-content-center justify-content-md-start align-items-center gap-3">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_posa_zinc" class="form-check-input"><label class="form-check-label">Acciaio Zincato</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_posa_rame" class="form-check-input"><label class="form-check-label">Rame</label></div>
                 </div>
             </div>
+            
         </div>
         
         <div class="row mt-1 g-0 border border-secondary rounded">
