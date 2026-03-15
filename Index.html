@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dati Verifica VIT - Completo</title>
+    <link rel="manifest" href="manifest.json">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { font-size: 0.7rem; background-color: #f0f2f5; color: #212529; font-family: Arial, sans-serif; }
+        .container { background-color: white; padding: 15px 25px; box-shadow: 0 0 15px rgba(0,0,0,0.15); margin-top: 15px; margin-bottom: 20px; max-width: 1150px; }
+        
+        /* Intestazioni di sezione */
+        .section-header { color: white; padding: 3px 8px; font-weight: bold; text-transform: uppercase; margin-top: 10px; margin-bottom: 4px; border-radius: 2px; font-size: 0.75rem; display: flex; align-items: center; }
+        .bg-dark-blue { background-color: #1f4e79; }
+        .bg-dark-green { background-color: #4a7e33; }
+        .bg-light-green-header { background-color: #8cb542; }
+        .bg-light-blue { background-color: #d9e1f2; }
+        .bg-light-green { background-color: #e2efda; }
+        .bg-light-grey { background-color: #f2f2f2; }
+        
+        /* Form e controlli testo */
+        .form-control, .form-select, .input-group-text { font-size: 0.7rem; padding: 0.1rem 0.3rem; border-radius: 2px; border: 1px solid #ccc; height: 1.8rem; }
+        .form-check-label { font-size: 0.7rem; margin-left: 2px; white-space: nowrap; cursor: pointer; }
+        .row { margin-bottom: 2px; }
+        .fw-bold-600 { font-weight: 600; }
+        
+        /* --- STILE UNIFICATO PER TUTTE LE CHECKBOX E RADIO --- */
+        .form-check-input {
+            width: 0.85rem; 
+            height: 0.85rem; 
+            min-width: 0.85rem; 
+            min-height: 0.85rem;
+            flex-shrink: 0; 
+            margin-top: 0.2rem;
+            border-radius: 2px !important; 
+            border: 1px solid #8da6c9;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        
+        .form-check-input:checked {
+            background-color: #ffffff !important; 
+            border-color: #0d6efd !important;     
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%230d6efd' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important;
+            background-size: 85% 85%;
+            background-position: center;
+        }
+        
+        /* Layout specifico */
+        .box-border { border: 1px solid #b4c6e7; padding: 4px; }
+        .border-green { border: 1px solid #c6e0b4; }
+        .bg-pink-light { background-color: #faebe4; }
+        .text-blue { color: #2f5597; }
+        .text-green { color: #385723; }
+        .table-conduttori td { padding: 0.2rem; vertical-align: middle; }
+        .table-diff th { background-color: #f2f2f2; padding: 0.2rem; font-size: 0.7rem; }
+        .table-diff td { padding: 0.1rem; }
+        .bg-nodo-collettore { background-color: #8da6c9; }
+
+        /* Regole Responsive per i bordi */
+        @media (min-width: 768px) {
+            .border-md-start { border-left: 1px solid #dee2e6 !important; }
+        }
+        @media (max-width: 767px) {
+            .border-sm-bottom { border-bottom: 1px solid #dee2e6 !important; }
+            .border-sm-top { border-top: 1px solid #dee2e6 !important; }
+        }
+        
+        @media print {
+            body { background-color: white; font-size: 0.65rem; }
+            .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; border: none !important;}
+            #area-bottoni, .no-print { display: none !important; }
+            .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .bg-light-blue, .bg-light-green, .bg-light-grey, .bg-pink-light, .bg-light-green-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .form-control, .form-select { border: none; border-bottom: 1px dotted #999; border-radius: 0; padding: 0; height: auto; background: transparent; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+            input[type="checkbox"], input[type="radio"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .form-check-input:checked { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .bg-nodo-collettore { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #8da6c9 !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row align-items-center mb-2">
+        <div class="col-2 text-center">
+            <h2 class="mb-0 text-success fw-bold">G&R</h2>
+            <div style="font-size: 0.5rem; line-height: 1;">Organismo di Certificazione s.r.l.</div>
+        </div>
+        <div class="col-4">
+            <h5 class="text-blue fw-bold mb-0">DATI VERIFICA VIT</h5>
+        </div>
+        <div class="col-6 text-end">
+            <div class="d-flex flex-wrap justify-content-end align-items-center mb-1">
+                <span class="me-2 fw-bold">Data effettuazione della verifica:</span>
+                <input type="date" name="data_verifica" class="form-control" style="width: 120px; background-color: #d9e1f2;">
+            </div>
+            <div class="d-flex flex-wrap justify-content-end align-items-center">
+                <span class="me-2">verbale VIT n.</span>
+                <input type="text" name="verbale_n1" class="form-control text-center" style="width: 40px; background-color: #d9e1f2;"> <span class="mx-1">/</span>
+                <input type="text" name="verbale_n2" class="form-control text-center" style="width: 40px; background-color: #d9e1f2;"> <span class="mx-1">/</span> del 
+                <input type="date" name="verbale_del" class="form-control ms-1" style="width: 120px; background-color: #d9e1f2;">
+            </div>
+        </div>
+    </div>
+
+    <form id="verificaForm">
+        <div class="section-header bg-dark-blue">DATI DEL COMMITTENTE</div>
+        <div class="row align-items-center">
+            <div class="col-12 col-md-9">
+                <div class="d-flex flex-wrap align-items-center mb-1">
+                    <span class="me-2" style="width: 80px;">Ragione sociale</span>
+                    <input type="text" name="ragione_sociale" class="form-control flex-grow-1 bg-light-blue">
+                </div>
+                <div class="d-flex flex-wrap align-items-center">
+                    <span class="me-2" style="width: 80px;">Città</span>
+                    <input type="text" name="citta_comm" class="form-control me-2 bg-light-blue flex-grow-1 mb-1 mb-md-0" style="min-width: 100px;">
+                    <span class="me-2 mt-1 mt-md-0">Indirizzo</span>
+                    <input type="text" name="indirizzo_comm" class="form-control flex-grow-1 bg-light-blue mt-1 mt-md-0">
+                </div>
+            </div>
+            <div class="col-12 col-md-3 bg-light-blue box-border mt-2 mt-md-0">
+                <div class="form-check d-flex align-items-center"><input class="form-check-input" type="radio" name="tipo_verifica" value="biennale" id="ver_bienn"><label class="form-check-label ms-1" for="ver_bienn">Verifica biennale</label></div>
+                <div class="form-check d-flex align-items-center"><input class="form-check-input" type="radio" name="tipo_verifica" value="quinquennale" id="ver_quinq"><label class="form-check-label ms-1" for="ver_quinq">Verifica quinquennale</label></div>
+            </div>
+        </div>
+
+        <div class="section-header bg-dark-green mt-2">Indirizzo dell'impianto soggetto a verifica</div>
+        <div class="d-flex flex-wrap align-items-center mb-1 gap-2">
+            <div class="d-flex align-items-center flex-grow-1">
+                <span class="me-2">Città</span>
+                <input type="text" name="citta_imp" class="form-control bg-light-blue" style="min-width: 100px;">
+            </div>
+            <div class="d-flex align-items-center flex-grow-1">
+                <span class="me-2">Indirizzo</span>
+                <input type="text" name="indirizzo_imp" class="form-control bg-light-blue" style="min-width: 150px;">
+            </div>
+            <div class="d-flex align-items-center flex-grow-1">
+                <span class="me-2">tipo:</span>
+                <input type="text" name="locale_uso" class="form-control bg-light-blue">
+            </div>
+        </div>
+
+        <div class="row bg-light-grey align-items-center py-1 border border-secondary rounded">
+            <div class="col-auto fw-bold text-blue mb-1 mb-md-0">Dati impianto</div>
+            <div class="col-auto d-flex align-items-center gap-2 flex-wrap mb-1 mb-md-0">
+                <div class="form-check form-check-inline m-0 d-flex align-items-center"><input name="sistema" type="radio" value="TT" class="form-check-input"><label class="form-check-label fw-bold">TT</label></div>
+                <div class="form-check form-check-inline m-0 d-flex align-items-center"><input name="sistema" type="radio" value="TN-S" class="form-check-input"><label class="form-check-label fw-bold">TN-S</label></div>
+                <div class="form-check form-check-inline m-0 d-flex align-items-center"><input name="sistema" type="radio" value="IT" class="form-check-input"><label class="form-check-label fw-bold">IT</label></div>
+            </div>
+            <div class="col-auto d-flex align-items-center mb-1 mb-md-0">
+                <span class="me-1">POD: IT001E</span><input type="text" name="pod" class="form-control bg-light-blue" style="width: 120px;">
+            </div>
+            <div class="col-auto d-flex align-items-center gap-1 border-md-start ps-md-2 mb-1 mb-md-0">
+                <span class="fw-bold">Area</span>
+                <div class="form-check form-check-inline m-0 d-flex align-items-center"><input name="area" type="radio" value="II" class="form-check-input"><label class="form-check-label">II (TT)</label></div>
+                <div class="form-check form-check-inline m-0 d-flex align-items-center"><input name="area" type="radio" value="III" class="form-check-input"><label class="form-check-label">III (TN)</label></div>
+            </div>
+            <div class="col d-flex flex-wrap justify-content-md-end align-items-center gap-2">
+                <div class="d-flex align-items-center"><span class="me-1 fw-bold">kW</span><input type="number" step="any" name="kw" class="form-control bg-light-blue" style="width: 50px;"></div>
+                <div class="d-flex align-items-center">
+                    <span class="me-1 fw-bold">Volt</span>
+                    <select name="volt" class="form-select bg-light-blue" style="width: 70px; padding-right: 20px;">
+                        <option value=""></option>
+                        <option value="230">230</option>
+                        <option value="380">380</option>
+                        <option value="400">400</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="col-12 mt-1 d-flex flex-wrap gap-2 justify-content-between border-top pt-1">
+                <div class="d-flex align-items-center"><span class="me-1">Tensione nominale (kV):</span><input type="number" step="any" name="tens_nominale" class="form-control bg-light-blue" style="width: 60px;"></div>
+                <div class="d-flex align-items-center"><span class="me-1">Corrente di guasto (A):</span><input type="number" step="any" name="corr_guasto" id="corr_guasto" class="form-control bg-light-blue" style="width: 70px;"></div>
+                <div class="d-flex align-items-center"><span class="me-1">Tempo di eliminazione del guasto:</span><input type="number" step="any" name="tempo_guasto" class="form-control bg-light-blue" style="width: 60px;"></div>
+                <div class="d-flex align-items-center"><span class="me-1">Tensione di contatto CEI 99-3 (V):</span><input type="number" step="any" name="tens_contatto" class="form-control bg-light-blue" style="width: 60px;"></div>
+            </div>
+        </div>
+
+        <div class="section-header bg-dark-green mt-2">Esame Documentale:</div>
+        <div class="bg-light-green border-green p-1">
+            <div class="row g-1 align-items-center">
+                <div class="col-auto d-flex align-items-center"><input type="checkbox" name="chk_doc_conf" class="form-check-input"></div>
+                <div class="col-12 col-md-3 fw-bold">Di.Co.</div>
+                <div class="col-12 col-md-5 d-flex align-items-center"><span class="me-1">di</span><input type="text" name="doc_conf_da" class="form-control bg-light-blue w-100"></div>
+                <div class="col-12 col-md-3 d-flex align-items-center"><span class="me-1 mx-2">il</span><input type="date" name="doc_conf_il" class="form-control bg-light-blue w-100"></div>
+            </div>
+            <div class="row g-1 align-items-center mt-1 mt-md-0">
+                <div class="col-auto d-flex align-items-center"><input type="checkbox" name="chk_doc_risp" class="form-check-input"></div>
+                <div class="col-12 col-md-3 fw-bold">Di.Ri.</div>
+                <div class="col-12 col-md-5 d-flex align-items-center"><span class="me-1">di</span><input type="text" name="doc_risp_da" class="form-control bg-light-blue w-100"></div>
+                <div class="col-12 col-md-3 d-flex align-items-center"><span class="me-1 mx-2">il</span><input type="date" name="doc_risp_il" class="form-control bg-light-blue w-100"></div>
+            </div>
+            <div class="row g-1 align-items-center mt-1 mt-md-0">
+                <div class="col-auto d-flex align-items-center"><input type="checkbox" name="chk_doc_prog" class="form-check-input"></div>
+                <div class="col-12 col-md-3 fw-bold">Progetto</div>
+                <div class="col-12 col-md-5 d-flex align-items-center"><span class="me-1">di</span><input type="text" name="doc_prog_da" class="form-control bg-light-blue w-100"></div>
+                <div class="col-12 col-md-3 d-flex align-items-center"><span class="me-1 mx-2">il</span><input type="date" name="doc_prog_il" class="form-control bg-light-blue w-100"></div>
+            </div>
+            
+            <div class="row g-1 align-items-center mt-1 mt-md-0">
+                <div class="col-auto d-flex align-items-center"><input type="checkbox" name="chk_inail" class="form-check-input"></div>
+                <div class="col-12 col-md-3 fw-bold">Denuncia Inail</div>
+                <div class="col-12 col-md-4 d-flex align-items-center"><span class="me-1">Data</span><input type="date" name="inail_data" class="form-control bg-light-blue w-100"></div>
+                <div class="col-12 col-md-4 d-flex align-items-center"><span class="me-1 mx-2">Matricola</span><input type="text" name="inail_matr" class="form-control bg-light-blue w-100"></div>
+            </div>
+            
+            <div class="row g-1 align-items-center mt-1 mt-md-0">
+                <div class="col-auto d-flex align-items-center"><input type="checkbox" name="chk_asl" class="form-check-input"></div>
+                <div class="col-12 col-md-3 fw-bold">Denuncia ASL</div>
+                <div class="col-12 col-md-4 d-flex align-items-center"><span class="me-1">Data</span><input type="date" name="asl_data" class="form-control bg-light-blue w-100"></div>
+                <div class="col-12 col-md-4 d-flex align-items-center"><span class="me-1 mx-2">Matricola</span><input type="text" name="asl_matr" class="form-control bg-light-blue w-100"></div>
+            </div>
+            
+            <div class="row g-1 align-items-center mt-1 text-center bg-light rounded py-1 flex-wrap">
+                <div class="col-12 col-md-4 d-flex justify-content-center align-items-center mb-1 mb-md-0"><div class="form-check form-check-inline d-flex align-items-center m-0"><input class="form-check-input" type="checkbox" name="doc_schemi"><label class="form-check-label fw-bold">Schemi elettrici</label></div></div>
+                <div class="col-12 col-md-4 d-flex justify-content-center align-items-center mb-1 mb-md-0"><div class="form-check form-check-inline d-flex align-items-center m-0"><input class="form-check-input" type="checkbox" name="doc_planimetria"><label class="form-check-label fw-bold">Planimetria impianto</label></div></div>
+                <div class="col-12 col-md-4 d-flex justify-content-center align-items-center"><div class="form-check form-check-inline d-flex align-items-center m-0"><input class="form-check-input bg-light-blue" type="checkbox" name="doc_verbale_prec"><label class="form-check-label fw-bold">Verbale di precedente verifica</label></div></div>
+            </div>
+            <div class="row g-1 align-items-center mt-1">
+                <div class="col-12 d-flex flex-wrap align-items-center gap-1">
+                    <span class="me-2">Per sistemi TN-S: Comunicazione dei dati di guasto del gestore del</span>
+                    <input type="date" name="tns_comunicazione" class="form-control bg-light-blue" style="width: 130px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header bg-dark-blue mt-2">Esame Strumentale:</div>
+        <div class="bg-light-blue box-border pb-1">
+            <div class="row g-1 align-items-center mb-1">
+                <div class="col-12 d-flex flex-wrap align-items-center gap-2">
+                    <div class="d-flex align-items-center">
+                        <span class="fw-bold me-1">Misura della resistenza di Terra:</span>
+                        <input type="number" step="any" name="misura_resistenza_terra" id="val_resistenza_terra" class="form-control bg-white" style="width: 80px;" placeholder="&Omega;">
+                    </div>
+                    <div class="d-flex align-items-center flex-wrap">
+                        <span class="text-primary me-2 ms-md-3">Metodo di misura:</span>
+                        <div class="form-check form-check-inline d-flex align-items-center"><input type="radio" name="metodo_misura" value="Anello Guasto" class="form-check-input"><label class="form-check-label">Resistenza anello di Guasto</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center"><input type="radio" name="metodo_misura" value="Voltamperometrico" class="form-check-input"><label class="form-check-label">Voltamperometrico</label></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-1 align-items-center border-top border-white pt-1">
+                <div class="col-12 d-flex flex-wrap align-items-center gap-1">
+                    <span class="fw-bold me-2">Sistemi TT:</span>coordinamento delle protezioni 
+                    <div class="form-check form-check-inline ms-2 d-flex align-items-center"><input type="radio" name="tt_soddisf" value="Risulta" class="form-check-input"><label class="form-check-label fw-bold">Risulta</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center"><input type="radio" name="tt_soddisf" value="Non Risulta" class="form-check-input"><label class="form-check-label">Non Risulta</label></div>
+                    
+                    <span class="ms-md-3">soddisfatta la relazione U<sub>L</sub> &le;</span>
+                    <select id="calc_ul" name="val_ul_scelta" class="form-select text-center bg-white text-danger fw-bold" style="width: 90px; padding-right: 15px;">
+                        <option value=""></option>
+                        <option value="50Volt">50Volt</option>
+                        <option value="25Volt">25Volt</option>
+                    </select>
+                    <span>(50V/25V)</span>
+                </div>
+            </div>
+            <div class="row g-1 align-items-center border-top border-white pt-1">
+                <div class="col-12 d-flex align-items-center flex-wrap gap-1">
+                    <span class="fw-bold me-2">Sistemi TN:</span> 
+                    <span class="ms-1">è soddisfatta U<sub>0</sub> &le; U<sub>tp</sub> e U<sub>0</sub> / Z<sub>s</sub> &le; I<sub>a</sub></span>
+                    <div class="form-check form-check-inline ms-md-3 d-flex align-items-center"><input type="radio" name="tn_soddisf_2" value="Risulta" class="form-check-input"><label class="form-check-label fw-bold text-warning" style="text-shadow: 0.5px 0.5px 0px #000;">Risulta</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center"><input type="radio" name="tn_soddisf_2" value="Non Risulta" class="form-check-input"><label class="form-check-label text-warning" style="text-shadow: 0.5px 0.5px 0px #000;">Non Risulta</label></div>
+                    <span class="ms-1"><strong>[U<sub>c</sub> = R<sub>E</sub> x I<sub>E</sub> =</strong></span>
+                    <input type="text" id="tn_val_uc" name="tn_val_uc" class="form-control bg-warning text-center border-0 text-dark fw-bold" style="width: 60px;" readonly>
+                    <strong>V]</strong>
+                </div>
+            </div>
+            <div class="row g-1 align-items-center border-top border-white pt-1 mt-1">
+                <div class="col-12 d-flex flex-wrap align-items-center gap-2">
+                    <span class="fw-bold me-2">ESITO</span>
+                    <div class="form-check form-check-inline bg-success bg-opacity-25 px-2 rounded d-flex align-items-center py-1 m-0"><input type="radio" name="esito_globale" value="POSITIVO" class="form-check-input mt-0"><label class="form-check-label fw-bold text-success">POSITIVO</label></div>
+                    <div class="form-check form-check-inline bg-danger bg-opacity-25 px-2 rounded d-flex align-items-center py-1 m-0"><input type="radio" name="esito_globale" value="NEGATIVO" class="form-check-input mt-0"><label class="form-check-label fw-bold text-danger">NEGATIVO</label></div>
+                    <div class="d-flex flex-wrap align-items-center ms-md-auto mt-1 mt-md-0">
+                        <span class="me-1">Tempo impiegato:</span>
+                        <input type="number" step="any" name="tempo_impiegato" class="form-control bg-white me-3" style="width: 100px;">
+                        <span class="me-1 mt-1 mt-md-0">Prossima verifica entro il:</span>
+                        <input type="date" name="prossima_verifica" class="form-control bg-light-green mt-1 mt-md-0" style="width: 120px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header bg-dark-green mt-2">Esame a Vista:</div>
+        <div class="bg-light-grey box-border pb-1">
+            
+            <div class="row g-1 align-items-center py-1 bg-light border-bottom border-white text-center flex-wrap">
+                <div class="col-12 col-md-3 d-flex justify-content-center justify-content-md-start align-items-center mb-1 mb-md-0">
+                    <span class="fw-bold px-md-2 ms-md-2">Sistema disperdente</span>
+                </div>
+                <div class="col-12 col-md-4 d-flex justify-content-center align-items-center mb-1 mb-md-0 gap-3">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="sist_disp_ispez" value="Ispezionabile" class="form-check-input bg-light-green"><label class="form-check-label">Ispezionabile</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="sist_disp_ispez" value="Non Ispezionabile" class="form-check-input"><label class="form-check-label text-muted">Non Ispezionabile</label></div>
+                </div>
+                <div class="col-12 col-md-5 d-flex justify-content-center justify-content-md-start align-items-center gap-3">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="sist_disp_regol" value="Regolamentare" class="form-check-input bg-light-blue"><label class="form-check-label">Regolamentare</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="sist_disp_regol" value="Non Regolamentare" class="form-check-input"><label class="form-check-label text-muted">Non Regolamentare</label></div>
+                </div>
+            </div>
+
+            <div class="row g-1 align-items-center py-1 bg-white border-bottom border-light text-center flex-wrap">
+                <div class="col-12 col-md-3 d-flex justify-content-center justify-content-md-start align-items-center mb-1 mb-md-0">
+                    <span class="bg-warning px-2 rounded fw-bold ms-md-2">Picchetto</span>
+                </div>
+                <div class="col-12 col-md-4 d-flex flex-wrap justify-content-center align-items-center mb-1 mb-md-0 gap-3">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_tubo" class="form-check-input"><label class="form-check-label text-primary">Tubo</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_profilo" class="form-check-input"><label class="form-check-label text-primary">Profilato</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_mass" class="form-check-input"><label class="form-check-label text-primary">Massiccio</label></div>
+                </div>
+                <div class="col-12 col-md-5 d-flex flex-wrap justify-content-center justify-content-md-start align-items-center gap-3">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_inf_zinc" class="form-check-input"><label class="form-check-label">Acciaio Zincato</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_inf_rame" class="form-check-input"><label class="form-check-label">Rame</label></div>
+                </div>
+            </div>
+            
+            <div class="row g-1 align-items-center py-1 bg-white border-bottom border-light text-center flex-wrap">
+                <div class="col-12 d-flex justify-content-center justify-content-md-end px-md-3">
+                    <div class="bg-primary text-white px-3 py-1 rounded d-flex flex-wrap justify-content-center align-items-center gap-2">
+                        <span class="fw-bold me-1">Picchetti N°</span>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="picchetti_num" value="1" class="form-check-input mt-0"><label class="form-check-label text-white">1</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="picchetti_num" value="2" class="form-check-input mt-0"><label class="form-check-label text-white">2</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="picchetti_num" value="3" class="form-check-input mt-0"><label class="form-check-label text-white">3</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="picchetti_num" value="4" class="form-check-input mt-0"><label class="form-check-label text-white">4</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="picchetti_num" value="vari" class="form-check-input mt-0"><label class="form-check-label text-white">vari</label></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-1 align-items-center py-1 bg-white text-center flex-wrap">
+                <div class="col-12 col-md-3 d-flex justify-content-center justify-content-md-start align-items-center mb-1 mb-md-0">
+                    <span class="bg-warning px-2 rounded fw-bold ms-md-2">Per posa</span>
+                </div>
+                <div class="col-12 col-md-4 d-flex flex-wrap justify-content-center align-items-center mb-1 mb-md-0 gap-3">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_nastro" class="form-check-input"><label class="form-check-label text-primary">Nastro</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_tondino" class="form-check-input"><label class="form-check-label text-primary">Tondino</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_cordato" class="form-check-input"><label class="form-check-label text-primary">Cordato</label></div>
+                </div>
+                <div class="col-12 col-md-5 d-flex flex-wrap justify-content-center justify-content-md-start align-items-center gap-3">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_posa_zinc" class="form-check-input"><label class="form-check-label">Acciaio Zincato</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_posa_rame" class="form-check-input"><label class="form-check-label">Rame</label></div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="row mt-1 g-0 border border-secondary rounded">
+            <div class="col-12 col-md-auto bg-white px-2 py-1 d-flex align-items-center border-sm-bottom">
+                <span class="fw-bold text-dark">Nodo/Collettore di terra</span>
+            </div>
+            <div class="col-12 col-md bg-nodo-collettore px-3 py-1 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="nodo_collettore" value="Acciaio Zincato" class="form-check-input mt-0"><label class="form-check-label text-white">Acciaio Zincato</label></div>
+                <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="nodo_collettore" value="Morsetto" class="form-check-input mt-0"><label class="form-check-label text-white">Morsetto</label></div>
+                <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="nodo_collettore" value="Rame" class="form-check-input mt-0"><label class="form-check-label text-white">Rame</label></div>
+                <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="nodo_collettore" value="Non Identificato" class="form-check-input mt-0"><label class="form-check-label text-white">Non Identificato</label></div>
+            </div>
+        </div>
+        
+        <div class="row mt-1 g-0">
+            <div class="col-12 d-flex flex-wrap align-items-center bg-light border py-2 px-2 rounded gap-2">
+                <div class="d-flex flex-wrap align-items-center me-md-3 gap-2">
+                    <span class="fw-bold">Stato delle connessioni</span>
+                    <div class="form-check form-check-inline bg-pink-light px-2 rounded border border-danger d-flex align-items-center py-1 m-2"><input type="radio" name="stato_conn" value="idonee" class="form-check-input mt-0"><label class="form-check-label text-danger">idonee</label></div>
+                    <div class="form-check form-check-inline bg-white px-2 rounded border d-flex align-items-center py-1 m-2"><input type="radio" name="stato_conn" value="non idonee" class="form-check-input mt-0"><label class="form-check-label">non idonee</label></div>
+                </div>
+                <div class="d-flex flex-wrap align-items-center gap-2 border-sm-top pt-1 pt-md-0 w-100 w-md-auto">
+                    <span class="fw-bold">Realizzate con</span>
+                    <div class="form-check form-check-inline bg-success bg-opacity-25 px-2 rounded d-flex align-items-center py-1 m-2"><input type="checkbox" name="realiz_bulloni" class="form-check-input mt-0"><label class="form-check-label text-success">Bulloni</label></div>
+                    <div class="form-check form-check-inline bg-white px-2 border rounded d-flex align-items-center py-1 m-2"><input type="checkbox" name="realiz_morsetti" class="form-check-input mt-0"><label class="form-check-label">Morsetti</label></div>
+                    <div class="form-check form-check-inline bg-white px-2 border rounded d-flex align-items-center py-1 m-2"><input type="checkbox" name="realiz_capicorda" class="form-check-input mt-0"><label class="form-check-label">Capicorda</label></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header bg-dark-green mt-2">Esame Conduttori:</div>
+        
+        <div class="row text-center border box-border bg-white g-0 py-1 flex-wrap">
+            <div class="col-12 col-md-4 d-flex flex-wrap justify-content-center align-items-center py-1 border-sm-bottom">
+                <span class="text-success fw-bold me-3">di Terra:  </span>
+                <div class="form-check form-check-inline bg-light-green px-1 d-flex align-items-center m-0 me-3"><input type="radio" name="id_terra" value="idonei" class="form-check-input"><label class="form-check-label">idonei</label></div>
+                <div class="form-check form-check-inline bg-light px-1 d-flex align-items-center m-0"><input type="radio" name="id_terra" value="non idonei" class="form-check-input"><label class="form-check-label">non idonei</label></div>
+            </div>
+            <div class="col-12 col-md-4 border-md-start border-sm-bottom d-flex flex-wrap justify-content-center align-items-center py-1">
+                <span class="text-primary fw-bold me-3">di Protezione:</span>
+                <div class="form-check form-check-inline bg-light-blue px-1 d-flex align-items-center m-0 me-3"><input type="radio" name="id_prot" value="idonei" class="form-check-input"><label class="form-check-label">idonei</label></div>
+                <div class="form-check form-check-inline bg-light px-1 d-flex align-items-center m-0"><input type="radio" name="id_prot" value="non idonei" class="form-check-input"><label class="form-check-label">non idonei</label></div>
+            </div>
+            <div class="col-12 col-md-4 border-md-start d-flex flex-wrap justify-content-center align-items-center py-1">
+                <span class="text-danger fw-bold me-3">Giunzioni:</span>
+                <div class="form-check form-check-inline bg-pink-light px-1 d-flex align-items-center m-0 me-3"><input type="radio" name="id_giunz" value="idonee" class="form-check-input"><label class="form-check-label">idonee</label></div>
+                <div class="form-check form-check-inline bg-light px-1 d-flex align-items-center m-0"><input type="radio" name="id_giunz" value="non idonee" class="form-check-input"><label class="form-check-label">non idonee</label></div>
+            </div>
+        </div>
+
+        <div class="row g-1 mt-1 mb-1 align-items-stretch">
+            <div class="col-md-7 d-flex overflow-auto">
+                <table class="table table-bordered table-sm text-center table-conduttori mb-0 bg-white w-100 h-100" style="min-width: 450px;">
+                    <tbody>
+                        <tr>
+                            <td class="fw-bold text-end bg-light" width="18%">Terra</td>
+                            <td><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="ct_isolati" class="form-check-input"><label class="form-check-label">Cavi</label></div></td>
+                            <td><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="ct_rame" class="form-check-input"><label class="form-check-label">Corde</label></div></td>
+                            <td><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="ct_nastri" class="form-check-input"><label class="form-check-label">Tondi/nastri</label></div></td>
+                            <td><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="ct_strutt" class="form-check-input"><label class="form-check-label">El. strutturali</label></div></td>
+                            <td class="align-middle">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <label class="me-1 mb-0" style="font-size:0.65rem;">Sez.</label>
+                                    <input type="number" name="sez_terra" class="form-control p-0 text-center bg-light-blue" style="width: 40px; height: 1.5rem;" min="0" step="any" placeholder="mm²">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-end bg-light">Protezione</td>
+                            <td><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="cp_isolati" class="form-check-input"><label class="form-check-label">Cavi</label></div></td>
+                            <td><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="cp_nudi" class="form-check-input"><label class="form-check-label">Nudi</label></div></td>
+                            <td><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="cp_anime" class="form-check-input"><label class="form-check-label">Anime cavi</label></div></td>
+                            <td><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="cp_involucri" class="form-check-input"><label class="form-check-label">Inv. metallici</label></div></td>
+                            <td class="align-middle">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <label class="me-1 mb-0" style="font-size:0.65rem;">Sez.</label>
+                                    <input type="number" name="sez_prot" class="form-control p-0 text-center bg-light-blue" style="width: 40px; height: 1.5rem;" min="0" step="any" placeholder="mm²">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-end bg-light">Equipotenziali</td>
+                            <td><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="ce_isolati" class="form-check-input"><label class="form-check-label">Cavi</label></div></td>
+                            <td><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="ce_nudi" class="form-check-input"><label class="form-check-label">Nudi</label></div></td>
+                            <td><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="ce_richiesti" class="form-check-input"><label class="form-check-label">Richiesti</label></div></td>
+                            <td><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="ce_non_richiesti" class="form-check-input"><label class="form-check-label">Non richiesti</label></div></td>
+                            <td class="align-middle">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <label class="me-1 mb-0" style="font-size:0.65rem;">Sez.</label>
+                                    <input type="number" name="sez_eq" class="form-control p-0 text-center bg-light-blue" style="width: 40px; height: 1.5rem;" min="0" step="any" placeholder="mm²">
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-md-5 d-flex overflow-auto mt-1 mt-md-0">
+                <table class="table table-bordered table-sm mb-0 bg-white w-100 h-100" style="min-width: 250px;">
+                    <thead>
+                        <tr class="bg-light">
+                            <th class="fw-bold text-start align-middle fs-6 border-end-0">Continuità</th>
+                            <th class="text-center align-middle border-start-0 border-end-0 fw-normal">Si</th>
+                            <th class="text-center align-middle border-start-0 border-end-0 fw-normal">No</th>
+                            <th class="text-center align-middle border-start-0 fw-normal">N/A</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-end align-middle">conduttori e collettori</td>
+                            <td class="text-center align-middle"><input type="radio" name="cont_cond" value="Si" class="form-check-input m-0 mx-auto d-block"></td>
+                            <td class="text-center align-middle"><input type="radio" name="cont_cond" value="No" class="form-check-input m-0 mx-auto d-block"></td>
+                            <td class="text-center align-middle"><input type="radio" name="cont_cond" value="N/A" class="form-check-input m-0 mx-auto d-block"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-end align-middle">equipotenziali supplementari</td>
+                            <td class="text-center align-middle"><input type="radio" name="cont_eq" value="Si" class="form-check-input m-0 mx-auto d-block"></td>
+                            <td class="text-center align-middle"><input type="radio" name="cont_eq" value="No" class="form-check-input m-0 mx-auto d-block"></td>
+                            <td class="text-center align-middle"><input type="radio" name="cont_eq" value="N/A" class="form-check-input m-0 mx-auto d-block"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="row box-border bg-light g-0 py-1 flex-wrap mt-2">
+            <div class="col-12 col-md-6 d-flex flex-wrap align-items-center py-1 gap-2">
+                <span class="fw-bold">Interruttori adottati:</span>
+                <div class="form-check form-check-inline text-danger d-flex align-items-center m-0"><input type="checkbox" name="int_diff" class="form-check-input"><label class="form-check-label fw-bold">differenziali</label></div>
+                <div class="form-check form-check-inline text-primary d-flex align-items-center m-0"><input type="checkbox" name="int_max_corr" class="form-check-input"><label class="form-check-label fw-bold">a massima corrente</label></div>
+            </div>
+            <div class="col-12 col-md-6 d-flex flex-wrap align-items-center border-md-start border-sm-top py-1 ps-md-2 gap-2 mt-1 mt-md-0">
+                <span class="fw-bold">Condizioni:</span>
+                <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="condizioni" value="buone" class="form-check-input"><label class="form-check-label">buone</label></div>
+                <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="condizioni" value="discrete" class="form-check-input"><label class="form-check-label">discrete</label></div>
+                <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="condizioni" value="mediocri" class="form-check-input"><label class="form-check-label">mediocri</label></div>
+                <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="condizioni" value="scarse" class="form-check-input"><label class="form-check-label">scarse</label></div>
+            </div>
+        </div>
+
+        <div class="section-header bg-light-green-header mt-2 d-flex align-items-center">
+            <span class="me-2 fs-6">🔍</span> % di campionamento e prova di continuità
+        </div>
+        
+        <div class="row box-border g-0 p-0 flex-column" style="border: 1px solid #8cb542;">
+            <div class="col-12 p-2 bg-pink-light border-bottom d-flex flex-wrap justify-content-center gap-4" style="border-color: #8cb542 !important;">
+                <div class="form-check d-flex align-items-center m-0">
+                    <input type="radio" name="tipo_ambiente" value="Ordinario" class="form-check-input me-2 mt-0" style="width: 1.2rem; height: 1.2rem;">
+                    <label class="form-check-label fw-bold text-dark" style="font-size: 0.75rem;">Ambiente Ordinario</label>
+                </div>
+                <div class="form-check d-flex align-items-center m-0">
+                    <input type="radio" name="tipo_ambiente" value="Speciale" class="form-check-input me-2 mt-0" style="width: 1.2rem; height: 1.2rem;">
+                    <label class="form-check-label fw-bold text-dark" style="font-size: 0.75rem;">Ambiente Speciale</label>
+                </div>
+            </div>
+            
+            <div class="col-12 bg-light-green p-2 py-3">
+                <div class="row g-2 align-items-center mb-2 flex-wrap">
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between mb-2 mb-md-0 px-md-3">
+                        <span class="me-2 text-start flex-grow-1">Tra dispersore accessibile e collettore di terra</span>
+                        <div class="d-flex align-items-center">
+                            <select name="perc_disp" class="form-select bg-light-blue text-center perc-dropdown" style="width: 70px; padding-right: 15px;"></select>
+                            <span class="ms-1 fw-bold">%</span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between px-md-3">
+                        <span class="me-2 text-start flex-grow-1">Tra collettori di terra</span>
+                        <div class="d-flex align-items-center">
+                            <select name="perc_coll" class="form-select bg-light-blue text-center perc-dropdown" style="width: 70px; padding-right: 15px;"></select>
+                            <span class="ms-1 fw-bold">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-2 align-items-center mb-2 flex-wrap border-sm-top pt-2 pt-md-0">
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between mb-2 mb-md-0 px-md-3">
+                        <span class="me-2 text-start flex-grow-1">Tra PE ed EQ</span>
+                        <div class="d-flex align-items-center">
+                            <select name="perc_pe" class="form-select bg-light-blue text-center perc-dropdown" style="width: 70px; padding-right: 15px;"></select>
+                            <span class="ms-1 fw-bold">%</span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between px-md-3">
+                        <span class="me-2 text-start flex-grow-1">Tra masse e collettori</span>
+                        <div class="d-flex align-items-center">
+                            <select name="perc_masse_coll" class="form-select bg-light-blue text-center perc-dropdown" style="width: 70px; padding-right: 15px;"></select>
+                            <span class="ms-1 fw-bold">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-2 align-items-center flex-wrap border-sm-top pt-2 pt-md-0">
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between px-md-3">
+                        <span class="me-2 text-start flex-grow-1">Tra masse estranee e verso le masse</span>
+                        <div class="d-flex align-items-center">
+                            <select name="perc_masse_est" class="form-select bg-light-blue text-center perc-dropdown" style="width: 70px; padding-right: 15px;"></select>
+                            <span class="ms-1 fw-bold">%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2 align-items-center bg-light-blue py-1 rounded">
+            <div class="col-12 d-flex flex-wrap align-items-center gap-2">
+                <span class="fw-bold me-2">Per conto del committente, durante la verifica era presente:</span>
+                <input type="text" name="presente_verifica" class="form-control flex-grow-1 bg-white" style="min-width: 150px;">
+            </div>
+        </div>
+
+        <div class="section-header bg-dark-blue mt-2">Prova di intervento dei differenziali</div>
+        <div class="overflow-auto">
+            <table class="table table-bordered text-center table-diff border-dark mb-2 bg-white" style="min-width: 600px;">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="align-middle" style="width: 35%;">Quadro</th>
+                        <th rowspan="2" class="align-middle" style="width: 8%;">No.</th>
+                        <th colspan="4" class="align-middle text-success">Corrente di intervento (I&Delta;n)</th>
+                        <th rowspan="2" class="align-middle" style="width: 35%;">Note</th>
+                    </tr>
+                    <tr>
+                        <th class="text-success">0,03</th><th class="text-success">0,3</th><th class="text-success">0,5</th><th class="text-success">1</th>
+                    </tr>
+                </thead>
+                <tbody id="diffTable"></tbody>
+            </table>
+        </div>
+        
+        <div class="text-end no-print">
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addRow()">+ Aggiungi Riga</button>
+        </div>
+
+        <div class="text-center mt-4 border-top pt-4 pb-4" id="area-bottoni">
+            <button type="button" class="btn btn-danger px-5 py-2 fs-6 fw-bold shadow-sm" onclick="stampaNativa()">
+                🖨️ Stampa / Salva PDF
+            </button>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+    // Percentuali decrescenti (da 100% a 0%)
+    document.querySelectorAll('.perc-dropdown').forEach(select => {
+        let optionsHtml = '<option value=""></option>';
+        for(let i = 100; i >= 0; i -= 5) {
+            optionsHtml += `<option value="${i}%">${i}%</option>`;
+        }
+        select.innerHTML = optionsHtml;
+    });
+
+    // Calcolo automatico della variabile Uc
+    function calcolaUc() {
+        const iGuasto = parseFloat(document.getElementById('corr_guasto').value) || 0;
+        const rTerra = parseFloat(document.getElementById('val_resistenza_terra').value) || 0;
+        const calcField = document.getElementById('tn_val_uc');
+        
+        if (iGuasto > 0 && rTerra > 0) {
+            calcField.value = (iGuasto * rTerra).toFixed(2);
+        } else {
+            calcField.value = "";
+        }
+    }
+
+    document.getElementById('corr_guasto').addEventListener('input', calcolaUc);
+    document.getElementById('val_resistenza_terra').addEventListener('input', calcolaUc);
+
+    // Gestione righe differenziali
+    function addRow() {
+        const tbody = document.getElementById('diffTable');
+        const tr = document.createElement('tr');
+        tr.className = "diff-row";
+        tr.innerHTML = `
+            <td><input type="text" class="form-control border-0 bg-transparent text-center w-100 q-nome"></td>
+            <td><input type="number" step="any" class="form-control border-0 bg-transparent text-center w-100 q-no"></td>
+            <td class="bg-light-blue align-middle"><input type="checkbox" class="form-check-input m-0 q-003" style="display:inline-block;"></td>
+            <td class="align-middle"><input type="checkbox" class="form-check-input m-0 q-03" style="display:inline-block;"></td>
+            <td class="bg-light-grey align-middle"><input type="checkbox" class="form-check-input m-0 q-05" style="display:inline-block;"></td>
+            <td class="align-middle"><input type="checkbox" class="form-check-input m-0 q-1" style="display:inline-block;"></td>
+            <td><input type="text" class="form-control border-0 bg-transparent w-100 q-note"></td>
+        `;
+        tbody.appendChild(tr);
+    }
+    
+    for(let i=0; i<10; i++) addRow();
+
+    // Funzione di stampa nativa
+    function stampaNativa() {
+        const btnArea = document.getElementById('area-bottoni');
+        btnArea.style.display = 'none';
+        
+        window.print();
+        
+        setTimeout(() => {
+            btnArea.style.display = 'block';
+        }, 1500);
+    }
+</script>
+</body>
+</html>
