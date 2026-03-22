@@ -43,7 +43,7 @@
         @media print {
             body { background-color: white; font-size: 0.65rem; }
             .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; border: none !important;}
-            #barra-strumenti, #area-bottoni, .btn-cestino, .no-print { display: none !important; }
+            #barra-strumenti, #area-bottoni, .btn-cestino, .btn-mic, .btn-gps, .no-print { display: none !important; }
             .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .bg-light-blue, .bg-light-green, .bg-light-grey, .bg-pink-light { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .form-control, .form-select { border: none; border-bottom: 1px dotted #999; border-radius: 0; padding: 0; height: auto; background: transparent; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
@@ -69,6 +69,10 @@
                 </select>
                 <button type="button" class="btn btn-sm btn-success fw-bold" onclick="caricaDaArchivio()">📂 Carica</button>
                 <button type="button" class="btn btn-sm btn-outline-danger fw-bold" onclick="eliminaDaArchivio()">🗑️ Elimina</button>
+                <span class="mx-1 border-start border-secondary h-100 d-inline-block"></span>
+                <button type="button" class="btn btn-sm btn-secondary fw-bold" onclick="esportaDB()" title="Scarica un backup di sicurezza dell'archivio">📥 Esporta DB</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" onclick="importaDB()" title="Ripristina un backup precedente">📤 Importa DB</button>
+                <input type="file" id="importaFile" style="display:none" accept=".json" onchange="eseguiImportazione(event)">
             </div>
             <button type="button" class="btn btn-sm btn-info text-white fw-bold" onclick="esportaCSV()">📊 Esporta Excel</button>
         </div>
@@ -133,11 +137,12 @@
                 <div class="row flex-wrap align-items-center mx-0 gap-2 mb-3">
                     <div class="d-flex align-items-center flex-grow-1 p-0">
                         <span class="me-2 fw-bold" style="width: 90px;">Città</span>
-                        <input type="text" name="citta_imp" class="form-control bg-white flex-grow-1" style="min-width: 100px;">
+                        <input type="text" name="citta_imp" id="citta_imp" class="form-control bg-white flex-grow-1" style="min-width: 100px;">
                     </div>
                     <div class="d-flex align-items-center flex-grow-1 p-0">
                         <span class="me-2 fw-bold">Indirizzo</span>
-                        <input type="text" name="indirizzo_imp" class="form-control bg-white flex-grow-1" style="min-width: 150px;">
+                        <input type="text" name="indirizzo_imp" id="indirizzo_imp" class="form-control bg-white flex-grow-1" style="min-width: 150px;">
+                        <button type="button" class="btn btn-sm btn-outline-primary ms-1 px-2 no-print btn-gps" onclick="trovaPosizione()" title="Trova la mia posizione GPS">📍</button>
                     </div>
                     <div class="d-flex align-items-center flex-grow-1 p-0">
                         <span class="me-2 fw-bold">Uso:</span>
@@ -620,7 +625,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-    // --- 1. MOTORE OFFLINE ---
+    // --- MOTORE OFFLINE ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('sw.js').then(function(registration) {
@@ -631,7 +636,87 @@
         });
     }
 
-    // --- 2. GESTIONE FOTOGRAFIE (Compressione automatica) ---
+    // --- POSIZIONE GPS ---
+    function trovaPosizione() {
+        if (!navigator.geolocation) {
+            alert("⚠️ Il tuo browser non supporta la geolocalizzazione.");
+            return;
+        }
+        
+        const btnGps = document.querySelector('.btn-gps');
+        const originalIcon = btnGps.innerHTML;
+        btnGps.innerHTML = '⏳';
+        
+        navigator.geolocation.getCurrentPosition(position => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            
+            // API gratuita per convertire le coordinate in indirizzo
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data && data.address) {
+                        const citta = data.address.city || data.address.town || data.address.village || "";
+                        const via = data.address.road || "";
+                        const civico = data.address.house_number || "";
+                        
+                        if (citta) document.getElementById('citta_imp').value = citta;
+                        if (via) document.getElementById('indirizzo_imp').value = via + " " + civico;
+                        
+                        salvaStato(); // salva le modifiche
+                        btnGps.innerHTML = originalIcon;
+                    }
+                })
+                .catch(err => {
+                    alert("📍 Posizione trovata ma impossibile convertire in indirizzo esatto (serve internet).");
+                    btnGps.innerHTML = originalIcon;
+                });
+        }, error => {
+            alert("⚠️ Errore GPS: Assicurati di aver dato i permessi di localizzazione al browser o al telefono.");
+            btnGps.innerHTML = originalIcon;
+        });
+    }
+
+    // --- DETTATURA VOCALE ---
+    function avviaDettatura(btn) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert("⚠️ Il tuo browser non supporta la dettatura vocale (Usa Chrome o Safari aggiornati).");
+            return;
+        }
+        
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'it-IT';
+        recognition.interimResults = false;
+        
+        // Trova la textarea associata a questo pulsante
+        const textarea = btn.parentElement.querySelector('textarea');
+        const originalIcon = btn.innerHTML;
+        
+        recognition.onstart = function() {
+            btn.innerHTML = '🔴'; // Pallino rosso = sta registrando
+        };
+        
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            // Aggiunge spazio solo se c'è già testo
+            textarea.value += (textarea.value ? " " : "") + transcript;
+            salvaStato(); 
+        };
+        
+        recognition.onerror = function(event) {
+            alert("⚠️ Errore microfono: " + event.error);
+            btn.innerHTML = originalIcon;
+        };
+        
+        recognition.onend = function() {
+            btn.innerHTML = originalIcon;
+        };
+        
+        recognition.start();
+    }
+
+    // --- GESTIONE FOTOGRAFIE ---
     function gestisciFoto(input) {
         const file = input.files[0];
         if (!file) return;
@@ -641,7 +726,7 @@
             const img = new Image();
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 800; // Compressione per evitare crash
+                const MAX_WIDTH = 800; 
                 let width = img.width;
                 let height = img.height;
 
@@ -655,7 +740,7 @@
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
 
-                const base64 = canvas.toDataURL('image/jpeg', 0.6); // 60% Qualità
+                const base64 = canvas.toDataURL('image/jpeg', 0.6);
                 
                 const preview = input.parentElement.nextElementSibling; 
                 preview.src = base64;
@@ -670,7 +755,7 @@
         reader.readAsDataURL(file);
     }
 
-    // Percentuali decrescenti
+    // Dropdown percentuali
     document.querySelectorAll('.perc-dropdown').forEach(select => {
         let optionsHtml = '<option value=""></option>';
         for(let i = 100; i >= 0; i -= 5) {
@@ -691,7 +776,7 @@
         }
     }
 
-    // Aggiungi Righe (Con name attributes per l'export Excel)
+    // --- TABELLE ---
     function addRow() {
         const tbody = document.getElementById('diffTable');
         const tr = document.createElement('tr');
@@ -730,6 +815,7 @@
             <td class="border-primary p-1">
                 <div class="d-flex align-items-start gap-1 h-100">
                     <textarea name="nc_note[]" class="form-control border-0 bg-transparent w-100" rows="3" placeholder="Note / Adeguamento..."></textarea>
+                    <button type="button" class="btn btn-sm btn-outline-secondary border-0 no-print btn-mic px-1 py-0" onclick="avviaDettatura(this)" title="Dettatura vocale">🎙️</button>
                     <button type="button" class="btn btn-sm btn-outline-danger border-0 no-print btn-cestino px-1 py-0" onclick="this.closest('tr').remove(); salvaStato();">🗑️</button>
                 </div>
             </td>
@@ -737,7 +823,6 @@
         tbody.appendChild(tr);
     }
 
-    // --- LA TUA LIBRERIA NC ESATTA ---
     const libreriaNC = [
         "Documentazione tecnica assente",
         "Documentazione incompleta/non aggiornata",
@@ -764,7 +849,7 @@
         datalistNC.appendChild(option);
     });
 
-    // --- GESTIONE ARCHIVIO ---
+    // --- ARCHIVIO E SALVATAGGI ---
     function fissaValoriHTML() {
         document.getElementById('area-dati').querySelectorAll('input, select, textarea').forEach(el => {
             if (el.type === 'checkbox' || el.type === 'radio') {
@@ -807,7 +892,6 @@
         }
     }
 
-    // MODIFICA QUI: Salva in archivio prendendo il nome dalla "Denominazione"
     function salvaInArchivio() {
         fissaValoriHTML();
         let denominazione = document.getElementById('denominazione_imp').value || "SenzaNome";
@@ -849,6 +933,50 @@
         }
     }
 
+    // --- NUOVO: IMPORTA / ESPORTA DATABASE INTERO ---
+    function esportaDB() {
+        let archivio = localStorage.getItem('verbaleVIT_archivio');
+        if (!archivio || archivio === "{}") {
+            alert("L'archivio è vuoto. Niente da esportare.");
+            return;
+        }
+        let blob = new Blob([archivio], {type: "application/json"});
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "Backup_Verbali_VIT_" + new Date().toISOString().split('T')[0] + ".json";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function importaDB() {
+        document.getElementById('importaFile').click();
+    }
+
+    function eseguiImportazione(event) {
+        let file = event.target.files[0];
+        if (!file) return;
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                let json = JSON.parse(e.target.result);
+                if(typeof json === 'object' && json !== null) {
+                    let archivioAttuale = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
+                    Object.assign(archivioAttuale, json); // Unisce i vecchi verbali con quelli nuovi
+                    localStorage.setItem('verbaleVIT_archivio', JSON.stringify(archivioAttuale));
+                    aggiornaSelectArchivio();
+                    alert("✅ Database ripristinato con successo!");
+                } else {
+                    alert("❌ Il file selezionato non è un backup valido.");
+                }
+            } catch(err) {
+                alert("❌ Errore durante la lettura del file: " + err.message);
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = ''; // Resetta l'input per poter ricaricare lo stesso file
+    }
+
     function svuotaModulo() {
         if(confirm("⚠️ Sei sicuro di voler PULIRE il modulo? I dati non salvati andranno persi.")) {
             localStorage.removeItem('verbaleVIT_backup');
@@ -856,7 +984,6 @@
         }
     }
 
-    // --- ESPORTAZIONE CSV (EXCEL) ---
     function esportaCSV() {
         let inputs = document.getElementById('area-dati').querySelectorAll('input[name], select[name], textarea[name]');
         let dati = {};
@@ -870,7 +997,6 @@
             } else if (el.type !== 'file') {
                 val = el.value.replace(/"/g, '""'); 
             }
-            
             if(dati[name]) dati[name] += " + " + val;
             else dati[name] = val;
         });
@@ -883,23 +1009,17 @@
         let link = document.createElement("a");
         link.setAttribute("href", encodedUri);
         
-        // --- MODIFICA NOME FILE EXCEL ---
         let denominazione = document.getElementById('denominazione_imp') ? document.getElementById('denominazione_imp').value : "";
         let dataVerb = document.getElementById('data_verifica_obblig') ? document.getElementById('data_verifica_obblig').value : "";
         let nomeFile = "Esportazione_VIT";
-        if (denominazione) {
-            nomeFile = `${denominazione} - ${dataVerb}`;
-        }
+        if (denominazione) nomeFile = `${denominazione} - ${dataVerb}`;
         
         link.setAttribute("download", nomeFile + ".csv");
-        // --------------------------------
-        
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     }
 
-    // --- STAMPA PDF ---
     function stampaNativa() {
         const dataObblig = document.getElementById('data_verifica_obblig');
         const ragSocialeObblig = document.getElementById('ragione_sociale_obblig');
@@ -920,28 +1040,28 @@
         btnArea.style.display = 'none';
         btnStrumenti.style.display = 'none';
         document.querySelectorAll('.btn-cestino').forEach(btn => btn.style.display = 'none');
+        document.querySelectorAll('.btn-mic').forEach(btn => btn.style.display = 'none');
+        document.querySelectorAll('.btn-gps').forEach(btn => btn.style.display = 'none');
         
-        // TRUCCO PER CAMBIARE IL NOME DEL PDF
         const titoloOriginale = document.title;
         let denominazione = document.getElementById('denominazione_imp') ? document.getElementById('denominazione_imp').value : "";
         let dataVerb = dataObblig.value || "";
         let nomeFile = "Verbale_VIT";
-        if (denominazione) {
-            nomeFile = `${denominazione} - ${dataVerb}`;
-        }
+        if (denominazione) nomeFile = `${denominazione} - ${dataVerb}`;
         document.title = nomeFile;
 
         window.print();
         
         setTimeout(() => {
-            document.title = titoloOriginale; // Rimette a posto il titolo
+            document.title = titoloOriginale; 
             btnArea.style.display = 'flex';
             btnStrumenti.style.display = 'flex';
             document.querySelectorAll('.btn-cestino').forEach(btn => btn.style.display = 'block');
+            document.querySelectorAll('.btn-mic').forEach(btn => btn.style.display = 'block');
+            document.querySelectorAll('.btn-gps').forEach(btn => btn.style.display = 'block');
         }, 1500);
     }
 
-    // Inizializzazione al caricamento della pagina
     window.onload = function() {
         aggiornaSelectArchivio();
         const backup = localStorage.getItem('verbaleVIT_backup');
