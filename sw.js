@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vit-app-offline-v1';
+const CACHE_NAME = 'vit-app-offline-v2';
 const urlsToCache = [
   './',
   './index.html',
