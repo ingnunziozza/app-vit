@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dati Verifica 462 VIT</title>
+    <title>Verifica 462/01 - VIT</title>
     <link rel="manifest" href="manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -79,8 +79,8 @@
     <div id="barra-strumenti" class="row align-items-center mb-3 mx-0 p-2 bg-light border border-secondary rounded shadow-sm no-print">
         <div class="col-12 d-flex flex-wrap gap-2 align-items-center justify-content-center justify-content-md-between">
             <div class="d-flex flex-wrap gap-1 align-items-center flex-grow-1 flex-md-grow-0 justify-content-center">
-                <button type="button" class="btn btn-sm btn-primary fw-bold" onclick="salvaInArchivio()">💾 Archivio</button>
-                <button type="button" class="btn btn-sm btn-warning fw-bold text-dark" onclick="duplicaVerbale()" title="Duplica Verbale Corrente">📑 Duplica</button>
+                <button type="button" class="btn btn-sm btn-primary fw-bold" onclick="salvaInArchivio()">💾</button>
+                <button type="button" class="btn btn-sm btn-warning fw-bold text-dark" onclick="duplicaVerbale()" title="Duplica Verbale Corrente">📑</button>
                 <select id="archivio_select" class="form-select form-select-sm" style="width: auto; min-width: 100px; max-width: 140px; flex-grow: 1;">
                     <option value="">-- Verbali --</option>
                 </select>
@@ -96,6 +96,7 @@
                 <span class="d-none d-md-inline-block mx-1 border-start border-secondary" style="height: 25px;"></span>
                 
                 <button type="button" class="btn btn-sm btn-dark fw-bold" onclick="toggleDarkMode()" id="btn-darkmode" title="Modalità Notturna">🌙</button>
+
                 <button type="button" class="btn btn-sm btn-info text-white fw-bold ms-md-1" onclick="esportaCSV()">📊 Export</button>
                 <button type="button" class="btn btn-sm btn-success text-white fw-bold d-flex align-items-center" onclick="condividiCSV()" title="Condividi">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -118,7 +119,7 @@
             </div>
             
             <div class="col-4">
-                <h5 class="text-blue fw-bold mb-0">DATI VERIFICA VIT</h5>
+                <h5 class="text-blue fw-bold mb-0">DATI VERIFICA</h5>
             </div>
             <div class="col-6 text-end">
                 <div class="d-flex flex-wrap justify-content-end align-items-center mb-1">
@@ -141,7 +142,7 @@
                 <div class="row align-items-center mx-0">
                     <div class="col-12 col-md-9 p-0 pr-md-2">
                         <div class="d-flex flex-wrap align-items-center mb-2">
-                            <span class="me-2 fw-bold text-danger" style="width: 80px;">* Ragione sociale</span>
+                            <span class="me-2 fw-bold text-danger" style="width: 120px;">Ragione sociale</span>
                             <input type="text" name="ragione_sociale" id="ragione_sociale_obblig" class="form-control flex-grow-1 bg-white">
                         </div>
                         <div class="d-flex flex-wrap align-items-center">
@@ -163,7 +164,7 @@
             <div class="bg-light-green border-green p-2 mb-2 rounded">
                 <div class="row align-items-center mx-0 mb-2">
                     <div class="col-12 d-flex align-items-center p-0">
-                        <span class="me-2 fw-bold text-danger" style="width: 90px;">* Denominazione</span>
+                        <span class="me-2 fw-bold text-danger" style="width: 90px;">Denominazione</span>
                         <input type="text" name="denominazione_imp" id="denominazione_imp" class="form-control flex-grow-1 bg-white">
                     </div>
                 </div>
@@ -215,10 +216,10 @@
                     
                     <div class="row d-flex flex-wrap gap-2 justify-content-between mx-0">
                         <div class="col-auto d-flex align-items-center p-0"><span class="me-1 fw-bold">Tensione (kV):</span><input type="number" step="any" name="tens_nominale" class="form-control bg-light" style="width: 60px;"></div>
-                        <div class="col-auto d-flex align-items-center p-0"><span class="me-1 fw-bold">I di guasto (A):</span><input type="number" step="any" name="corr_guasto" id="corr_guasto" class="form-control bg-light" style="width: 70px;" oninput="calcolaUc()"></div>
+                        <div class="col-auto d-flex align-items-center p-0"><span class="me-1 fw-bold">I<sub>F</sub> di guasto (A):</span><input type="number" step="any" name="corr_guasto" id="corr_guasto" class="form-control bg-light" style="width: 70px;" oninput="calcolaUc()"></div>
                         
                         <div class="col-auto d-flex align-items-center p-0">
-                            <span class="me-1 fw-bold">T eliminazione (s):</span>
+                            <span class="me-1 fw-bold">t<sub>F</sub> guasto (s):</span>
                             <select name="tempo_guasto" id="tempo_guasto" class="form-select bg-light px-1 text-center" style="width: 65px; background-position: right 0.2rem center;" onchange="autoCompilaTensione(this)">
                                 <option value=""></option>
                             </select>
@@ -658,8 +659,7 @@
                 </div>
             </div>
 
-            <datalist id="lista-nc">
-                </datalist>
+            <datalist id="lista-nc"></datalist>
         </form>
     </div> 
     
@@ -737,7 +737,7 @@
     function popolaSelectTF() {
         const selectTF = document.getElementById('tempo_guasto');
         if(!selectTF) return;
-        selectTF.innerHTML = '<option value=""></option>'; // Resetta le opzioni
+        selectTF.innerHTML = '<option value=""></option>';
         for (let tf in tabellaCEI99_3) {
             let option = document.createElement('option');
             option.value = tf;
@@ -757,7 +757,6 @@
         calcolaUc();
     }
 
-    // Logica del Semaforo (Verde se Sicuro, Rosso se Non Sicuro)
     function calcolaUc() {
         const iGuasto = parseFloat(document.getElementById('corr_guasto').value) || 0;
         const rTerra = parseFloat(document.getElementById('val_resistenza_terra').value) || 0;
@@ -771,12 +770,10 @@
             
             if (tensContatto > 0) {
                 if (uc <= tensContatto) {
-                    // Sicuro: Semaforo Verde
                     calcField.classList.remove('bg-warning', 'bg-danger', 'text-dark');
                     calcField.classList.add('bg-success', 'text-white');
                     document.querySelector('input[name="tn_soddisf_2"][value="Risulta"]').checked = true;
                 } else {
-                    // Pericolo: Semaforo Rosso
                     calcField.classList.remove('bg-warning', 'bg-success', 'text-dark');
                     calcField.classList.add('bg-danger', 'text-white');
                     document.querySelector('input[name="tn_soddisf_2"][value="Non Risulta"]').checked = true;
@@ -833,7 +830,7 @@
         recognition.start();
     }
 
-    // --- GESTIONE FOTO E TIMBRO LEGALE ---
+    // --- GESTIONE FOTO E TIMBRO LEGALE E APERTURA FOTOCAMERA---
     function gestisciFoto(input) {
         const file = input.files[0];
         if (!file) return;
@@ -845,7 +842,7 @@
              reader.onload = function(e) {
                  const img = new Image();
                  img.onload = function() {
-                     const canvas = input.parentElement.nextElementSibling; 
+                     const canvas = input.parentElement.parentElement.querySelector('.foto-canvas'); 
                      const MAX_WIDTH = 800; 
                      let width = img.width;
                      let height = img.height;
@@ -854,11 +851,10 @@
                      const ctx = canvas.getContext('2d');
                      ctx.drawImage(img, 0, 0, width, height);
                      
-                     // Timbro Legale (Data e Ora)
                      const d = new Date();
                      const dataOra = d.toLocaleString('it-IT');
                      ctx.font = "bold 16px Arial";
-                     ctx.fillStyle = "#FFEB3B"; // Giallo
+                     ctx.fillStyle = "#FFEB3B"; 
                      ctx.shadowColor = "black";
                      ctx.shadowBlur = 4;
                      ctx.fillText(dataOra, 10, height - 15);
@@ -883,9 +879,7 @@
                      geolocData = `Lat: ${pos.coords.latitude.toFixed(5)} Lon: ${pos.coords.longitude.toFixed(5)}`;
                      scatta();
                  },
-                 (err) => {
-                     scatta();
-                 }
+                 (err) => { scatta(); }
              );
         } else {
             scatta();
@@ -1056,9 +1050,14 @@
             <td class="align-middle border-primary fw-bold text-primary">${rowCount}</td>
             <td class="border-primary p-1 text-start">
                 <input type="text" name="nc_descrizione[]" class="form-control border-0 bg-transparent w-100 text-start mb-1" list="lista-nc" placeholder="Scrivi o seleziona difetto..." oninput="autoCompilaNC(this)">
-                <label class="btn btn-sm btn-outline-primary no-print w-100 mb-1">
-                    📷 Allega Foto e Disegna <input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)">
-                </label>
+                <div class="d-flex gap-1 mb-1 w-100 no-print">
+                    <label class="btn btn-sm btn-outline-primary flex-grow-1 m-0" title="Scatta direttamente dalla fotocamera">
+                        📸 Click <input type="file" class="d-none" accept="image/*" capture="environment" onchange="gestisciFoto(this)">
+                    </label>
+                    <label class="btn btn-sm btn-outline-secondary flex-grow-1 m-0" title="Scegli dalla galleria">
+                        🖼️ Foto <input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)">
+                    </label>
+                </div>
                 <canvas class="foto-canvas"></canvas>
             </td>
             <td class="border-primary p-1">
@@ -1280,7 +1279,7 @@
     window.onload = function() {
         applicaDarkMode();
         mostraLogo();
-        popolaSelectTF(); // Richiama la funzione corretta!
+        popolaSelectTF(); 
         inizializzaLibreria(); 
         aggiornaSelectArchivio();
         const backup = localStorage.getItem('verbaleVIT_backup');
