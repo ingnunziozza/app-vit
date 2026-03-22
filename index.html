@@ -58,23 +58,33 @@
 </head>
 <body>
 
-<div class="container">
-
+<div class="container" id="modulo-principale">
+    
     <div id="barra-strumenti" class="row align-items-center mb-3 mx-0 p-2 bg-light border border-secondary rounded shadow-sm no-print">
-        <div class="col-12 d-flex flex-wrap justify-content-between gap-2">
-            <div class="d-flex flex-wrap gap-2 align-items-center">
-                <button type="button" class="btn btn-sm btn-primary fw-bold" onclick="salvaInArchivio()">💾 Salva in Archivio</button>
-                <select id="archivio_select" class="form-select form-select-sm" style="width: 180px;">
-                    <option value="">-- Archivio Verbali --</option>
+        <div class="col-12 d-flex flex-wrap gap-2 align-items-center justify-content-center justify-content-md-between">
+            <div class="d-flex flex-wrap gap-1 align-items-center flex-grow-1 flex-md-grow-0 justify-content-center">
+                <button type="button" class="btn btn-sm btn-primary fw-bold" onclick="salvaInArchivio()">💾 Archivio</button>
+                <select id="archivio_select" class="form-select form-select-sm" style="width: auto; min-width: 100px; max-width: 140px; flex-grow: 1;">
+                    <option value="">-- Verbali --</option>
                 </select>
-                <button type="button" class="btn btn-sm btn-success fw-bold" onclick="caricaDaArchivio()">📂 Carica</button>
-                <button type="button" class="btn btn-sm btn-outline-danger fw-bold" onclick="eliminaDaArchivio()">🗑️ Elimina</button>
-                <span class="mx-1 border-start border-secondary h-100 d-inline-block"></span>
-                <button type="button" class="btn btn-sm btn-secondary fw-bold" onclick="esportaDB()" title="Scarica un backup di sicurezza dell'archivio">📥 Esporta DB</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" onclick="importaDB()" title="Ripristina un backup precedente">📤 Importa DB</button>
-                <input type="file" id="importaFile" style="display:none" accept=".json" onchange="eseguiImportazione(event)">
+                <button type="button" class="btn btn-sm btn-success fw-bold" onclick="caricaDaArchivio()" title="Carica Verbale">📂</button>
+                <button type="button" class="btn btn-sm btn-outline-danger fw-bold" onclick="eliminaDaArchivio()" title="Elimina Verbale">🗑️</button>
             </div>
-            <button type="button" class="btn btn-sm btn-info text-white fw-bold" onclick="esportaCSV()">📊 Esporta Excel</button>
+            
+            <div class="d-flex flex-wrap gap-1 align-items-center justify-content-center">
+                <button type="button" class="btn btn-sm btn-secondary fw-bold" onclick="esportaDB()" title="Esporta Backup">📥 DB</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" onclick="importaDB()" title="Importa Backup">📤 DB</button>
+                <input type="file" id="importaFile" style="display:none" accept=".json" onchange="eseguiImportazione(event)">
+                
+                <span class="d-none d-md-inline-block mx-1 border-start border-secondary" style="height: 25px;"></span>
+                
+                <button type="button" class="btn btn-sm btn-info text-white fw-bold ms-md-1" onclick="esportaCSV()">📊 Export</button>
+                <button type="button" class="btn btn-sm btn-success text-white fw-bold d-flex align-items-center" onclick="condividiCSV()" title="Condividi">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -625,7 +635,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-    // --- MOTORE OFFLINE ---
+    // --- 1. MOTORE OFFLINE ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('sw.js').then(function(registration) {
@@ -636,22 +646,18 @@
         });
     }
 
-    // --- POSIZIONE GPS ---
+    // --- 2. GPS ---
     function trovaPosizione() {
         if (!navigator.geolocation) {
-            alert("⚠️ Il tuo browser non supporta la geolocalizzazione.");
+            alert("⚠️ Il browser non supporta la geolocalizzazione.");
             return;
         }
-        
         const btnGps = document.querySelector('.btn-gps');
         const originalIcon = btnGps.innerHTML;
         btnGps.innerHTML = '⏳';
-        
         navigator.geolocation.getCurrentPosition(position => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
-            
-            // API gratuita per convertire le coordinate in indirizzo
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
                 .then(response => response.json())
                 .then(data => {
@@ -659,68 +665,40 @@
                         const citta = data.address.city || data.address.town || data.address.village || "";
                         const via = data.address.road || "";
                         const civico = data.address.house_number || "";
-                        
                         if (citta) document.getElementById('citta_imp').value = citta;
                         if (via) document.getElementById('indirizzo_imp').value = via + " " + civico;
-                        
-                        salvaStato(); // salva le modifiche
+                        salvaStato(); 
                         btnGps.innerHTML = originalIcon;
                     }
-                })
-                .catch(err => {
-                    alert("📍 Posizione trovata ma impossibile convertire in indirizzo esatto (serve internet).");
-                    btnGps.innerHTML = originalIcon;
-                });
-        }, error => {
-            alert("⚠️ Errore GPS: Assicurati di aver dato i permessi di localizzazione al browser o al telefono.");
-            btnGps.innerHTML = originalIcon;
-        });
+                }).catch(() => btnGps.innerHTML = originalIcon);
+        }, () => btnGps.innerHTML = originalIcon);
     }
 
-    // --- DETTATURA VOCALE ---
+    // --- 3. DETTATURA VOCALE ---
     function avviaDettatura(btn) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
-            alert("⚠️ Il tuo browser non supporta la dettatura vocale (Usa Chrome o Safari aggiornati).");
-            return;
+            alert("⚠️ Dettatura non supportata in questo browser."); return;
         }
-        
         const recognition = new SpeechRecognition();
         recognition.lang = 'it-IT';
-        recognition.interimResults = false;
-        
-        // Trova la textarea associata a questo pulsante
         const textarea = btn.parentElement.querySelector('textarea');
         const originalIcon = btn.innerHTML;
         
-        recognition.onstart = function() {
-            btn.innerHTML = '🔴'; // Pallino rosso = sta registrando
-        };
-        
-        recognition.onresult = function(event) {
-            const transcript = event.results[0][0].transcript;
-            // Aggiunge spazio solo se c'è già testo
-            textarea.value += (textarea.value ? " " : "") + transcript;
+        recognition.onstart = () => btn.innerHTML = '🔴';
+        recognition.onresult = (event) => {
+            textarea.value += (textarea.value ? " " : "") + event.results[0][0].transcript;
             salvaStato(); 
         };
-        
-        recognition.onerror = function(event) {
-            alert("⚠️ Errore microfono: " + event.error);
-            btn.innerHTML = originalIcon;
-        };
-        
-        recognition.onend = function() {
-            btn.innerHTML = originalIcon;
-        };
-        
+        recognition.onerror = () => btn.innerHTML = originalIcon;
+        recognition.onend = () => btn.innerHTML = originalIcon;
         recognition.start();
     }
 
-    // --- GESTIONE FOTOGRAFIE ---
+    // --- 4. GESTIONE FOTO ---
     function gestisciFoto(input) {
         const file = input.files[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = function(e) {
             const img = new Image();
@@ -729,25 +707,16 @@
                 const MAX_WIDTH = 800; 
                 let width = img.width;
                 let height = img.height;
-
-                if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-                }
-                canvas.width = width;
-                canvas.height = height;
-
+                if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                canvas.width = width; canvas.height = height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-
-                const base64 = canvas.toDataURL('image/jpeg', 0.6);
-                
+                const base64 = canvas.toDataURL('image/jpeg', 0.6); 
                 const preview = input.parentElement.nextElementSibling; 
                 preview.src = base64;
                 preview.setAttribute('src', base64);
                 preview.style.display = 'block';
                 preview.setAttribute('style', 'max-height: 120px; display: block; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px;');
-                
                 salvaStato(); 
             }
             img.src = e.target.result;
@@ -758,9 +727,7 @@
     // Dropdown percentuali
     document.querySelectorAll('.perc-dropdown').forEach(select => {
         let optionsHtml = '<option value=""></option>';
-        for(let i = 100; i >= 0; i -= 5) {
-            optionsHtml += `<option value="${i}%">${i}%</option>`;
-        }
+        for(let i = 100; i >= 0; i -= 5) optionsHtml += `<option value="${i}%">${i}%</option>`;
         select.innerHTML = optionsHtml;
     });
 
@@ -768,12 +735,8 @@
         const iGuasto = parseFloat(document.getElementById('corr_guasto').value) || 0;
         const rTerra = parseFloat(document.getElementById('val_resistenza_terra').value) || 0;
         const calcField = document.getElementById('tn_val_uc');
-        
-        if (iGuasto > 0 && rTerra > 0) {
-            calcField.value = (iGuasto * rTerra).toFixed(2);
-        } else {
-            calcField.value = "";
-        }
+        if (iGuasto > 0 && rTerra > 0) calcField.value = (iGuasto * rTerra).toFixed(2);
+        else calcField.value = "";
     }
 
     // --- TABELLE ---
@@ -824,44 +787,30 @@
     }
 
     const libreriaNC = [
-        "Documentazione tecnica assente",
-        "Documentazione incompleta/non aggiornata",
-        "Dichiarazione di conformità incompleta o assente",
-        "Pannelli di chiusura quadro danneggiati/rotti",
-        "Coprifori / otturatori modulari mancanti",
-        "Parti attive accessibili",
-        "Grado IP non garantito",
-        "Ci sono Quadri non accessibili",
-        "Scarsa pulizia / presenza di polvere o detriti nel quadro elettrico",
-        "AVG - differenziale generale non funzionante",
-        "Differenziale/i a valle non funzionante/i con protezione a monte presente",
-        "Selettività non garantita",
-        "Nodo equipotenziale principale non accessibile",
-        "Dispersori coperti da manto stradale/pavimentazione",
-        "Dispersori dello stabile non di pertinenza esclusiva",
-        "Presenza di infiltrazioni/Locali umidi"
+        "Documentazione tecnica assente", "Documentazione incompleta/non aggiornata", "Dichiarazione di conformità incompleta o assente",
+        "Pannelli di chiusura quadro danneggiati/rotti", "Coprifori / otturatori modulari mancanti", "Parti attive accessibili", "Grado IP non garantito",
+        "Ci sono Quadri non accessibili", "Scarsa pulizia / presenza di polvere o detriti nel quadro elettrico", "AVG - differenziale generale non funzionante",
+        "Differenziale/i a valle non funzionante/i con protezione a monte presente", "Selettività non garantita", "Nodo equipotenziale principale non accessibile",
+        "Dispersori coperti da manto stradale/pavimentazione", "Dispersori dello stabile non di pertinenza esclusiva", "Presenza di infiltrazioni/Locali umidi"
     ];
 
     const datalistNC = document.getElementById('lista-nc');
     libreriaNC.forEach(nc => {
         const option = document.createElement('option');
-        option.value = nc;
-        datalistNC.appendChild(option);
+        option.value = nc; datalistNC.appendChild(option);
     });
 
     // --- ARCHIVIO E SALVATAGGI ---
     function fissaValoriHTML() {
         document.getElementById('area-dati').querySelectorAll('input, select, textarea').forEach(el => {
             if (el.type === 'checkbox' || el.type === 'radio') {
-                if (el.checked) el.setAttribute('checked', 'checked');
-                else el.removeAttribute('checked');
+                if (el.checked) el.setAttribute('checked', 'checked'); else el.removeAttribute('checked');
             } else if (el.type !== 'file') {
                 el.setAttribute('value', el.value);
                 if(el.tagName.toLowerCase() === 'textarea') el.innerHTML = el.value;
                 if (el.tagName.toLowerCase() === 'select') {
                     Array.from(el.options).forEach(opt => {
-                        if (opt.value === el.value) opt.setAttribute('selected', 'selected');
-                        else opt.removeAttribute('selected');
+                        if (opt.value === el.value) opt.setAttribute('selected', 'selected'); else opt.removeAttribute('selected');
                     });
                 }
             }
@@ -882,13 +831,10 @@
 
     function aggiornaSelectArchivio() {
         const select = document.getElementById('archivio_select');
-        select.innerHTML = '<option value="">-- Archivio Verbali --</option>';
+        select.innerHTML = '<option value="">-- Verbali --</option>';
         let archivio = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
         for (let nome in archivio) {
-            let opt = document.createElement('option');
-            opt.value = nome;
-            opt.textContent = nome;
-            select.appendChild(opt);
+            let opt = document.createElement('option'); opt.value = nome; opt.textContent = nome; select.appendChild(opt);
         }
     }
 
@@ -897,14 +843,11 @@
         let denominazione = document.getElementById('denominazione_imp').value || "SenzaNome";
         let dataVerb = document.getElementById('data_verifica_obblig').value || new Date().toLocaleDateString('it-IT');
         let nomeSuggerito = `${denominazione} - ${dataVerb}`;
-        
         let nome = prompt("Nome del verbale da salvare in archivio:", nomeSuggerito);
         if (!nome) return;
-
         let archivio = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
         archivio[nome] = document.getElementById('area-dati').innerHTML;
         localStorage.setItem('verbaleVIT_archivio', JSON.stringify(archivio));
-        
         alert(`✅ Verbale "${nome}" salvato in archivio!`);
         aggiornaSelectArchivio();
     }
@@ -912,13 +855,11 @@
     function caricaDaArchivio() {
         let nome = document.getElementById('archivio_select').value;
         if (!nome) { alert("⚠️ Seleziona un verbale dalla tendina in alto!"); return; }
-        if(!confirm(`Vuoi caricare "${nome}"? I dati non salvati sul modulo attuale andranno persi.`)) return;
-
+        if(!confirm(`Vuoi caricare "${nome}"? I dati non salvati andranno persi.`)) return;
         let archivio = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
         if (archivio[nome]) {
             document.getElementById('area-dati').innerHTML = archivio[nome];
-            riattivaEventi();
-            salvaStato();
+            riattivaEventi(); salvaStato();
         }
     }
     
@@ -933,25 +874,17 @@
         }
     }
 
-    // --- NUOVO: IMPORTA / ESPORTA DATABASE INTERO ---
     function esportaDB() {
         let archivio = localStorage.getItem('verbaleVIT_archivio');
-        if (!archivio || archivio === "{}") {
-            alert("L'archivio è vuoto. Niente da esportare.");
-            return;
-        }
+        if (!archivio || archivio === "{}") { alert("L'archivio è vuoto."); return; }
         let blob = new Blob([archivio], {type: "application/json"});
         let link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = "Backup_Verbali_VIT_" + new Date().toISOString().split('T')[0] + ".json";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
 
-    function importaDB() {
-        document.getElementById('importaFile').click();
-    }
+    function importaDB() { document.getElementById('importaFile').click(); }
 
     function eseguiImportazione(event) {
         let file = event.target.files[0];
@@ -962,86 +895,92 @@
                 let json = JSON.parse(e.target.result);
                 if(typeof json === 'object' && json !== null) {
                     let archivioAttuale = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
-                    Object.assign(archivioAttuale, json); // Unisce i vecchi verbali con quelli nuovi
+                    Object.assign(archivioAttuale, json);
                     localStorage.setItem('verbaleVIT_archivio', JSON.stringify(archivioAttuale));
-                    aggiornaSelectArchivio();
-                    alert("✅ Database ripristinato con successo!");
-                } else {
-                    alert("❌ Il file selezionato non è un backup valido.");
-                }
-            } catch(err) {
-                alert("❌ Errore durante la lettura del file: " + err.message);
-            }
+                    aggiornaSelectArchivio(); alert("✅ Database ripristinato con successo!");
+                } else alert("❌ File di backup non valido.");
+            } catch(err) { alert("❌ Errore durante la lettura del file: " + err.message); }
         };
         reader.readAsText(file);
-        event.target.value = ''; // Resetta l'input per poter ricaricare lo stesso file
+        event.target.value = ''; 
     }
 
     function svuotaModulo() {
-        if(confirm("⚠️ Sei sicuro di voler PULIRE il modulo? I dati non salvati andranno persi.")) {
-            localStorage.removeItem('verbaleVIT_backup');
-            location.reload();
+        if(confirm("⚠️ Sei sicuro di voler PULIRE il modulo?")) {
+            localStorage.removeItem('verbaleVIT_backup'); location.reload();
         }
     }
 
-    function esportaCSV() {
+    // --- CSV EXPORT & CONDIVISIONE ---
+    function generaContenutoCSV() {
         let inputs = document.getElementById('area-dati').querySelectorAll('input[name], select[name], textarea[name]');
         let dati = {};
-        
         inputs.forEach(el => {
-            let name = el.name;
-            let val = "";
+            let name = el.name; let val = "";
             if (el.type === 'checkbox' || el.type === 'radio') {
-                if (el.checked) val = el.value !== "on" ? el.value : "Si";
-                else return; 
-            } else if (el.type !== 'file') {
-                val = el.value.replace(/"/g, '""'); 
-            }
-            if(dati[name]) dati[name] += " + " + val;
-            else dati[name] = val;
+                if (el.checked) val = el.value !== "on" ? el.value : "Si"; else return; 
+            } else if (el.type !== 'file') { val = el.value.replace(/"/g, '""'); }
+            if(dati[name]) dati[name] += " + " + val; else dati[name] = val;
         });
-        
         let headers = Object.keys(dati).map(k => `"${k}"`).join(";");
         let values = Object.values(dati).map(v => `"${v}"`).join(";");
-        let csvContent = "data:text/csv;charset=utf-8," + headers + "\n" + values;
-            
-        let encodedUri = encodeURI(csvContent);
-        let link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        
+        return headers + "\n" + values;
+    }
+
+    function getNomeFileEsportazione() {
         let denominazione = document.getElementById('denominazione_imp') ? document.getElementById('denominazione_imp').value : "";
         let dataVerb = document.getElementById('data_verifica_obblig') ? document.getElementById('data_verifica_obblig').value : "";
         let nomeFile = "Esportazione_VIT";
         if (denominazione) nomeFile = `${denominazione} - ${dataVerb}`;
-        
-        link.setAttribute("download", nomeFile + ".csv");
+        return nomeFile + ".csv";
+    }
+
+    function esportaCSV() {
+        let csvContent = "data:text/csv;charset=utf-8," + generaContenutoCSV();
+        let encodedUri = encodeURI(csvContent);
+        let link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", getNomeFileEsportazione());
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     }
 
+    async function condividiCSV() {
+        const csvText = generaContenutoCSV();
+        const fileName = getNomeFileEsportazione();
+        const file = new File([new Blob([csvText], {type: "text/csv;charset=utf-8"})], fileName, { type: "text/csv" });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: 'Verbale VIT CSV',
+                    text: 'Ecco il file dati esportato del verbale.'
+                });
+            } catch (error) {
+                console.log('Condivisione annullata o non riuscita', error);
+            }
+        } else {
+            alert("Il tuo dispositivo/browser non supporta la condivisione diretta. Verrà eseguito il normale salvataggio.");
+            esportaCSV();
+        }
+    }
+
+    // --- STAMPA PDF ---
     function stampaNativa() {
         const dataObblig = document.getElementById('data_verifica_obblig');
         const ragSocialeObblig = document.getElementById('ragione_sociale_obblig');
-        
         let errore = false;
-        if (!dataObblig.value) { dataObblig.classList.add('campo-errore'); errore = true; } 
-        else { dataObblig.classList.remove('campo-errore'); }
-        if (!ragSocialeObblig.value) { ragSocialeObblig.classList.add('campo-errore'); errore = true; } 
-        else { ragSocialeObblig.classList.remove('campo-errore'); }
+        if (!dataObblig.value) { dataObblig.classList.add('campo-errore'); errore = true; } else dataObblig.classList.remove('campo-errore');
+        if (!ragSocialeObblig.value) { ragSocialeObblig.classList.add('campo-errore'); errore = true; } else ragSocialeObblig.classList.remove('campo-errore');
 
-        if (errore) {
-            alert("⚠️ Manca la Data o la Ragione Sociale. Compila i campi evidenziati in rosso!");
-            return;
-        }
+        if (errore) { alert("⚠️ Manca la Data o la Ragione Sociale."); return; }
 
         const btnArea = document.getElementById('area-bottoni');
         const btnStrumenti = document.getElementById('barra-strumenti');
-        btnArea.style.display = 'none';
-        btnStrumenti.style.display = 'none';
-        document.querySelectorAll('.btn-cestino').forEach(btn => btn.style.display = 'none');
-        document.querySelectorAll('.btn-mic').forEach(btn => btn.style.display = 'none');
-        document.querySelectorAll('.btn-gps').forEach(btn => btn.style.display = 'none');
+        btnArea.style.display = 'none'; btnStrumenti.style.display = 'none';
+        document.querySelectorAll('.btn-cestino, .btn-mic, .btn-gps').forEach(btn => btn.style.display = 'none');
         
         const titoloOriginale = document.title;
         let denominazione = document.getElementById('denominazione_imp') ? document.getElementById('denominazione_imp').value : "";
@@ -1054,11 +993,8 @@
         
         setTimeout(() => {
             document.title = titoloOriginale; 
-            btnArea.style.display = 'flex';
-            btnStrumenti.style.display = 'flex';
-            document.querySelectorAll('.btn-cestino').forEach(btn => btn.style.display = 'block');
-            document.querySelectorAll('.btn-mic').forEach(btn => btn.style.display = 'block');
-            document.querySelectorAll('.btn-gps').forEach(btn => btn.style.display = 'block');
+            btnArea.style.display = 'flex'; btnStrumenti.style.display = 'flex';
+            document.querySelectorAll('.btn-cestino, .btn-mic, .btn-gps').forEach(btn => btn.style.display = 'inline-block');
         }, 1500);
     }
 
