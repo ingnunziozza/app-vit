@@ -10,7 +10,7 @@
         body { font-size: 0.7rem; background-color: #f0f2f5; color: #212529; font-family: Arial, sans-serif; }
         .container { background-color: white; padding: 15px 25px; box-shadow: 0 0 15px rgba(0,0,0,0.15); margin-top: 15px; margin-bottom: 20px; max-width: 1150px; }
         
-        .section-header { color: white; padding: 3px 8px; font-weight: bold; text-transform: uppercase; margin-top: 10px; margin-bottom: 4px; border-radius: 2px; font-size: 0.75rem; display: flex; align-items: center; }
+        .section-header { color: white; padding: 3px 8px; font-weight: bold; text-transform: uppercase; margin-top: 10px; margin-bottom: 4px; border-radius: 2px; font-size: 0.75rem; display: flex; align-items: center; justify-content: space-between; }
         .bg-dark-blue { background-color: #1f4e79; }
         .bg-dark-green { background-color: #4a7e33; }
         .bg-light-blue { background-color: #d9e1f2; }
@@ -34,8 +34,8 @@
         .table-diff td { padding: 0.1rem; }
         .bg-nodo-collettore { background-color: #8da6c9; }
         
-        /* Stile per le anteprime delle foto */
-        .img-preview { max-height: 120px; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px; }
+        /* Stile lavagna per le foto interattive */
+        canvas.foto-canvas { touch-action: none; cursor: crosshair; max-height: 200px; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px; width: 100%; display: none; }
 
         @media (min-width: 768px) { .border-md-start { border-left: 1px solid #dee2e6 !important; } }
         @media (max-width: 767px) { .border-sm-bottom { border-bottom: 1px solid #dee2e6 !important; } .border-sm-top { border-top: 1px solid #dee2e6 !important; } }
@@ -52,7 +52,6 @@
             .bg-nodo-collettore { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #8da6c9 !important; }
         }
         
-        /* Evidenzia campi obbligatori vuoti se cerchi di stampare */
         .campo-errore { border: 2px solid red !important; background-color: #ffe6e6 !important; }
     </style>
 </head>
@@ -64,6 +63,7 @@
         <div class="col-12 d-flex flex-wrap gap-2 align-items-center justify-content-center justify-content-md-between">
             <div class="d-flex flex-wrap gap-1 align-items-center flex-grow-1 flex-md-grow-0 justify-content-center">
                 <button type="button" class="btn btn-sm btn-primary fw-bold" onclick="salvaInArchivio()">💾 Archivio</button>
+                <button type="button" class="btn btn-sm btn-warning fw-bold text-dark" onclick="duplicaVerbale()" title="Duplica Verbale Corrente">📑 Duplica</button>
                 <select id="archivio_select" class="form-select form-select-sm" style="width: auto; min-width: 100px; max-width: 140px; flex-grow: 1;">
                     <option value="">-- Verbali --</option>
                 </select>
@@ -599,15 +599,21 @@
                 </div>
             </div>
 
-            <div class="section-header bg-dark-blue mt-3">Rilievi / Non Conformità</div>
+            <div class="section-header bg-dark-blue mt-3">
+                <span>Rilievi / Non Conformità</span>
+                <div class="no-print ms-auto">
+                    <button type="button" class="btn btn-sm btn-outline-light py-0 px-2 fw-bold" onclick="document.getElementById('importaNC').click()" title="Aggiorna libreria da CSV">📥 Importa CSV Libreria NC</button>
+                    <input type="file" id="importaNC" style="display:none" accept=".csv" onchange="gestisciImportazioneNC(event)">
+                </div>
+            </div>
             <div class="bg-light-blue box-border p-2 rounded mb-2">
                 <div class="overflow-auto border border-primary rounded p-1">
                     <table class="table table-bordered text-center table-diff border-primary mb-0" style="min-width: 600px;">
                         <thead>
                             <tr>
                                 <th class="align-middle bg-light border-primary" style="width: 5%;">N°</th>
-                                <th class="align-middle text-white bg-primary border-primary" style="width: 50%;">Descrizione Rilievo / Non Conformità</th>
-                                <th class="align-middle bg-light border-primary" style="width: 45%;">Note / Adeguamento</th>
+                                <th class="align-middle text-white bg-primary border-primary" style="width: 45%;">Descrizione Rilievo / Non Conformità</th>
+                                <th class="align-middle bg-light border-primary" style="width: 50%;">Note / Adeguamento</th>
                             </tr>
                         </thead>
                         <tbody id="ncTable"></tbody>
@@ -639,19 +645,14 @@
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('sw.js').then(function(registration) {
-                console.log('App pronta per l\'uso Offline!', registration.scope);
-            }, function(err) {
-                console.log('Errore Service Worker: ', err);
+                console.log('App pronta per l\'uso Offline!');
             });
         });
     }
 
     // --- 2. GPS ---
     function trovaPosizione() {
-        if (!navigator.geolocation) {
-            alert("⚠️ Il browser non supporta la geolocalizzazione.");
-            return;
-        }
+        if (!navigator.geolocation) { alert("⚠️ Il browser non supporta la geolocalizzazione."); return; }
         const btnGps = document.querySelector('.btn-gps');
         const originalIcon = btnGps.innerHTML;
         btnGps.innerHTML = '⏳';
@@ -667,8 +668,7 @@
                         const civico = data.address.house_number || "";
                         if (citta) document.getElementById('citta_imp').value = citta;
                         if (via) document.getElementById('indirizzo_imp').value = via + " " + civico;
-                        salvaStato(); 
-                        btnGps.innerHTML = originalIcon;
+                        salvaStato(); btnGps.innerHTML = originalIcon;
                     }
                 }).catch(() => btnGps.innerHTML = originalIcon);
         }, () => btnGps.innerHTML = originalIcon);
@@ -677,9 +677,7 @@
     // --- 3. DETTATURA VOCALE ---
     function avviaDettatura(btn) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert("⚠️ Dettatura non supportata in questo browser."); return;
-        }
+        if (!SpeechRecognition) { alert("⚠️ Dettatura non supportata in questo browser."); return; }
         const recognition = new SpeechRecognition();
         recognition.lang = 'it-IT';
         const textarea = btn.parentElement.querySelector('textarea');
@@ -695,7 +693,7 @@
         recognition.start();
     }
 
-    // --- 4. GESTIONE FOTO ---
+    // --- 4. GESTIONE FOTO E DISEGNO SU CANVAS ---
     function gestisciFoto(input) {
         const file = input.files[0];
         if (!file) return;
@@ -703,7 +701,7 @@
         reader.onload = function(e) {
             const img = new Image();
             img.onload = function() {
-                const canvas = document.createElement('canvas');
+                const canvas = input.parentElement.nextElementSibling; 
                 const MAX_WIDTH = 800; 
                 let width = img.width;
                 let height = img.height;
@@ -711,17 +709,148 @@
                 canvas.width = width; canvas.height = height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-                const base64 = canvas.toDataURL('image/jpeg', 0.6); 
-                const preview = input.parentElement.nextElementSibling; 
-                preview.src = base64;
-                preview.setAttribute('src', base64);
-                preview.style.display = 'block';
-                preview.setAttribute('style', 'max-height: 120px; display: block; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px;');
+                
+                canvas.style.display = 'block';
+                canvas.setAttribute('data-img', canvas.toDataURL('image/jpeg', 0.6));
+                abilitareDisegno(canvas);
                 salvaStato(); 
             }
             img.src = e.target.result;
         }
         reader.readAsDataURL(file);
+    }
+
+    function abilitareDisegno(canvas) {
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        
+        function getPos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let clientX = evt.clientX; let clientY = evt.clientY;
+            if(evt.touches && evt.touches.length > 0) {
+                clientX = evt.touches[0].clientX; clientY = evt.touches[0].clientY;
+            }
+            return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+        }
+
+        function startDraw(e) {
+            isDrawing = true; const pos = getPos(e);
+            ctx.beginPath(); ctx.moveTo(pos.x, pos.y); e.preventDefault();
+        }
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = getPos(e);
+            ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.strokeStyle = 'red';
+            ctx.lineTo(pos.x, pos.y); ctx.stroke(); e.preventDefault();
+        }
+        function endDraw() {
+            if(isDrawing) {
+                isDrawing = false;
+                canvas.setAttribute('data-img', canvas.toDataURL('image/jpeg', 0.6));
+                salvaStato();
+            }
+        }
+
+        canvas.onmousedown = startDraw; canvas.onmousemove = draw; canvas.onmouseup = endDraw; canvas.onmouseout = endDraw;
+        canvas.ontouchstart = startDraw; canvas.ontouchmove = draw; canvas.ontouchend = endDraw;
+    }
+
+    function ripristinaCanvas() {
+        document.querySelectorAll('canvas.foto-canvas').forEach(canvas => {
+            const dataImg = canvas.getAttribute('data-img');
+            if (dataImg) {
+                const img = new Image();
+                img.onload = function() {
+                    canvas.width = img.width; canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    canvas.style.display = 'block';
+                    abilitareDisegno(canvas);
+                };
+                img.src = dataImg;
+            }
+        });
+    }
+
+    // --- LIBRERIA NC DINAMICA E AUTOCOMPILAZIONE ---
+    let libreriaNC_Dinamica = [];
+
+    function inizializzaLibreria() {
+        let salvata = localStorage.getItem('libreriaNC_custom');
+        if (salvata) {
+            libreriaNC_Dinamica = JSON.parse(salvata);
+        } else {
+            // Dati di default base
+            libreriaNC_Dinamica = [
+                { desc: "Documentazione tecnica assente", pres: "Mettere a disposizione dichiarazione di conformità/rispondenza, schemi elettrici, progetto ove previsto e verbali precedenti." },
+                { desc: "Documentazione incompleta/non aggiornata", pres: "Aggiornare la documentazione tecnica e renderla coerente con lo stato attuale dell’impianto." },
+                { desc: "Pannelli di chiusura quadro danneggiati/rotti", pres: "Sostituire i pannelli danneggiati con elementi originali o equivalenti conformi alle caratteristiche costruttive del quadro." },
+                { desc: "Coprifori / otturatori modulari mancanti", pres: "Ripristinare il grado di protezione del quadro installando gli appositi moduli copriforo/otturatori." }
+            ];
+        }
+        popolaDatalistNC();
+    }
+
+    function popolaDatalistNC() {
+        const datalistNC = document.getElementById('lista-nc');
+        datalistNC.innerHTML = '';
+        libreriaNC_Dinamica.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.desc;
+            datalistNC.appendChild(option);
+        });
+    }
+
+    // Carica il CSV e impara le associazioni
+    function gestisciImportazioneNC(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const text = e.target.result;
+            const rows = text.split(/\r?\n/);
+            let nuovaLibreria = [];
+            const separator = text.indexOf(';') > -1 ? ';' : ',';
+            
+            for(let i=1; i<rows.length; i++) {
+                if(rows[i].trim() === '') continue;
+                // Splitta ignorando il separatore se è dentro le virgolette
+                const re = new RegExp(`${separator}(?=(?:(?:[^"]*"){2})*[^"]*$)`);
+                const cols = rows[i].split(re).map(c => c.replace(/^"|"$/g, '').trim());
+                
+                if(cols.length > 5) {
+                    nuovaLibreria.push({ desc: cols[3], pres: cols[5] }); // Usa colonna 3 per desc e 5 per prescrizione
+                } else if(cols.length >= 2) {
+                    nuovaLibreria.push({ desc: cols[0], pres: cols[1] }); // Formato ridotto
+                }
+            }
+            if(nuovaLibreria.length > 0) {
+                localStorage.setItem('libreriaNC_custom', JSON.stringify(nuovaLibreria));
+                libreriaNC_Dinamica = nuovaLibreria;
+                popolaDatalistNC();
+                alert(`✅ Libreria NC aggiornata con successo! (${nuovaLibreria.length} voci memorizzate)`);
+            } else {
+                alert('❌ Formato CSV non riconosciuto.');
+            }
+        };
+        reader.readAsText(file, 'UTF-8');
+        event.target.value = '';
+    }
+
+    // Scrive da sola la nota quando scegli il difetto!
+    function autoCompilaNC(input) {
+        const desc = input.value;
+        const match = libreriaNC_Dinamica.find(item => item.desc === desc);
+        if (match) {
+            const textarea = input.closest('tr').querySelector('textarea[name="nc_note[]"]');
+            if(textarea && !textarea.value.trim()) { 
+                textarea.value = match.pres;
+                salvaStato();
+            }
+        }
+        salvaStato();
     }
 
     // Dropdown percentuali
@@ -769,36 +898,24 @@
         tr.innerHTML = `
             <td class="align-middle border-primary fw-bold text-primary">${rowCount}</td>
             <td class="border-primary p-1 text-start">
-                <input type="text" name="nc_descrizione[]" class="form-control border-0 bg-transparent w-100 text-start mb-1" list="lista-nc" placeholder="Scrivi o seleziona...">
+                <input type="text" name="nc_descrizione[]" class="form-control border-0 bg-transparent w-100 text-start mb-1" list="lista-nc" placeholder="Scrivi o seleziona difetto..." oninput="autoCompilaNC(this)">
                 <label class="btn btn-sm btn-outline-primary no-print w-100 mb-1">
-                    📷 Allega Foto <input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)">
+                    📷 Allega Foto e Disegna <input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)">
                 </label>
-                <img class="img-preview" src="" style="display: none;">
+                <canvas class="foto-canvas"></canvas>
             </td>
             <td class="border-primary p-1">
                 <div class="d-flex align-items-start gap-1 h-100">
                     <textarea name="nc_note[]" class="form-control border-0 bg-transparent w-100" rows="3" placeholder="Note / Adeguamento..."></textarea>
-                    <button type="button" class="btn btn-sm btn-outline-secondary border-0 no-print btn-mic px-1 py-0" onclick="avviaDettatura(this)" title="Dettatura vocale">🎙️</button>
-                    <button type="button" class="btn btn-sm btn-outline-danger border-0 no-print btn-cestino px-1 py-0" onclick="this.closest('tr').remove(); salvaStato();">🗑️</button>
+                    <div class="d-flex flex-column gap-1">
+                        <button type="button" class="btn btn-sm btn-outline-secondary border-0 no-print btn-mic px-1 py-0" onclick="avviaDettatura(this)" title="Dettatura vocale">🎙️</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger border-0 no-print btn-cestino px-1 py-0" onclick="this.closest('tr').remove(); salvaStato();">🗑️</button>
+                    </div>
                 </div>
             </td>
         `;
         tbody.appendChild(tr);
     }
-
-    const libreriaNC = [
-        "Documentazione tecnica assente", "Documentazione incompleta/non aggiornata", "Dichiarazione di conformità incompleta o assente",
-        "Pannelli di chiusura quadro danneggiati/rotti", "Coprifori / otturatori modulari mancanti", "Parti attive accessibili", "Grado IP non garantito",
-        "Ci sono Quadri non accessibili", "Scarsa pulizia / presenza di polvere o detriti nel quadro elettrico", "AVG - differenziale generale non funzionante",
-        "Differenziale/i a valle non funzionante/i con protezione a monte presente", "Selettività non garantita", "Nodo equipotenziale principale non accessibile",
-        "Dispersori coperti da manto stradale/pavimentazione", "Dispersori dello stabile non di pertinenza esclusiva", "Presenza di infiltrazioni/Locali umidi"
-    ];
-
-    const datalistNC = document.getElementById('lista-nc');
-    libreriaNC.forEach(nc => {
-        const option = document.createElement('option');
-        option.value = nc; datalistNC.appendChild(option);
-    });
 
     // --- ARCHIVIO E SALVATAGGI ---
     function fissaValoriHTML() {
@@ -822,6 +939,7 @@
         document.getElementById('val_resistenza_terra').addEventListener('input', calcolaUc);
         document.getElementById('area-dati').addEventListener('input', salvaStato);
         document.getElementById('area-dati').addEventListener('change', salvaStato);
+        ripristinaCanvas();
     }
 
     function salvaStato() {
@@ -849,6 +967,19 @@
         archivio[nome] = document.getElementById('area-dati').innerHTML;
         localStorage.setItem('verbaleVIT_archivio', JSON.stringify(archivio));
         alert(`✅ Verbale "${nome}" salvato in archivio!`);
+        aggiornaSelectArchivio();
+    }
+
+    function duplicaVerbale() {
+        let denominazione = document.getElementById('denominazione_imp').value || "Copia";
+        let nomeSuggerito = `${denominazione} - Copia`;
+        let nome = prompt("Duplica l'attuale verbale e salvalo nell'archivio come:", nomeSuggerito);
+        if (!nome) return;
+        fissaValoriHTML();
+        let archivio = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
+        archivio[nome] = document.getElementById('area-dati').innerHTML;
+        localStorage.setItem('verbaleVIT_archivio', JSON.stringify(archivio));
+        alert(`✅ Verbale duplicato e salvato come "${nome}"!`);
         aggiornaSelectArchivio();
     }
 
@@ -932,7 +1063,7 @@
         let dataVerb = document.getElementById('data_verifica_obblig') ? document.getElementById('data_verifica_obblig').value : "";
         let nomeFile = "Esportazione_VIT";
         if (denominazione) nomeFile = `${denominazione} - ${dataVerb}`;
-        return nomeFile + ".csv";
+        return nomeFile;
     }
 
     function esportaCSV() {
@@ -940,29 +1071,21 @@
         let encodedUri = encodeURI(csvContent);
         let link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", getNomeFileEsportazione());
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        link.setAttribute("download", getNomeFileEsportazione() + ".csv");
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
 
     async function condividiCSV() {
         const csvText = generaContenutoCSV();
-        const fileName = getNomeFileEsportazione();
+        const fileName = getNomeFileEsportazione() + ".csv";
         const file = new File([new Blob([csvText], {type: "text/csv;charset=utf-8"})], fileName, { type: "text/csv" });
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
-                await navigator.share({
-                    files: [file],
-                    title: 'Verbale VIT CSV',
-                    text: 'Ecco il file dati esportato del verbale.'
-                });
-            } catch (error) {
-                console.log('Condivisione annullata o non riuscita', error);
-            }
+                await navigator.share({ files: [file], title: 'Verbale VIT CSV', text: 'File dati esportato del verbale.' });
+            } catch (error) { console.log('Condivisione annullata'); }
         } else {
-            alert("Il tuo dispositivo/browser non supporta la condivisione diretta. Verrà eseguito il normale salvataggio.");
+            alert("Dispositivo non supportato per la condivisione diretta. Salvataggio normale...");
             esportaCSV();
         }
     }
@@ -983,11 +1106,7 @@
         document.querySelectorAll('.btn-cestino, .btn-mic, .btn-gps').forEach(btn => btn.style.display = 'none');
         
         const titoloOriginale = document.title;
-        let denominazione = document.getElementById('denominazione_imp') ? document.getElementById('denominazione_imp').value : "";
-        let dataVerb = dataObblig.value || "";
-        let nomeFile = "Verbale_VIT";
-        if (denominazione) nomeFile = `${denominazione} - ${dataVerb}`;
-        document.title = nomeFile;
+        document.title = getNomeFileEsportazione();
 
         window.print();
         
@@ -999,6 +1118,7 @@
     }
 
     window.onload = function() {
+        inizializzaLibreria();
         aggiornaSelectArchivio();
         const backup = localStorage.getItem('verbaleVIT_backup');
         if (backup) {
