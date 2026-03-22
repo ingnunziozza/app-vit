@@ -10,44 +10,20 @@
         body { font-size: 0.7rem; background-color: #f0f2f5; color: #212529; font-family: Arial, sans-serif; }
         .container { background-color: white; padding: 15px 25px; box-shadow: 0 0 15px rgba(0,0,0,0.15); margin-top: 15px; margin-bottom: 20px; max-width: 1150px; }
         
-        /* Intestazioni di sezione */
         .section-header { color: white; padding: 3px 8px; font-weight: bold; text-transform: uppercase; margin-top: 10px; margin-bottom: 4px; border-radius: 2px; font-size: 0.75rem; display: flex; align-items: center; }
         .bg-dark-blue { background-color: #1f4e79; }
         .bg-dark-green { background-color: #4a7e33; }
-        .bg-light-green-header { background-color: #8cb542; }
         .bg-light-blue { background-color: #d9e1f2; }
         .bg-light-green { background-color: #e2efda; }
         .bg-light-grey { background-color: #f2f2f2; }
         
-        /* Form e controlli testo */
         .form-control, .form-select, .input-group-text { font-size: 0.7rem; padding: 0.1rem 0.3rem; border-radius: 2px; border: 1px solid #ccc; height: 1.8rem; }
         .form-check-label { font-size: 0.7rem; margin-left: 2px; white-space: nowrap; cursor: pointer; }
         .row { margin-bottom: 2px; }
-        .fw-bold-600 { font-weight: 600; }
         
-        /* --- STILE UNIFICATO PER TUTTE LE CHECKBOX E RADIO --- */
-        .form-check-input {
-            width: 0.85rem; 
-            height: 0.85rem; 
-            min-width: 0.85rem; 
-            min-height: 0.85rem;
-            flex-shrink: 0; 
-            margin-top: 0.2rem;
-            border-radius: 2px !important; 
-            border: 1px solid #8da6c9;
-            background-color: #fff;
-            cursor: pointer;
-        }
+        .form-check-input { width: 0.85rem; height: 0.85rem; min-width: 0.85rem; min-height: 0.85rem; flex-shrink: 0; margin-top: 0.2rem; border-radius: 2px !important; border: 1px solid #8da6c9; background-color: #fff; cursor: pointer; }
+        .form-check-input:checked { background-color: #ffffff !important; border-color: #0d6efd !important; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%230d6efd' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important; background-size: 85% 85%; background-position: center; }
         
-        .form-check-input:checked {
-            background-color: #ffffff !important; 
-            border-color: #0d6efd !important;     
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%230d6efd' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important;
-            background-size: 85% 85%;
-            background-position: center;
-        }
-        
-        /* Layout specifico */
         .box-border { border: 1px solid #b4c6e7; padding: 4px; }
         .border-green { border: 1px solid #c6e0b4; padding: 4px; }
         .bg-pink-light { background-color: #faebe4; }
@@ -58,31 +34,28 @@
         .table-diff td { padding: 0.1rem; }
         .bg-nodo-collettore { background-color: #8da6c9; }
 
-        /* Regole Responsive per i bordi */
-        @media (min-width: 768px) {
-            .border-md-start { border-left: 1px solid #dee2e6 !important; }
-        }
-        @media (max-width: 767px) {
-            .border-sm-bottom { border-bottom: 1px solid #dee2e6 !important; }
-            .border-sm-top { border-top: 1px solid #dee2e6 !important; }
-        }
+        @media (min-width: 768px) { .border-md-start { border-left: 1px solid #dee2e6 !important; } }
+        @media (max-width: 767px) { .border-sm-bottom { border-bottom: 1px solid #dee2e6 !important; } .border-sm-top { border-top: 1px solid #dee2e6 !important; } }
         
         @media print {
             body { background-color: white; font-size: 0.65rem; }
             .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; border: none !important;}
-            #area-bottoni, .no-print { display: none !important; }
+            #area-bottoni, .btn-cestino, .no-print { display: none !important; }
             .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .bg-light-blue, .bg-light-green, .bg-light-grey, .bg-pink-light, .bg-light-green-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .bg-light-blue, .bg-light-green, .bg-light-grey, .bg-pink-light { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .form-control, .form-select { border: none; border-bottom: 1px dotted #999; border-radius: 0; padding: 0; height: auto; background: transparent; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
             input[type="checkbox"], input[type="radio"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .form-check-input:checked { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .bg-nodo-collettore { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #8da6c9 !important; }
         }
+        
+        /* Evidenzia campi obbligatori vuoti se cerchi di stampare */
+        .campo-errore { border: 2px solid red !important; background-color: #ffe6e6 !important; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="modulo-principale">
     <div class="row align-items-center mb-2 mx-0">
         <div class="col-2 text-center">
             <h2 class="mb-0 text-success fw-bold">G&R</h2>
@@ -93,8 +66,8 @@
         </div>
         <div class="col-6 text-end">
             <div class="d-flex flex-wrap justify-content-end align-items-center mb-1">
-                <span class="me-2 fw-bold">Data effettuazione della verifica:</span>
-                <input type="date" name="data_verifica" class="form-control" style="width: 120px; background-color: #d9e1f2;">
+                <span class="me-2 fw-bold text-danger">* Data effettuazione:</span>
+                <input type="date" name="data_verifica" id="data_verifica_obblig" class="form-control" style="width: 120px; background-color: #d9e1f2;">
             </div>
             <div class="d-flex flex-wrap justify-content-end align-items-center">
                 <span class="me-2">verbale VIT n.</span>
@@ -112,8 +85,8 @@
             <div class="row align-items-center mx-0">
                 <div class="col-12 col-md-9 p-0 pr-md-2">
                     <div class="d-flex flex-wrap align-items-center mb-2">
-                        <span class="me-2 fw-bold" style="width: 80px;">Ragione sociale</span>
-                        <input type="text" name="ragione_sociale" class="form-control flex-grow-1 bg-white">
+                        <span class="me-2 fw-bold text-danger" style="width: 80px;">* Ragione sociale</span>
+                        <input type="text" name="ragione_sociale" id="ragione_sociale_obblig" class="form-control flex-grow-1 bg-white">
                     </div>
                     <div class="d-flex flex-wrap align-items-center">
                         <span class="me-2 fw-bold" style="width: 80px;">Città</span>
@@ -234,7 +207,7 @@
             </div>
             <div class="row g-1 align-items-center mx-0">
                 <div class="col-12 d-flex flex-wrap align-items-center gap-1 p-0">
-                    <span class="me-2 fw-bold">Per sistemi TN-S: Comunicazione dati guasto del gestore del</span>
+                    <span class="me-2 fw-bold">Per sistemi TN-S: Comunicazione dati guasto gestore del</span>
                     <input type="date" name="tns_comunicazione" class="form-control bg-white" style="width: 130px;">
                 </div>
             </div>
@@ -245,7 +218,7 @@
             <div class="row g-1 align-items-center mx-0 mb-2 border border-success rounded p-2">
                 <div class="col-12 d-flex flex-wrap align-items-center gap-2 p-0">
                     <div class="d-flex align-items-center me-md-4">
-                        <span class="fw-bold me-2 text-success">Misura resistenza di Terra:</span>
+                        <span class="fw-bold me-2 text-success">Misura resistenza Terra:</span>
                         <input type="number" step="any" name="misura_resistenza_terra" id="val_resistenza_terra" class="form-control border-success bg-light" style="width: 80px;" placeholder="&Omega;">
                     </div>
                     <div class="d-flex align-items-center flex-wrap">
@@ -262,7 +235,7 @@
                     <div class="form-check form-check-inline ms-2 d-flex align-items-center m-0 me-2"><input type="radio" name="tt_soddisf" value="Risulta" class="form-check-input"><label class="form-check-label fw-bold">Risulta</label></div>
                     <div class="form-check form-check-inline d-flex align-items-center m-0 me-md-3"><input type="radio" name="tt_soddisf" value="Non Risulta" class="form-check-input"><label class="form-check-label">Non Risulta</label></div>
                     
-                    <span class="ms-md-3 mt-1 mt-md-0 border-sm-top pt-1 pt-md-0">soddisfatta la relazione U<sub>L</sub> &le;</span>
+                    <span class="ms-md-3 mt-1 mt-md-0 border-sm-top pt-1 pt-md-0">soddisfatta U<sub>L</sub> &le;</span>
                     <select id="calc_ul" name="val_ul_scelta" class="form-select text-center bg-light text-danger fw-bold ms-1" style="width: 90px; padding-right: 15px;">
                         <option value=""></option>
                         <option value="50Volt">50Volt</option>
@@ -386,7 +359,6 @@
                     <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="realiz_capicorda" class="form-check-input mt-0"><label class="form-check-label">Capicorda</label></div>
                 </div>
             </div>
-
         </div>
 
         <div class="section-header bg-dark-green mt-3">Esame Conduttori</div>
@@ -406,7 +378,7 @@
                 <div class="col-12 col-md-4 border-md-start border-success d-flex flex-wrap justify-content-center align-items-center py-1">
                     <span class="text-success fw-bold me-3">Giunzioni:</span>
                     <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="radio" name="id_giunz" value="idonee" class="form-check-input border-success"><label class="form-check-label text-success">idonee</label></div>
-                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="id_giunz" value="non idonee" class="form-check-input border-danger"><label class="form-check-label text-danger">non idonee</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="id_giunz" value="non idonee" class="form-check-input border-danger"><label class="form-check-label text-danger">non idonei</label></div>
                 </div>
             </div>
 
@@ -569,18 +541,18 @@
         </div>
 
         <div class="section-header bg-dark-green mt-3">Prova di intervento dei differenziali</div>
-        <div class="bg-light-green border-green p-2 rounded">
+        <div class="bg-light-green border-green p-2 rounded mb-2">
             <div class="overflow-auto border border-success rounded p-1">
                 <table class="table table-bordered text-center table-diff border-success mb-0" style="min-width: 600px;">
                     <thead>
                         <tr>
-                            <th rowspan="2" class="align-middle border-success" style="width: 35%;">Quadro</th>
-                            <th rowspan="2" class="align-middle border-success" style="width: 8%;">No.</th>
+                            <th rowspan="2" class="align-middle bg-light" style="width: 33%;">Quadro</th>
+                            <th rowspan="2" class="align-middle bg-light" style="width: 6%;">No.</th>
                             <th colspan="4" class="align-middle text-white bg-success">Corrente di intervento (I&Delta;n)</th>
-                            <th rowspan="2" class="align-middle border-success" style="width: 35%;">Note</th>
+                            <th rowspan="2" class="align-middle bg-light" style="width: 33%;">Note</th>
                         </tr>
                         <tr>
-                            <th class="text-success border-success">0,03</th><th class="text-success border-success">0,3</th><th class="text-success border-success">0,5</th><th class="text-success border-success">1</th>
+                            <th class="text-success bg-light border-success">0,03</th><th class="text-success bg-light border-success">0,3</th><th class="text-success bg-light border-success">0,5</th><th class="text-success bg-light border-success">1</th>
                         </tr>
                     </thead>
                     <tbody id="diffTable"></tbody>
@@ -592,7 +564,33 @@
             </div>
         </div>
 
-        <div class="text-center mt-4 border-top pt-4 pb-4" id="area-bottoni">
+        <div class="section-header bg-dark-blue mt-3">Rilievi / Non Conformità</div>
+        <div class="bg-light-blue box-border p-2 rounded mb-2">
+            <div class="overflow-auto border border-primary rounded p-1">
+                <table class="table table-bordered text-center table-diff border-primary mb-0" style="min-width: 600px;">
+                    <thead>
+                        <tr>
+                            <th class="align-middle bg-light border-primary" style="width: 5%;">N°</th>
+                            <th class="align-middle text-white bg-primary border-primary" style="width: 60%;">Descrizione Rilievo / Non Conformità</th>
+                            <th class="align-middle bg-light border-primary" style="width: 30%;">Note / Adeguamento</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ncTable"></tbody>
+                </table>
+            </div>
+            
+            <div class="text-end mt-2 no-print">
+                <button type="button" class="btn btn-sm btn-primary fw-bold px-3 shadow-sm" onclick="addNCRow()">+ Aggiungi Rilievo</button>
+            </div>
+        </div>
+
+        <datalist id="lista-nc">
+            </datalist>
+
+        <div class="text-center mt-4 border-top pt-4 pb-4 d-flex justify-content-center flex-wrap gap-3" id="area-bottoni">
+            <button type="button" class="btn btn-warning px-4 py-3 fs-6 fw-bold shadow-sm no-print" onclick="svuotaModulo()" style="border-radius: 50px;">
+                🔄 Svuota Modulo
+            </button>
             <button type="button" class="btn btn-danger px-5 py-3 fs-5 fw-bold shadow" onclick="stampaNativa()" style="border-radius: 50px;">
                 🖨️ Stampa / Salva PDF
             </button>
@@ -602,6 +600,17 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
+    // Inizializza il Service Worker per il funzionamento 100% Offline
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('sw.js').then(function(registration) {
+                console.log('App pronta per l\'uso Offline!', registration.scope);
+            }, function(err) {
+                console.log('Errore Service Worker: ', err);
+            });
+        });
+    }
+
     // Percentuali decrescenti (da 100% a 0%)
     document.querySelectorAll('.perc-dropdown').forEach(select => {
         let optionsHtml = '<option value=""></option>';
@@ -624,39 +633,162 @@
         }
     }
 
-    document.getElementById('corr_guasto').addEventListener('input', calcolaUc);
-    document.getElementById('val_resistenza_terra').addEventListener('input', calcolaUc);
-
     // Gestione righe differenziali
     function addRow() {
         const tbody = document.getElementById('diffTable');
         const tr = document.createElement('tr');
         tr.className = "diff-row";
         tr.innerHTML = `
-            <td class="border-success"><input type="text" class="form-control border-0 bg-transparent text-center w-100 q-nome"></td>
-            <td class="border-success"><input type="number" step="any" class="form-control border-0 bg-transparent text-center w-100 q-no"></td>
-            <td class="align-middle border-success"><input type="checkbox" class="form-check-input m-0 q-003 border-success" style="display:inline-block;"></td>
-            <td class="align-middle border-success"><input type="checkbox" class="form-check-input m-0 q-03 border-success" style="display:inline-block;"></td>
-            <td class="align-middle border-success"><input type="checkbox" class="form-check-input m-0 q-05 border-success" style="display:inline-block;"></td>
-            <td class="align-middle border-success"><input type="checkbox" class="form-check-input m-0 q-1 border-success" style="display:inline-block;"></td>
-            <td class="border-success"><input type="text" class="form-control border-0 bg-transparent w-100 q-note"></td>
+            <td class="border-success p-1"><input type="text" class="form-control border-0 bg-transparent text-center w-100"></td>
+            <td class="border-success p-1"><input type="number" step="any" class="form-control border-0 bg-transparent text-center w-100"></td>
+            <td class="align-middle border-success"><input type="checkbox" class="form-check-input m-0 border-success"></td>
+            <td class="align-middle border-success"><input type="checkbox" class="form-check-input m-0 border-success"></td>
+            <td class="align-middle border-success"><input type="checkbox" class="form-check-input m-0 border-success"></td>
+            <td class="align-middle border-success"><input type="checkbox" class="form-check-input m-0 border-success"></td>
+            <td class="border-success p-1">
+                <div class="d-flex align-items-center gap-1">
+                    <input type="text" class="form-control border-0 bg-transparent w-100">
+                    <button type="button" class="btn btn-sm btn-outline-danger border-0 no-print btn-cestino px-1 py-0" onclick="this.closest('tr').remove();">🗑️</button>
+                </div>
+            </td>
         `;
         tbody.appendChild(tr);
     }
-    
-    for(let i=0; i<10; i++) addRow();
 
-    // Funzione di stampa nativa
+    // Gestione Rilievi / Non Conformità
+    function addNCRow() {
+        const tbody = document.getElementById('ncTable');
+        const rowCount = tbody.children.length + 1;
+        const tr = document.createElement('tr');
+        tr.className = "nc-row";
+        tr.innerHTML = `
+            <td class="align-middle border-primary fw-bold text-primary">${rowCount}</td>
+            <td class="border-primary p-1">
+                <input type="text" class="form-control border-0 bg-transparent w-100 text-start" list="lista-nc" placeholder="Scrivi o seleziona...">
+            </td>
+            <td class="border-primary p-1">
+                <div class="d-flex align-items-center gap-1">
+                    <input type="text" class="form-control border-0 bg-transparent w-100">
+                    <button type="button" class="btn btn-sm btn-outline-danger border-0 no-print btn-cestino px-1 py-0" onclick="this.closest('tr').remove();">🗑️</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    }
+
+    // --- LIBRERIA NON CONFORMITA' (Qui puoi incollare il tuo elenco!) ---
+    const libreriaNC = [
+        "Documentazione tecnica assente",
+        "Documentazione incompleta/non aggiornata",
+	    "Dichiarazione di conformità incompleta o assente",
+        "Pannelli di chiusura quadro danneggiati/rotti",
+        "Coprifori / otturatori modulari mancanti",
+	    "Parti attive accessibili",
+        "Grado IP non garantito",
+    	"Ci sono Quadri non accessibili",
+    	"Scarsa pulizia / presenza di polvere o detriti nel quadro elettrico",
+    	"AVG - differenziale generale non funzionante",
+    	"Differenziale/i a valle non funzionante/i con protezione a monte presente",
+    	"Selettività non garantita",
+    	"Nodo equipotenziale principale non accessibile",
+    	"Dispersori coperti da manto stradale/pavimentazione",
+    	"Dispersori dello stabile non di pertinenza esclusiva",
+    	"Presenza di infiltrazioni/Locali umidi"
+    ];
+
+    const datalistNC = document.getElementById('lista-nc');
+    libreriaNC.forEach(nc => {
+        const option = document.createElement('option');
+        option.value = nc;
+        datalistNC.appendChild(option);
+    });
+
+    // --- SISTEMA DI SALVATAGGIO AUTOMATICO ---
+    function salvaStato() {
+        const container = document.getElementById('modulo-principale');
+        
+        // Fissiamo i valori digitati nell'HTML reale per poterli salvare
+        container.querySelectorAll('input, select').forEach(el => {
+            if (el.type === 'checkbox' || el.type === 'radio') {
+                if (el.checked) el.setAttribute('checked', 'checked');
+                else el.removeAttribute('checked');
+            } else {
+                el.setAttribute('value', el.value);
+                if (el.tagName.toLowerCase() === 'select') {
+                    Array.from(el.options).forEach(opt => {
+                        if (opt.value === el.value) opt.setAttribute('selected', 'selected');
+                        else opt.removeAttribute('selected');
+                    });
+                }
+            }
+        });
+        // Salviamo l'intero modulo nella memoria del telefono
+        localStorage.setItem('verbaleVIT_backup', container.innerHTML);
+    }
+
+    function caricaStato() {
+        const backup = localStorage.getItem('verbaleVIT_backup');
+        if (backup) {
+            document.getElementById('modulo-principale').innerHTML = backup;
+        } else {
+            // Se è il primo avvio, crea le righe vuote
+            for(let i=0; i<10; i++) addRow();
+            for(let i=0; i<3; i++) addNCRow();
+        }
+        
+        // Riattiva i calcoli automatici dopo il caricamento
+        document.getElementById('corr_guasto').addEventListener('input', calcolaUc);
+        document.getElementById('val_resistenza_terra').addEventListener('input', calcolaUc);
+        
+        // Riattiva il salvataggio automatico ad ogni click o tasto premuto
+        document.getElementById('modulo-principale').addEventListener('input', salvaStato);
+        document.getElementById('modulo-principale').addEventListener('change', salvaStato);
+    }
+
+    // Pulisce tutto il modulo
+    function svuotaModulo() {
+        if(confirm("ATTENZIONE: Sei sicuro di voler SVUOTARE l'intero modulo? Tutti i dati inseriti andranno persi.")) {
+            localStorage.removeItem('verbaleVIT_backup');
+            location.reload(); // Ricarica la pagina pulita
+        }
+    }
+
+    // Funzione di stampa nativa e controllo campi obbligatori
     function stampaNativa() {
+        // Controllo campi obbligatori (Data e Ragione Sociale)
+        const dataObblig = document.getElementById('data_verifica_obblig');
+        const ragSocialeObblig = document.getElementById('ragione_sociale_obblig');
+        
+        let errore = false;
+        
+        if (!dataObblig.value) { dataObblig.classList.add('campo-errore'); errore = true; } 
+        else { dataObblig.classList.remove('campo-errore'); }
+        
+        if (!ragSocialeObblig.value) { ragSocialeObblig.classList.add('campo-errore'); errore = true; } 
+        else { ragSocialeObblig.classList.remove('campo-errore'); }
+
+        if (errore) {
+            alert("⚠️ ATTENZIONE: Compila la 'Data' (in alto a destra) e la 'Ragione Sociale' prima di stampare o salvare il PDF!");
+            return; // Blocca la stampa
+        }
+
+        // Se tutto ok, procedi con la stampa
         const btnArea = document.getElementById('area-bottoni');
         btnArea.style.display = 'none';
+        
+        // Nascondiamo momentaneamente i tasti cestino
+        document.querySelectorAll('.btn-cestino').forEach(btn => btn.style.display = 'none');
         
         window.print();
         
         setTimeout(() => {
-            btnArea.style.display = 'block';
+            btnArea.style.display = 'flex';
+            document.querySelectorAll('.btn-cestino').forEach(btn => btn.style.display = 'block');
         }, 1500);
     }
+
+    // All'avvio dell'app, carica i dati salvati
+    window.onload = caricaStato;
 </script>
 </body>
 </html>
