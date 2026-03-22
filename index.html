@@ -7,8 +7,8 @@
     <link rel="manifest" href="manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { font-size: 0.7rem; background-color: #f0f2f5; color: #212529; font-family: Arial, sans-serif; }
-        .container { background-color: white; padding: 15px 25px; box-shadow: 0 0 15px rgba(0,0,0,0.15); margin-top: 15px; margin-bottom: 20px; max-width: 1150px; }
+        body { font-size: 0.7rem; background-color: #f0f2f5; color: #212529; font-family: Arial, sans-serif; transition: background-color 0.3s, color 0.3s; }
+        .container { background-color: white; padding: 15px 25px; box-shadow: 0 0 15px rgba(0,0,0,0.15); margin-top: 15px; margin-bottom: 20px; max-width: 1150px; transition: background-color 0.3s; }
         
         .section-header { color: white; padding: 3px 8px; font-weight: bold; text-transform: uppercase; margin-top: 10px; margin-bottom: 4px; border-radius: 2px; font-size: 0.75rem; display: flex; align-items: center; justify-content: space-between; }
         .bg-dark-blue { background-color: #1f4e79; }
@@ -37,16 +37,33 @@
         /* Stile lavagna per le foto interattive */
         canvas.foto-canvas { touch-action: none; cursor: crosshair; max-height: 200px; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px; width: 100%; display: none; }
 
+        /* DARK MODE STYLES */
+        body.dark-mode { background-color: #121212; color: #e0e0e0; }
+        body.dark-mode .container { background-color: #1e1e1e; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        body.dark-mode .bg-light { background-color: #2c2c2c !important; color: #e0e0e0; }
+        body.dark-mode .bg-light-blue { background-color: #2a3b5c; }
+        body.dark-mode .bg-light-green { background-color: #2a402a; }
+        body.dark-mode .bg-white { background-color: #333 !important; color: #fff !important; border-color: #555; }
+        body.dark-mode input, body.dark-mode select, body.dark-mode textarea { background-color: #333 !important; color: #fff !important; border-color: #555 !important; }
+        body.dark-mode .text-blue { color: #90caf9; }
+        body.dark-mode .text-green, body.dark-mode .text-success { color: #81c784 !important; }
+        body.dark-mode .text-primary { color: #90caf9 !important; }
+        body.dark-mode .text-danger { color: #e57373 !important; }
+        body.dark-mode .border-primary { border-color: #90caf9 !important; }
+        body.dark-mode .border-success { border-color: #81c784 !important; }
+        body.dark-mode .table { color: #e0e0e0; }
+        body.dark-mode .table td, body.dark-mode .table th { border-color: #555; }
+
         @media (min-width: 768px) { .border-md-start { border-left: 1px solid #dee2e6 !important; } }
         @media (max-width: 767px) { .border-sm-bottom { border-bottom: 1px solid #dee2e6 !important; } .border-sm-top { border-top: 1px solid #dee2e6 !important; } }
         
         @media print {
-            body { background-color: white; font-size: 0.65rem; }
-            .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; border: none !important;}
+            body, body.dark-mode { background-color: white !important; color: black !important; font-size: 0.65rem; }
+            .container, body.dark-mode .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; border: none !important; background-color: white !important;}
             #barra-strumenti, #area-bottoni, .btn-cestino, .btn-mic, .btn-gps, .no-print { display: none !important; }
             .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .bg-light-blue, .bg-light-green, .bg-light-grey, .bg-pink-light { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .form-control, .form-select { border: none; border-bottom: 1px dotted #999; border-radius: 0; padding: 0; height: auto; background: transparent; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+            .form-control, .form-select { border: none !important; border-bottom: 1px dotted #999 !important; border-radius: 0; padding: 0; height: auto; background: transparent !important; -webkit-appearance: none; -moz-appearance: none; appearance: none; color: black !important;}
             input[type="checkbox"], input[type="radio"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .form-check-input:checked { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .bg-nodo-collettore { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #8da6c9 !important; }
@@ -78,6 +95,7 @@
                 
                 <span class="d-none d-md-inline-block mx-1 border-start border-secondary" style="height: 25px;"></span>
                 
+                <button type="button" class="btn btn-sm btn-dark fw-bold" onclick="toggleDarkMode()" id="btn-darkmode" title="Modalità Notturna">🌙</button>
                 <button type="button" class="btn btn-sm btn-info text-white fw-bold ms-md-1" onclick="esportaCSV()">📊 Export</button>
                 <button type="button" class="btn btn-sm btn-success text-white fw-bold d-flex align-items-center" onclick="condividiCSV()" title="Condividi">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -90,10 +108,15 @@
 
     <div id="area-dati">
         <div class="row align-items-center mb-2 mx-0">
-            <div class="col-2 text-center">
-                <h2 class="mb-0 text-success fw-bold">G&R</h2>
-                <div style="font-size: 0.5rem; line-height: 1;">Organismo di Certificazione s.r.l.</div>
+            <div class="col-2 text-center" style="cursor: pointer;" onclick="document.getElementById('uploadLogo').click()" title="Clicca per inserire il tuo Logo">
+                <img id="logo_img" src="" style="max-height: 55px; max-width: 100%; display: none;">
+                <div id="logo_text">
+                    <h2 class="mb-0 text-success fw-bold">G&R</h2>
+                    <div style="font-size: 0.5rem; line-height: 1;">Organismo di Certificazione s.r.l.</div>
+                </div>
+                <input type="file" id="uploadLogo" accept="image/*" class="no-print d-none" onchange="caricaLogo(event)">
             </div>
+            
             <div class="col-4">
                 <h5 class="text-blue fw-bold mb-0">DATI VERIFICA VIT</h5>
             </div>
@@ -192,16 +215,18 @@
                     
                     <div class="row d-flex flex-wrap gap-2 justify-content-between mx-0">
                         <div class="col-auto d-flex align-items-center p-0"><span class="me-1 fw-bold">Tensione (kV):</span><input type="number" step="any" name="tens_nominale" class="form-control bg-light" style="width: 60px;"></div>
-                        <div class="col-auto d-flex align-items-center p-0"><span class="me-1 fw-bold">I di guasto (A):</span><input type="number" step="any" name="corr_guasto" id="corr_guasto" class="form-control bg-light" style="width: 70px;"></div>
+                        <div class="col-auto d-flex align-items-center p-0"><span class="me-1 fw-bold">I di guasto (A):</span><input type="number" step="any" name="corr_guasto" id="corr_guasto" class="form-control bg-light" style="width: 70px;" oninput="calcolaUc()"></div>
                         
                         <div class="col-auto d-flex align-items-center p-0">
                             <span class="me-1 fw-bold">T eliminazione (s):</span>
-                            <input type="text" name="tempo_guasto" id="tempo_guasto" class="form-control bg-light text-center" style="width: 65px;" list="lista-tf" oninput="autoCompilaTensione(this)" autocomplete="off">
-                            <datalist id="lista-tf"></datalist>
+                            <select name="tempo_guasto" id="tempo_guasto" class="form-select bg-light px-1 text-center" style="width: 65px; background-position: right 0.2rem center;" onchange="autoCompilaTensione(this)">
+                                <option value=""></option>
+                            </select>
                         </div>
+                        
                         <div class="col-auto d-flex align-items-center p-0">
                             <span class="me-1 fw-bold">Tensione contatto (V):</span>
-                            <input type="number" step="any" name="tens_contatto" id="tens_contatto" class="form-control bg-light" style="width: 60px;">
+                            <input type="number" step="any" name="tens_contatto" id="tens_contatto" class="form-control bg-light" style="width: 60px;" oninput="calcolaUc()">
                         </div>
                     </div>
                 </div>
@@ -261,7 +286,7 @@
                     <div class="col-12 d-flex flex-wrap align-items-center gap-2 p-0">
                         <div class="d-flex align-items-center me-md-4">
                             <span class="fw-bold me-2 text-success">Misura resistenza Terra:</span>
-                            <input type="number" step="any" name="misura_resistenza_terra" id="val_resistenza_terra" class="form-control border-success bg-light" style="width: 80px;" placeholder="&Omega;">
+                            <input type="number" step="any" name="misura_resistenza_terra" id="val_resistenza_terra" class="form-control border-success bg-light" style="width: 80px;" placeholder="&Omega;" oninput="calcolaUc()">
                         </div>
                         <div class="d-flex align-items-center flex-wrap">
                             <span class="fw-bold me-2 text-success">Metodo:</span>
@@ -295,7 +320,7 @@
                         <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="tn_soddisf_2" value="Non Risulta" class="form-check-input"><label class="form-check-label text-warning" style="text-shadow: 0.5px 0.5px 0px #000;">Non Risulta</label></div>
                         
                         <span class="ms-md-4 ms-1 mt-1 mt-md-0 border-sm-top pt-1 pt-md-0"><strong>[U<sub>c</sub> = R<sub>E</sub> x I<sub>E</sub> =</strong></span>
-                        <input type="text" id="tn_val_uc" name="tn_val_uc" class="form-control bg-warning text-center border-0 text-dark fw-bold ms-1" style="width: 60px;" readonly>
+                        <input type="text" id="tn_val_uc" name="tn_val_uc" class="form-control bg-warning text-center border-0 text-dark fw-bold ms-1 transition-all" style="width: 60px;" readonly>
                         <strong class="ms-1">V]</strong>
                     </div>
                 </div>
@@ -636,7 +661,9 @@
             <datalist id="lista-nc">
                 </datalist>
         </form>
-    </div> <div class="text-center mt-4 border-top pt-4 pb-4 d-flex justify-content-center flex-wrap gap-3" id="area-bottoni">
+    </div> 
+    
+    <div class="text-center mt-4 border-top pt-4 pb-4 d-flex justify-content-center flex-wrap gap-3" id="area-bottoni">
         <button type="button" class="btn btn-warning px-4 py-3 fs-6 fw-bold shadow-sm no-print" onclick="svuotaModulo()" style="border-radius: 50px;">
             🔄 Svuota Modulo
         </button>
@@ -658,7 +685,41 @@
         });
     }
 
-    // --- LIBRERIA CEI 99-3 (Tensioni e Tempi) ---
+    // --- LOGO AZIENDALE ---
+    function caricaLogo(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            localStorage.setItem('vit_logo', e.target.result);
+            mostraLogo();
+        };
+        reader.readAsDataURL(file);
+    }
+    function mostraLogo() {
+        const logoData = localStorage.getItem('vit_logo');
+        if(logoData) {
+            document.getElementById('logo_img').src = logoData;
+            document.getElementById('logo_img').style.display = 'inline-block';
+            document.getElementById('logo_text').style.display = 'none';
+        }
+    }
+
+    // --- DARK MODE ---
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        document.getElementById('btn-darkmode').innerHTML = isDark ? '☀️' : '🌙';
+        localStorage.setItem('vit_darkmode', isDark);
+    }
+    function applicaDarkMode() {
+        if(localStorage.getItem('vit_darkmode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('btn-darkmode').innerHTML = '☀️';
+        }
+    }
+
+    // --- TABELLA CEI 99-3 E VALIDAZIONE SEMAFORO ---
     const tabellaCEI99_3 = {
         "0,01": "790", "0,02": "770", "0,03": "750", "0,04": "732", "0,05": "716", "0,06": "703", "0,07": "690", "0,08": "677", "0,09": "666",
         "0,1": "654", "0,11": "643", "0,12": "632", "0,13": "621", "0,14": "610", "0,15": "599", "0,16": "587", "0,17": "574", "0,18": "562", "0,19": "549",
@@ -673,28 +734,64 @@
         "2": "96", "2,2": "95", "2,4": "94", "2,6": "92", "2,8": "91", "3": "90", "3,67": "89", "4,3": "87", "5": "86", "7": "85", "10": "85", ">10": "80"
     };
 
-    function popolaDatalistTF() {
-        const datalistTF = document.getElementById('lista-tf');
-        datalistTF.innerHTML = '';
+    function popolaSelectTF() {
+        const selectTF = document.getElementById('tempo_guasto');
+        if(!selectTF) return;
+        selectTF.innerHTML = '<option value=""></option>'; // Resetta le opzioni
         for (let tf in tabellaCEI99_3) {
             let option = document.createElement('option');
             option.value = tf;
-            datalistTF.appendChild(option);
+            option.textContent = tf;
+            selectTF.appendChild(option);
         }
     }
 
-    function autoCompilaTensione(input) {
-        const tf = input.value;
+    function autoCompilaTensione(selectElement) {
+        const tf = selectElement.value;
         const tensioneInput = document.getElementById('tens_contatto');
         if (tabellaCEI99_3[tf]) {
             tensioneInput.value = tabellaCEI99_3[tf];
         } else {
             tensioneInput.value = "";
         }
+        calcolaUc();
+    }
+
+    // Logica del Semaforo (Verde se Sicuro, Rosso se Non Sicuro)
+    function calcolaUc() {
+        const iGuasto = parseFloat(document.getElementById('corr_guasto').value) || 0;
+        const rTerra = parseFloat(document.getElementById('val_resistenza_terra').value) || 0;
+        const calcField = document.getElementById('tn_val_uc');
+        const tensContattoStr = document.getElementById('tens_contatto').value;
+        const tensContatto = parseFloat(tensContattoStr.replace(',', '.')) || 0;
+
+        if (iGuasto > 0 && rTerra > 0) {
+            let uc = iGuasto * rTerra;
+            calcField.value = uc.toFixed(2);
+            
+            if (tensContatto > 0) {
+                if (uc <= tensContatto) {
+                    // Sicuro: Semaforo Verde
+                    calcField.classList.remove('bg-warning', 'bg-danger', 'text-dark');
+                    calcField.classList.add('bg-success', 'text-white');
+                    document.querySelector('input[name="tn_soddisf_2"][value="Risulta"]').checked = true;
+                } else {
+                    // Pericolo: Semaforo Rosso
+                    calcField.classList.remove('bg-warning', 'bg-success', 'text-dark');
+                    calcField.classList.add('bg-danger', 'text-white');
+                    document.querySelector('input[name="tn_soddisf_2"][value="Non Risulta"]').checked = true;
+                }
+            } else {
+                calcField.className = "form-control bg-warning text-center border-0 text-dark fw-bold ms-1 transition-all";
+            }
+        } else {
+            calcField.value = "";
+            calcField.className = "form-control bg-warning text-center border-0 text-dark fw-bold ms-1 transition-all";
+        }
         salvaStato();
     }
 
-    // --- 2. GPS ---
+    // --- GPS E DETTATURA ---
     function trovaPosizione() {
         if (!navigator.geolocation) { alert("⚠️ Il browser non supporta la geolocalizzazione."); return; }
         const btnGps = document.querySelector('.btn-gps');
@@ -718,7 +815,6 @@
         }, () => btnGps.innerHTML = originalIcon);
     }
 
-    // --- 3. DETTATURA VOCALE ---
     function avviaDettatura(btn) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) { alert("⚠️ Dettatura non supportata in questo browser."); return; }
@@ -737,31 +833,63 @@
         recognition.start();
     }
 
-    // --- 4. GESTIONE FOTO E DISEGNO SU CANVAS ---
+    // --- GESTIONE FOTO E TIMBRO LEGALE ---
     function gestisciFoto(input) {
         const file = input.files[0];
         if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = new Image();
-            img.onload = function() {
-                const canvas = input.parentElement.nextElementSibling; 
-                const MAX_WIDTH = 800; 
-                let width = img.width;
-                let height = img.height;
-                if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                canvas.width = width; canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                
-                canvas.style.display = 'block';
-                canvas.setAttribute('data-img', canvas.toDataURL('image/jpeg', 0.6));
-                abilitareDisegno(canvas);
-                salvaStato(); 
-            }
-            img.src = e.target.result;
+        
+        let geolocData = "";
+        
+        const scatta = () => {
+             const reader = new FileReader();
+             reader.onload = function(e) {
+                 const img = new Image();
+                 img.onload = function() {
+                     const canvas = input.parentElement.nextElementSibling; 
+                     const MAX_WIDTH = 800; 
+                     let width = img.width;
+                     let height = img.height;
+                     if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                     canvas.width = width; canvas.height = height;
+                     const ctx = canvas.getContext('2d');
+                     ctx.drawImage(img, 0, 0, width, height);
+                     
+                     // Timbro Legale (Data e Ora)
+                     const d = new Date();
+                     const dataOra = d.toLocaleString('it-IT');
+                     ctx.font = "bold 16px Arial";
+                     ctx.fillStyle = "#FFEB3B"; // Giallo
+                     ctx.shadowColor = "black";
+                     ctx.shadowBlur = 4;
+                     ctx.fillText(dataOra, 10, height - 15);
+                     if(geolocData) {
+                         ctx.font = "12px Arial";
+                         ctx.fillText(geolocData, 10, height - 35);
+                     }
+                     
+                     canvas.style.display = 'block';
+                     canvas.setAttribute('data-img', canvas.toDataURL('image/jpeg', 0.6));
+                     abilitareDisegno(canvas);
+                     salvaStato(); 
+                 }
+                 img.src = e.target.result;
+             }
+             reader.readAsDataURL(file);
+        };
+
+        if (navigator.geolocation) {
+             navigator.geolocation.getCurrentPosition(
+                 (pos) => {
+                     geolocData = `Lat: ${pos.coords.latitude.toFixed(5)} Lon: ${pos.coords.longitude.toFixed(5)}`;
+                     scatta();
+                 },
+                 (err) => {
+                     scatta();
+                 }
+             );
+        } else {
+            scatta();
         }
-        reader.readAsDataURL(file);
     }
 
     function abilitareDisegno(canvas) {
@@ -828,9 +956,7 @@
         } else {
             libreriaNC_Dinamica = [
                 { desc: "Documentazione tecnica assente", pres: "Mettere a disposizione dichiarazione di conformità/rispondenza, schemi elettrici, progetto ove previsto e verbali precedenti." },
-                { desc: "Documentazione incompleta/non aggiornata", pres: "Aggiornare la documentazione tecnica e renderla coerente con lo stato attuale dell’impianto." },
-                { desc: "Pannelli di chiusura quadro danneggiati/rotti", pres: "Sostituire i pannelli danneggiati con elementi originali o equivalenti conformi alle caratteristiche costruttive del quadro." },
-                { desc: "Coprifori / otturatori modulari mancanti", pres: "Ripristinare il grado di protezione del quadro installando gli appositi moduli copriforo/otturatori." }
+                { desc: "Documentazione incompleta/non aggiornata", pres: "Aggiornare la documentazione tecnica e renderla coerente con lo stato attuale dell’impianto." }
             ];
         }
         popolaDatalistNC();
@@ -898,14 +1024,6 @@
         for(let i = 100; i >= 0; i -= 5) optionsHtml += `<option value="${i}%">${i}%</option>`;
         select.innerHTML = optionsHtml;
     });
-
-    function calcolaUc() {
-        const iGuasto = parseFloat(document.getElementById('corr_guasto').value) || 0;
-        const rTerra = parseFloat(document.getElementById('val_resistenza_terra').value) || 0;
-        const calcField = document.getElementById('tn_val_uc');
-        if (iGuasto > 0 && rTerra > 0) calcField.value = (iGuasto * rTerra).toFixed(2);
-        else calcField.value = "";
-    }
 
     // --- TABELLE ---
     function addRow() {
@@ -975,7 +1093,7 @@
 
     function riattivaEventi() {
         document.getElementById('corr_guasto').addEventListener('input', calcolaUc);
-        document.getElementById('val_resistenza_terra').addEventListener('input', calcolaUc);
+        document.getElementById('tens_contatto').addEventListener('input', calcolaUc);
         document.getElementById('area-dati').addEventListener('input', salvaStato);
         document.getElementById('area-dati').addEventListener('change', salvaStato);
         ripristinaCanvas();
@@ -1160,8 +1278,10 @@
     }
 
     window.onload = function() {
-        popolaDatalistTF(); // Popola tendina T eliminazione
-        inizializzaLibreria(); // Popola tendina Non Conformità
+        applicaDarkMode();
+        mostraLogo();
+        popolaSelectTF(); // Richiama la funzione corretta!
+        inizializzaLibreria(); 
         aggiornaSelectArchivio();
         const backup = localStorage.getItem('verbaleVIT_backup');
         if (backup) {
