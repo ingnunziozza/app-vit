@@ -109,12 +109,8 @@
 
     <div id="area-dati">
         <div class="row align-items-center mb-2 mx-0">
-            <div class="col-2 text-center" style="cursor: pointer;" onclick="document.getElementById('uploadLogo').click()" title="Clicca per inserire il tuo Logo">
-                <img id="logo_img" src="" style="max-height: 55px; max-width: 100%; display: none;">
-                <div id="logo_text">
-                    <img src="icon.png" alt="Logo" style="max-height: 55px; max-width: 100%;">
-                </div>
-                <input type="file" id="uploadLogo" accept="image/*" class="no-print d-none" onchange="caricaLogo(event)">
+            <div class="col-2 text-center">
+                <img src="icona.png" alt="Logo G&R" style="max-height: 55px; max-width: 100%;">
             </div>
             
             <div class="col-4">
@@ -718,26 +714,6 @@
         salvaStato();
     }
 
-    // --- LOGO AZIENDALE ---
-    function caricaLogo(event) {
-        const file = event.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            localStorage.setItem('vit_logo', e.target.result);
-            mostraLogo();
-        };
-        reader.readAsDataURL(file);
-    }
-    function mostraLogo() {
-        const logoData = localStorage.getItem('vit_logo');
-        if(logoData) {
-            document.getElementById('logo_img').src = logoData;
-            document.getElementById('logo_img').style.display = 'inline-block';
-            document.getElementById('logo_text').style.display = 'none';
-        }
-    }
-
     // --- DARK MODE ---
     function toggleDarkMode() {
         document.body.classList.toggle('dark-mode');
@@ -1332,7 +1308,6 @@
 
     window.onload = function() {
         applicaDarkMode();
-        mostraLogo();
         popolaSelectTF(); 
         inizializzaLibreria(); 
         aggiornaSelectArchivio();
