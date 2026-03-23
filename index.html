@@ -34,7 +34,7 @@
         .table-diff td { padding: 0.1rem; }
         .bg-nodo-collettore { background-color: #8da6c9; }
         
-        /* Stile lavagna per le foto interattive */
+        /* Lavagna Foto */
         canvas.foto-canvas { touch-action: none; cursor: crosshair; max-height: 200px; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px; width: 100%; display: none; }
 
         /* DARK MODE STYLES */
@@ -79,8 +79,8 @@
     <div id="barra-strumenti" class="row align-items-center mb-3 mx-0 p-2 bg-light border border-secondary rounded shadow-sm no-print">
         <div class="col-12 d-flex flex-wrap gap-2 align-items-center justify-content-center justify-content-md-between">
             <div class="d-flex flex-wrap gap-1 align-items-center flex-grow-1 flex-md-grow-0 justify-content-center">
-                <button type="button" class="btn btn-sm btn-primary fw-bold" onclick="salvaInArchivio()">💾</button>
-                <button type="button" class="btn btn-sm btn-warning fw-bold text-dark" onclick="duplicaVerbale()" title="Duplica Verbale Corrente">📑</button>
+                <button type="button" class="btn btn-sm btn-primary fw-bold" onclick="salvaInArchivio()">💾 Archivio</button>
+                <button type="button" class="btn btn-sm btn-warning fw-bold text-dark" onclick="duplicaVerbale()" title="Duplica Verbale Corrente">📑 Duplica</button>
                 <select id="archivio_select" class="form-select form-select-sm" style="width: auto; min-width: 100px; max-width: 140px; flex-grow: 1;">
                     <option value="">-- Verbali --</option>
                 </select>
@@ -112,24 +112,22 @@
             <div class="col-2 text-center" style="cursor: pointer;" onclick="document.getElementById('uploadLogo').click()" title="Clicca per inserire il tuo Logo">
                 <img id="logo_img" src="" style="max-height: 55px; max-width: 100%; display: none;">
                 <div id="logo_text">
-                    <h2 class="mb-0 text-success fw-bold">G&R</h2>
-                    <div style="font-size: 0.5rem; line-height: 1;">Organismo di Certificazione s.r.l.</div>
+                    <img src="icon.png" alt="Logo" style="max-height: 55px; max-width: 100%;">
                 </div>
                 <input type="file" id="uploadLogo" accept="image/*" class="no-print d-none" onchange="caricaLogo(event)">
             </div>
             
             <div class="col-4">
-                <h5 class="text-blue fw-bold mb-0">DATI VERIFICA</h5>
+                <h5 class="text-blue fw-bold mb-0">DATI VERIFICA VIT</h5>
             </div>
             <div class="col-6 text-end">
                 <div class="d-flex flex-wrap justify-content-end align-items-center mb-1">
                     <span class="me-2 fw-bold text-danger">* Data effettuazione:</span>
-                    <input type="date" name="data_verifica" id="data_verifica_obblig" class="form-control" style="width: 120px; background-color: #d9e1f2;">
+                    <input type="date" name="data_verifica" id="data_verifica_obblig" class="form-control" style="width: 120px; background-color: #d9e1f2;" onchange="calcolaProssimaVerifica()">
                 </div>
                 <div class="d-flex flex-wrap justify-content-end align-items-center">
                     <span class="me-2">verbale VIT n.</span>
-                    <input type="text" name="verbale_n1" class="form-control text-center" style="width: 40px; background-color: #d9e1f2;"> <span class="mx-1">/</span>
-                    <input type="text" name="verbale_n2" class="form-control text-center" style="width: 40px; background-color: #d9e1f2;"> <span class="mx-1">/</span> del 
+                    <input type="text" name="verbale_n1" class="form-control text-center" style="width: 60px; background-color: #d9e1f2;"> <span class="mx-1">/</span> del 
                     <input type="date" name="verbale_del" class="form-control ms-1" style="width: 120px; background-color: #d9e1f2;">
                 </div>
             </div>
@@ -142,7 +140,7 @@
                 <div class="row align-items-center mx-0">
                     <div class="col-12 col-md-9 p-0 pr-md-2">
                         <div class="d-flex flex-wrap align-items-center mb-2">
-                            <span class="me-2 fw-bold text-danger" style="width: 120px;">Ragione sociale</span>
+                            <span class="me-2 fw-bold text-danger" style="width: 80px;">* Ragione sociale</span>
                             <input type="text" name="ragione_sociale" id="ragione_sociale_obblig" class="form-control flex-grow-1 bg-white">
                         </div>
                         <div class="d-flex flex-wrap align-items-center">
@@ -153,9 +151,9 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-3 border border-primary rounded p-2 mt-2 mt-md-0">
-                        <div class="form-check d-flex align-items-center mb-1"><input class="form-check-input" type="radio" name="tipo_verifica" value="biennale" id="ver_bienn"><label class="form-check-label ms-1 fw-bold" for="ver_bienn">Verifica biennale</label></div>
-                        <div class="form-check d-flex align-items-center mb-1"><input class="form-check-input" type="radio" name="tipo_verifica" value="quinquennale" id="ver_quinq"><label class="form-check-label ms-1 fw-bold" for="ver_quinq">Verifica quinquennale</label></div>
-                        <div class="form-check d-flex align-items-center m-0"><input class="form-check-input" type="radio" name="tipo_verifica" value="straordinaria" id="ver_straord"><label class="form-check-label ms-1 fw-bold" for="ver_straord">Verifica straordinaria</label></div>
+                        <div class="form-check d-flex align-items-center mb-1"><input class="form-check-input" type="radio" name="tipo_verifica" value="biennale" id="ver_bienn" onchange="calcolaProssimaVerifica()"><label class="form-check-label ms-1 fw-bold" for="ver_bienn">Verifica biennale</label></div>
+                        <div class="form-check d-flex align-items-center mb-1"><input class="form-check-input" type="radio" name="tipo_verifica" value="quinquennale" id="ver_quinq" onchange="calcolaProssimaVerifica()"><label class="form-check-label ms-1 fw-bold" for="ver_quinq">Verifica quinquennale</label></div>
+                        <div class="form-check d-flex align-items-center m-0"><input class="form-check-input" type="radio" name="tipo_verifica" value="straordinaria" id="ver_straord" onchange="calcolaProssimaVerifica()"><label class="form-check-label ms-1 fw-bold" for="ver_straord">Verifica straordinaria</label></div>
                     </div>
                 </div>
             </div>
@@ -164,7 +162,7 @@
             <div class="bg-light-green border-green p-2 mb-2 rounded">
                 <div class="row align-items-center mx-0 mb-2">
                     <div class="col-12 d-flex align-items-center p-0">
-                        <span class="me-2 fw-bold text-danger" style="width: 90px;">Denominazione</span>
+                        <span class="me-2 fw-bold text-danger" style="width: 90px;">* Denominazione</span>
                         <input type="text" name="denominazione_imp" id="denominazione_imp" class="form-control flex-grow-1 bg-white">
                     </div>
                 </div>
@@ -216,10 +214,10 @@
                     
                     <div class="row d-flex flex-wrap gap-2 justify-content-between mx-0">
                         <div class="col-auto d-flex align-items-center p-0"><span class="me-1 fw-bold">Tensione (kV):</span><input type="number" step="any" name="tens_nominale" class="form-control bg-light" style="width: 60px;"></div>
-                        <div class="col-auto d-flex align-items-center p-0"><span class="me-1 fw-bold">I<sub>F</sub> di guasto (A):</span><input type="number" step="any" name="corr_guasto" id="corr_guasto" class="form-control bg-light" style="width: 70px;" oninput="calcolaUc()"></div>
+                        <div class="col-auto d-flex align-items-center p-0"><span class="me-1 fw-bold">I di guasto (A):</span><input type="number" step="any" name="corr_guasto" id="corr_guasto" class="form-control bg-light" style="width: 70px;" oninput="calcolaUc()"></div>
                         
                         <div class="col-auto d-flex align-items-center p-0">
-                            <span class="me-1 fw-bold">t<sub>F</sub> guasto (s):</span>
+                            <span class="me-1 fw-bold">T eliminazione (s):</span>
                             <select name="tempo_guasto" id="tempo_guasto" class="form-select bg-light px-1 text-center" style="width: 65px; background-position: right 0.2rem center;" onchange="autoCompilaTensione(this)">
                                 <option value=""></option>
                             </select>
@@ -336,7 +334,7 @@
                             <span class="me-2 fw-bold">Tempo (ore):</span>
                             <input type="number" step="any" name="tempo_impiegato" class="form-control bg-white me-3" style="width: 80px;">
                             <span class="me-2 mt-2 mt-md-0 fw-bold">Prossima verifica entro:</span>
-                            <input type="date" name="prossima_verifica" class="form-control bg-white mt-2 mt-md-0" style="width: 120px;">
+                            <input type="date" name="prossima_verifica" id="prossima_verifica" class="form-control bg-white mt-2 mt-md-0" style="width: 120px;">
                         </div>
                     </div>
                 </div>
@@ -659,15 +657,16 @@
                 </div>
             </div>
 
-            <datalist id="lista-nc"></datalist>
+            <datalist id="lista-nc">
+                </datalist>
         </form>
     </div> 
     
     <div class="text-center mt-4 border-top pt-4 pb-4 d-flex justify-content-center flex-wrap gap-3" id="area-bottoni">
-        <button type="button" class="btn btn-warning px-4 py-3 fs-6 fw-bold shadow-sm no-print" onclick="svuotaModulo()" style="border-radius: 50px;">
+        <button type="button" class="btn btn-sm btn-warning fw-bold shadow-sm no-print" onclick="svuotaModulo()">
             🔄 Svuota Modulo
         </button>
-        <button type="button" class="btn btn-danger px-5 py-3 fs-5 fw-bold shadow" onclick="stampaNativa()" style="border-radius: 50px;">
+        <button type="button" class="btn btn-sm btn-danger fw-bold shadow-sm no-print" onclick="stampaNativa()">
             🖨️ Stampa / Salva PDF
         </button>
     </div>
@@ -683,6 +682,40 @@
                 console.log('App pronta per l\'uso Offline!');
             });
         });
+    }
+
+    // --- MACCHINA DEL TEMPO (Calcolo Prossima Verifica) ---
+    function calcolaProssimaVerifica() {
+        const dataInizioStr = document.getElementById('data_verifica_obblig').value;
+        const tipoVerificaElems = document.getElementsByName('tipo_verifica');
+        const campoProssima = document.getElementById('prossima_verifica');
+        
+        let tipoSelezionato = null;
+        for (let radio of tipoVerificaElems) {
+            if (radio.checked) {
+                tipoSelezionato = radio.value;
+                break;
+            }
+        }
+
+        if (dataInizioStr && tipoSelezionato) {
+            let data = new Date(dataInizioStr);
+            if (tipoSelezionato === 'biennale') {
+                data.setFullYear(data.getFullYear() + 2);
+            } else if (tipoSelezionato === 'quinquennale') {
+                data.setFullYear(data.getFullYear() + 5);
+            } else if (tipoSelezionato === 'straordinaria') {
+                campoProssima.value = "";
+                salvaStato();
+                return;
+            }
+            
+            let anno = data.getFullYear();
+            let mese = ("0" + (data.getMonth() + 1)).slice(-2);
+            let giorno = ("0" + data.getDate()).slice(-2);
+            campoProssima.value = `${anno}-${mese}-${giorno}`;
+        }
+        salvaStato();
     }
 
     // --- LOGO AZIENDALE ---
@@ -949,8 +982,29 @@
             libreriaNC_Dinamica = JSON.parse(salvata);
         } else {
             libreriaNC_Dinamica = [
-                { desc: "Documentazione tecnica assente", pres: "Mettere a disposizione dichiarazione di conformità/rispondenza, schemi elettrici, progetto ove previsto e verbali precedenti." },
-                { desc: "Documentazione incompleta/non aggiornata", pres: "Aggiornare la documentazione tecnica e renderla coerente con lo stato attuale dell’impianto." }
+                { desc: "All’atto della verifica non è stata esibita la documentazione tecnica dell’impianto; pertanto non è stato possibile procedere alla relativa verifica documentale.", pres: "Mettere a disposizione dichiarazione di conformità/rispondenza, schemi elettrici, progetto ove previsto e verbali precedenti." },
+                { desc: "La documentazione tecnica dell’impianto è risultata incompleta e/o non aggiornata rispetto allo stato dei luoghi.", pres: "Aggiornare la documentazione tecnica e renderla coerente con lo stato attuale dell’impianto." },
+                { desc: "Il quadro elettrico presenta pannelli di chiusura/involucro danneggiati o rotti, con possibile compromissione del grado di protezione dell’involucro e dell’efficacia delle misure di protezione contro i contatti diretti.", pres: "Sostituire i pannelli danneggiati con elementi originali o equivalenti conformi alle caratteristiche costruttive del quadro." },
+                { desc: "Sono presenti moduli liberi privi di coprifori/otturatori, con conseguente rischio di contatto diretto e potenziale riduzione del grado di protezione IP del quadro.", pres: "Installare idonei elementi di chiusura modulari conformi alle norme tecniche vigenti." },
+                { desc: "Il quadro elettrico presenta aperture o danneggiamenti tali da consentire l’accesso a parti attive, con rischio di contatto diretto.", pres: "Provvedere all’immediata messa in sicurezza e al ripristino delle barriere di protezione." },
+                { desc: "Le condizioni del quadro elettrico non consentono di ritenere garantito il grado di protezione IP richiesto per l’ambiente di installazione.", pres: "Ripristinare l’involucro e verificare l’idoneità del grado di protezione rispetto all’ambiente." },
+                { desc: "Quadri non accessibili", pres: "Rendere accessibili" },
+                { desc: "Scarsa pulizia / presenza di polvere o detriti nel quadro elettrico", pres: "Pulizia e verifica" },
+                { desc: "Nel corso delle prove strumentali alcuni interruttori differenziali sono risultati non funzionanti e/o non conformi ai valori di intervento previsti.", pres: "Sostituire i dispositivi non conformi al fine di ripristinare la protezione differenziale." },
+                { desc: "Nel corso delle prove strumentali alcuni interruttori differenziali a valle sono risultati non funzionanti; si evidenzia tuttavia la presenza di un dispositivo differenziale a monte che garantisce una protezione generale dell’impianto.", pres: "Sostituire i differenziali non conformi al fine di ripristinare la selettività e l’efficacia complessiva del sistema di protezione." },
+                { desc: "Dalle verifiche effettuate alcuni interruttori differenziali presentano tempi di intervento superiori ai limiti previsti.", pres: "Sostituire o ritarare i dispositivi, verificando il coordinamento del sistema di protezione." },
+                { desc: "È stata rilevata l’assenza della protezione differenziale su circuiti/utenze per i quali la stessa risulta necessaria.", pres: "Installare idonea protezione differenziale conforme alle caratteristiche dell’impianto." },
+                { desc: "La configurazione delle protezioni differenziali non garantisce adeguata selettività tra dispositivi a monte e a valle.", pres: "Rivedere il coordinamento e sostituire i dispositivi ove necessario." },
+                { desc: "I dispersori di terra non risultano ispezionabili in quanto non accessibili e privi di pozzetti di verifica.", pres: "Realizzare idonei punti di ispezione o documentare tecnicamente la configurazione del dispersore." },
+                { desc: "I dispersori risultano coperti dal manto stradale/pavimentazione e non accessibili; la verifica è stata eseguita nei limiti delle parti ispezionabili.", pres: "Realizzare pozzetti di ispezione o predisporre adeguata accessibilità ai dispersori." },
+                { desc: "Il nodo equipotenziale principale non risulta accessibile/ispezionabile al momento della verifica.", pres: "Rendere accessibile il nodo equipotenziale principale ai fini della verifica e della manutenzione." },
+                { desc: "Le misure effettuate evidenziano un valore di resistenza di terra non compatibile con le condizioni di sicurezza richieste.", pres: "Adeguare l’impianto di terra e ripetere le misure strumentali a seguito dell’intervento." },
+                { desc: "È stata riscontrata la presenza di infiltrazioni di acqua/umidità nei locali ove sono installati componenti dell’impianto elettrico.", pres: "Eliminare le cause delle infiltrazioni e ripristinare condizioni ambientali idonee alla sicurezza dell’impianto." },
+                { desc: "Nel corso della verifica è stata rilevata la presenza di locali con condizioni di umidità significativa, tali da richiedere componenti idonei all’ambiente di installazione.", pres: "Verificare l’idoneità dei componenti installati e adeguare il grado di protezione ove necessario." },
+                { desc: "Sono presenti componenti elettrici installati in un corridoio/via di esodo, con possibile interferenza con i requisiti di sicurezza dell’esodo.", pres: "Verificare la conformità dell’installazione e valutare la ricollocazione in vano tecnico dedicato." },
+                { desc: "Sono presenti ingombri/ostacoli lungo le vie di esodo in corrispondenza di componenti elettrici o quadri.", pres: "Ripristinare l’immediata fruibilità della via di esodo rimuovendo gli ostacoli presenti." },
+                { desc: "L’immobile oggetto di verifica risulta attualmente in fase di ristrutturazione; la verifica è stata eseguita limitatamente alle parti dell’impianto accessibili al momento del sopralluogo.", pres: "Ripetere la verifica sulle parti attualmente non accessibili a ultimazione dei lavori." },
+                { desc: "I dispersori risultano parte integrante dell’impianto di terra generale dello stabile e non di esclusiva pertinenza dell’unità immobiliare oggetto di verifica.", pres: "Acquisire documentazione tecnica del sistema dispersore generale e dei relativi punti di ispezione." }
             ];
         }
         popolaDatalistNC();
@@ -1052,10 +1106,10 @@
                 <input type="text" name="nc_descrizione[]" class="form-control border-0 bg-transparent w-100 text-start mb-1" list="lista-nc" placeholder="Scrivi o seleziona difetto..." oninput="autoCompilaNC(this)">
                 <div class="d-flex gap-1 mb-1 w-100 no-print">
                     <label class="btn btn-sm btn-outline-primary flex-grow-1 m-0" title="Scatta direttamente dalla fotocamera">
-                        📸 Click <input type="file" class="d-none" accept="image/*" capture="environment" onchange="gestisciFoto(this)">
+                        📸 Scatta <input type="file" class="d-none" accept="image/*" capture="environment" onchange="gestisciFoto(this)">
                     </label>
                     <label class="btn btn-sm btn-outline-secondary flex-grow-1 m-0" title="Scegli dalla galleria">
-                        🖼️ Foto <input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)">
+                        🖼️ Galleria <input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)">
                     </label>
                 </div>
                 <canvas class="foto-canvas"></canvas>
