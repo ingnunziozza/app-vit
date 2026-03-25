@@ -202,9 +202,9 @@
                 </div>
                 <div class="d-flex flex-wrap justify-content-end align-items-center">
                     <span class="me-2">verbale VIT n.</span>
-                    <input type="text" name="verbale_n1" class="form-control text-center" style="width: 60px; background-color: var(--bg-light-blue);"> <span class="mx-1"></span> del 
-                    <input type="date" name="verbale_del" class="form-control ms-1" style="width: 120px; background-color: var(--bg-light-blue);">
+                    <input type="text" name="verbale_n1" class="form-control text-center" style="width: 80px; background-color: var(--bg-light-blue);">
                 </div>
+
             </div>
         </div>
 
@@ -289,17 +289,17 @@
                     
                     <div class="row d-flex flex-wrap gap-2 justify-content-between mx-0">
                         <div class="col-auto d-flex align-items-center p-0"><span class="me-1 fw-bold">Tensione (kV):</span><input type="number" step="any" inputmode="decimal" name="tens_nominale" class="form-control bg-light" style="width: 60px;"></div>
-                        <div class="col-auto d-flex align-items-center p-0"><span class="me-1 fw-bold">I di guasto (A):</span><input type="number" step="any" inputmode="decimal" name="corr_guasto" id="corr_guasto" class="form-control bg-light" style="width: 70px;" oninput="calcolaUc()"></div>
+                        <div class="col-auto d-flex align-items-center p-0"><span class="me-1 fw-bold">I<sub>f</sub> (A):</span><input type="number" step="any" inputmode="decimal" name="corr_guasto" id="corr_guasto" class="form-control bg-light" style="width: 70px;" oninput="calcolaUc()"></div>
                         
                         <div class="col-auto d-flex align-items-center p-0">
-                            <span class="me-1 fw-bold">T eliminazione (s):</span>
+                            <span class="me-1 fw-bold">T<sub>f</sub> (s):</span>
                             <select name="tempo_guasto" id="tempo_guasto" class="form-select bg-light px-1 text-center" style="width: 65px; background-position: right 0.2rem center;" onchange="autoCompilaTensione(this)">
                                 <option value=""></option>
                             </select>
                         </div>
                         
                         <div class="col-auto d-flex align-items-center p-0">
-                            <span class="me-1 fw-bold">Tensione contatto (V):</span>
+                            <span class="me-1 fw-bold">U<sub>TP</sub> (V):</span>
                             <input type="number" step="any" inputmode="decimal" name="tens_contatto" id="tens_contatto" class="form-control bg-light" style="width: 60px;" oninput="calcolaUc()">
                         </div>
                     </div>
@@ -309,37 +309,43 @@
             <div class="section-header bg-dark-blue mt-3">Esame Documentale</div>
             <div class="bg-light-blue box-border p-2 mb-2 rounded">
                 <div class="row g-1 align-items-center mx-0 mb-1 border border-primary rounded p-1">
-                    <div class="col-auto d-flex align-items-center"><input type="checkbox" name="chk_doc_conf" class="form-check-input"></div>
-                    <div class="col-12 col-md-3 fw-bold text-primary">Di.Co.</div>
-                    <div class="col-12 col-md-5 d-flex align-items-center"><span class="me-1">di</span><input type="text" name="doc_conf_da" class="form-control bg-white w-100"></div>
-                    <div class="col-12 col-md-3 d-flex align-items-center"><span class="me-1 mx-2">il</span><input type="date" name="doc_conf_il" class="form-control bg-white w-100"></div>
+                    <div class="col-12 col-md-3 d-flex align-items-center gap-2 fw-bold text-primary">
+                        <input type="checkbox" name="chk_doc_conf" class="form-check-input m-0"> Di.Co.
+                    </div>
+                    <div class="col-12 col-md-5 d-flex align-items-center mt-1 mt-md-0"><span class="me-1">di</span><input type="text" name="doc_conf_da" class="form-control bg-white w-100"></div>
+                    <div class="col-12 col-md-4 d-flex align-items-center mt-1 mt-md-0"><span class="me-1 mx-md-2">il</span><input type="date" name="doc_conf_il" class="form-control bg-white w-100"></div>
                 </div>
                 <div class="row g-1 align-items-center mx-0 mb-1 border border-primary rounded p-1">
-                    <div class="col-auto d-flex align-items-center"><input type="checkbox" name="chk_doc_risp" class="form-check-input"></div>
-                    <div class="col-12 col-md-3 fw-bold text-primary">Di.Ri.</div>
-                    <div class="col-12 col-md-5 d-flex align-items-center"><span class="me-1">di</span><input type="text" name="doc_risp_da" class="form-control bg-white w-100"></div>
-                    <div class="col-12 col-md-3 d-flex align-items-center"><span class="me-1 mx-2">il</span><input type="date" name="doc_risp_il" class="form-control bg-white w-100"></div>
+                    <div class="col-12 col-md-3 d-flex align-items-center gap-2 fw-bold text-primary">
+                        <input type="checkbox" name="chk_doc_risp" class="form-check-input m-0"> Di.Ri.
+                    </div>
+                    <div class="col-12 col-md-5 d-flex align-items-center mt-1 mt-md-0"><span class="me-1">di</span><input type="text" name="doc_risp_da" class="form-control bg-white w-100"></div>
+                    <div class="col-12 col-md-4 d-flex align-items-center mt-1 mt-md-0"><span class="me-1 mx-md-2">il</span><input type="date" name="doc_risp_il" class="form-control bg-white w-100"></div>
                 </div>
                 <div class="row g-1 align-items-center mx-0 mb-1 border border-primary rounded p-1">
-                    <div class="col-auto d-flex align-items-center"><input type="checkbox" name="chk_doc_prog" class="form-check-input"></div>
-                    <div class="col-12 col-md-3 fw-bold text-primary">Progetto</div>
-                    <div class="col-12 col-md-5 d-flex align-items-center"><span class="me-1">di</span><input type="text" name="doc_prog_da" class="form-control bg-white w-100"></div>
-                    <div class="col-12 col-md-3 d-flex align-items-center"><span class="me-1 mx-2">il</span><input type="date" name="doc_prog_il" class="form-control bg-white w-100"></div>
+                    <div class="col-12 col-md-3 d-flex align-items-center gap-2 fw-bold text-primary">
+                        <input type="checkbox" name="chk_doc_prog" class="form-check-input m-0"> Progetto
+                    </div>
+                    <div class="col-12 col-md-5 d-flex align-items-center mt-1 mt-md-0"><span class="me-1">di</span><input type="text" name="doc_prog_da" class="form-control bg-white w-100"></div>
+                    <div class="col-12 col-md-4 d-flex align-items-center mt-1 mt-md-0"><span class="me-1 mx-md-2">il</span><input type="date" name="doc_prog_il" class="form-control bg-white w-100"></div>
                 </div>
                 
                 <div class="row g-1 align-items-center mx-0 mb-1 border border-primary rounded p-1">
-                    <div class="col-auto d-flex align-items-center"><input type="checkbox" name="chk_inail" class="form-check-input"></div>
-                    <div class="col-12 col-md-3 fw-bold text-primary">Denuncia Inail</div>
-                    <div class="col-12 col-md-5 d-flex align-items-center"><span class="me-1">Matricola</span><input type="text" name="inail_matr" class="form-control bg-white w-100"></div>
-                    <div class="col-12 col-md-3 d-flex align-items-center"><span class="me-1 mx-2">Data</span><input type="date" name="inail_data" class="form-control bg-white w-100"></div>
+                    <div class="col-12 col-md-4 d-flex align-items-center gap-2 fw-bold text-primary">
+                        <input type="checkbox" name="chk_inail" class="form-check-input m-0"> Denuncia Inail
+                    </div>
+                    <div class="col-12 col-md-4 d-flex align-items-center mt-1 mt-md-0"><span class="me-1">Matricola</span><input type="text" name="inail_matr" class="form-control bg-white w-100"></div>
+                    <div class="col-12 col-md-4 d-flex align-items-center mt-1 mt-md-0"><span class="me-1 mx-md-2">Data</span><input type="date" name="inail_data" class="form-control bg-white w-100"></div>
                 </div>
                 
                 <div class="row g-1 align-items-center mx-0 mb-2 border border-primary rounded p-1">
-                    <div class="col-auto d-flex align-items-center"><input type="checkbox" name="chk_asl" class="form-check-input"></div>
-                    <div class="col-12 col-md-3 fw-bold text-primary">Denuncia ASL</div>
-                    <div class="col-12 col-md-5 d-flex align-items-center"><span class="me-1">Matricola</span><input type="text" name="asl_matr" class="form-control bg-white w-100"></div>
-                    <div class="col-12 col-md-3 d-flex align-items-center"><span class="me-1 mx-2">Data</span><input type="date" name="asl_data" class="form-control bg-white w-100"></div>
+                    <div class="col-12 col-md-4 d-flex align-items-center gap-2 fw-bold text-primary">
+                        <input type="checkbox" name="chk_asl" class="form-check-input m-0"> Denuncia ASL
+                    </div>
+                    <div class="col-12 col-md-4 d-flex align-items-center mt-1 mt-md-0"><span class="me-1">Matricola</span><input type="text" name="asl_matr" class="form-control bg-white w-100"></div>
+                    <div class="col-12 col-md-4 d-flex align-items-center mt-1 mt-md-0"><span class="me-1 mx-md-2">Data</span><input type="date" name="asl_data" class="form-control bg-white w-100"></div>
                 </div>
+
                 
                 <div class="row g-1 align-items-center mx-0 mb-2 border border-primary rounded py-2 px-1 flex-wrap text-center">
                     <div class="col-12 col-md-4 d-flex justify-content-center align-items-center mb-1 mb-md-0"><div class="form-check form-check-inline d-flex align-items-center m-0"><input class="form-check-input" type="checkbox" name="doc_schemi"><label class="form-check-label fw-bold">Schemi elettrici</label></div></div>
@@ -408,7 +414,7 @@
                         <div class="d-flex flex-wrap align-items-center ms-md-auto mt-2 mt-md-0 w-100 w-md-auto">
                             <span class="me-2 fw-bold">Tempo (ore):</span>
                             <input type="number" step="any" inputmode="decimal" name="tempo_impiegato" class="form-control bg-white me-3" style="width: 80px;">
-                            <span class="me-2 mt-2 mt-md-0 fw-bold">Prossima verifica entro:</span>
+                            <span class="me-2 mt-2 mt-md-0 fw-bold">Prossima verifica:</span>
                             <input type="date" name="prossima_verifica" id="prossima_verifica" class="form-control bg-white mt-2 mt-md-0" style="width: 120px;">
                         </div>
                     </div>
@@ -614,10 +620,8 @@
                     </div>
                 </div>
             </div>
-
-            <div class="section-header bg-dark-blue mt-3 d-flex align-items-center">
-                <span class="me-2 fs-6">🔍</span> % di Campionamento e Prova di continuità
-            </div>
+	<div class="section-header bg-dark-blue mt-3">🔍</span>% di Campionamento e Prova di continuità</div>
+            
             <div class="bg-light-blue box-border p-2 mb-2 rounded">
                 
                 <div class="row g-1 align-items-center py-2 border border-primary rounded mb-2 mx-0 text-center flex-wrap shadow-sm">
@@ -1246,10 +1250,10 @@
                 <input type="text" name="nc_descrizione[]" class="form-control border-0 bg-transparent w-100 text-start mb-1" list="lista-nc" placeholder="Scrivi o seleziona difetto..." oninput="autoCompilaNC(this)">
                 <div class="d-flex gap-1 mb-1 w-100 no-print">
                     <label class="btn btn-sm btn-outline-primary flex-grow-1 m-0" title="Scatta direttamente dalla fotocamera">
-                        📸 Scatta <input type="file" class="d-none" accept="image/*" capture="environment" onchange="gestisciFoto(this)">
+                        📸<input type="file" class="d-none" accept="image/*" capture="environment" onchange="gestisciFoto(this)">
                     </label>
                     <label class="btn btn-sm btn-outline-secondary flex-grow-1 m-0" title="Scegli dalla galleria">
-                        🖼️ Galleria <input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)">
+                        🖼️<input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)">
                     </label>
                 </div>
                 <canvas class="foto-canvas"></canvas>
