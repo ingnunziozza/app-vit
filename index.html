@@ -153,9 +153,10 @@
                 <button type="button" class="btn btn-sm btn-primary fw-bold flex-fill" onclick="salvaInArchivio()">💾</button>
                 <button type="button" class="btn btn-sm btn-warning fw-bold text-dark flex-fill" onclick="duplicaVerbale()" title="Duplica Verbale Corrente">🗺️</button>
                 <button type="button" class="btn btn-sm btn-outline-primary fw-bold flex-fill" onclick="nuovoVerbale()" title="Inizia un nuovo verbale vuoto">✍️</button>
+		<button type="button" class="btn btn-sm btn-info text-white fw-bold flex-fill" onclick="mostraStatistiche()" title="Statistiche Archivio">📈</button>
                 <button type="button" class="btn btn-sm btn-success fw-bold" onclick="caricaDaArchivio()" title="Carica Verbale Selezionato">📂</button>
                 <button type="button" class="btn btn-sm btn-outline-danger fw-bold" onclick="eliminaDaArchivio()" title="Elimina Verbale">🗑️</button>
-	<button type="button" class="btn btn-sm btn-info text-white fw-bold ms-1" onclick="mostraStatistiche()" title="Statistiche Archivio">📈</button>
+		<button type="button" class="btn btn-sm btn-info text-white fw-bold flex-fill" onclick="mostraStatistiche()" title="Statistiche Archivio">📈</button>
 	<span id="salvataggio-badge" class="badge bg-success ms-2" style="opacity: 0; transition: opacity 0.5s;">Salvato</span>
             </div>
             
@@ -194,9 +195,10 @@
                 </div>
             </div>
             
-            <div class="col-4">
-                <h5 class="text-blue fw-bold mb-0">DATI VERIFICA VIT</h5>
-            </div>
+        <div class="col-4 d-flex align-items-center flex-wrap gap-2">
+    	<h5 class="text-blue fw-bold mb-0">DATI VIT</h5>
+    	<span id="salvataggio-badge" class="badge bg-success" style="opacity: 0; transition: opacity 0.5s; font-size:0.6rem;">✅ Salvato</span>
+	</div>
             <div class="col-6 text-end">
                 <div class="d-flex flex-wrap justify-content-end align-items-center mb-1">
                     <span class="me-2 fw-bold text-danger">Data effettuazione:</span>
@@ -824,16 +826,16 @@
                     <h5 class="modal-title fw-bold m-0">📈 Statistiche Archivio</h5>
                   </div>
                   <div class="modal-body text-center py-4">
-                    <h2 class="text-primary fw-bold mb-4">${totali} <span class="fs-6 fw-normal">Verbali in Memoria</span></h2>
+                    <h2 class="text-primary fw-bold mb-4">${totali} <span class="fs-6 fw-normal text-dark">Verbali in Memoria</span></h2>
                     <div class="d-flex justify-content-around mb-4">
-                        <div class="p-2 border border-success rounded bg-light w-100 mx-1 shadow-sm">
+                        <div class="p-2 border border-success rounded bg-light-green w-100 mx-1 shadow-sm">
                             <h3 class="text-success m-0 fw-bold">${positivi}</h3><small class="text-success fw-bold">POSITIVI</small>
                         </div>
-                        <div class="p-2 border border-danger rounded bg-light w-100 mx-1 shadow-sm">
+                        <div class="p-2 border border-danger rounded bg-pink-light w-100 mx-1 shadow-sm">
                             <h3 class="text-danger m-0 fw-bold">${negativi}</h3><small class="text-danger fw-bold">NEGATIVI</small>
                         </div>
                     </div>
-                    <p class="mb-0">Ultima ispezione registrata il: <strong>${ultimaDataStr}</strong></p>
+                    <p class="mb-0 text-muted">Ultima ispezione registrata il: <strong class="text-dark">${ultimaDataStr}</strong></p>
                   </div>
                   <div class="modal-footer py-2 justify-content-center bg-light">
                     <button type="button" class="btn btn-secondary fw-bold shadow-sm" onclick="document.getElementById('statsModal').remove()">Chiudi</button>
@@ -1056,7 +1058,12 @@
         recognition.start();
     }
 
-    // --- GESTIONE FOTO (INDEXEDDB) E TIMBRO LEGALE E APERTURA FOTOCAMERA---
+    // --- HELPERS BLOB ---
+    function canvasToBlobAsync(canvas, mimeType='image/jpeg', quality=0.6) {
+        return new Promise(resolve => canvas.toBlob(resolve, mimeType, quality));
+    }
+
+    // --- GESTIONE FOTO E TIMBRO LEGALE ---
     async function gestisciFoto(input) {
         const file = input.files[0];
         if (!file) return;
@@ -1097,11 +1104,12 @@
                          canvas.setAttribute('data-foto-id', fotoId);
                      }
                      
-                     const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
-                     await idbKeyval.set(fotoId, dataUrl);
+                     // Salva come BLOB super-leggero
+                     const blob = await canvasToBlobAsync(canvas);
+                     await idbKeyval.set(fotoId, blob);
                      
                      abilitareDisegno(canvas);
-                     salvaStato(); 
+                     salvataggioIntelligente(); 
                  }
                  img.src = e.target.result;
              }
@@ -1109,9 +1117,7 @@
         };
 
         if (navigator.geolocation) {
-             // Imposta un timeout massimo di 3 secondi (3000 ms) per la ricerca GPS
              const options = { enableHighAccuracy: false, timeout: 3000, maximumAge: 10000 };
-             
              navigator.geolocation.getCurrentPosition(
                  (pos) => {
                      geolocData = `Lat: ${pos.coords.latitude.toFixed(5)} Lon: ${pos.coords.longitude.toFixed(5)}`;
@@ -1158,11 +1164,44 @@
                 isDrawing = false;
                 let fotoId = canvas.getAttribute('data-foto-id');
                 if (fotoId) {
-                    await idbKeyval.set(fotoId, canvas.toDataURL('image/jpeg', 0.6));
-                    salvaStato();
+                    const blob = await canvasToBlobAsync(canvas);
+                    await idbKeyval.set(fotoId, blob);
+                    salvataggioIntelligente();
                 }
             }
         }
+
+        canvas.onmousedown = startDraw; canvas.onmousemove = draw; canvas.onmouseup = endDraw; canvas.onmouseout = endDraw;
+        canvas.ontouchstart = startDraw; canvas.ontouchmove = draw; canvas.ontouchend = endDraw;
+    }
+
+    async function ripristinaCanvas() {
+        const canvases = document.querySelectorAll('canvas.foto-canvas');
+        for (const canvas of canvases) {
+            const fotoId = canvas.getAttribute('data-foto-id');
+            if (fotoId) {
+                try {
+                    const dataImg = await idbKeyval.get(fotoId);
+                    if (dataImg) {
+                        const img = new Image();
+                        img.onload = function() {
+                            canvas.width = img.width; canvas.height = img.height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0);
+                            canvas.style.display = 'block';
+                            abilitareDisegno(canvas);
+                            if(dataImg instanceof Blob) URL.revokeObjectURL(img.src);
+                        };
+                        img.src = (dataImg instanceof Blob) ? URL.createObjectURL(dataImg) : dataImg;
+                    } else {
+                        canvas.style.display = 'none';
+                    }
+                } catch(err) {
+                    console.error("Errore recupero foto:", err);
+                }
+            }
+        }
+    }
 
         canvas.onmousedown = startDraw; canvas.onmousemove = draw; canvas.onmouseup = endDraw; canvas.onmouseout = endDraw;
         canvas.ontouchstart = startDraw; canvas.ontouchmove = draw; canvas.ontouchend = endDraw;
@@ -1366,15 +1405,42 @@
         });
     }
 
-    // --- SALVATAGGIO INTELLIGENTE ANTI-LAG ---
+    // --- CERVELLO (Valutazione Automatica Esito Globale) ---
+    function aggiornaEsitoGlobale() {
+        let isNegativo = false;
+
+        if (document.querySelector('input[name="tn_soddisf_2"][value="Non Risulta"]')?.checked) isNegativo = true;
+        if (document.querySelector('input[name="tt_soddisf"][value="Non Risulta"]')?.checked) isNegativo = true;
+
+        document.querySelectorAll('input[name="nc_descrizione[]"]').forEach(el => {
+            if (el.value.trim() !== "") isNegativo = true;
+        });
+
+        const radPositivo = document.querySelector('input[name="esito_globale"][value="POSITIVO"]');
+        const radNegativo = document.querySelector('input[name="esito_globale"][value="NEGATIVO"]');
+
+        if (isNegativo) {
+            if(radNegativo && !radNegativo.checked) radNegativo.checked = true;
+        } else {
+            const denom = document.getElementById('denominazione_imp').value;
+            if(denom && radPositivo && !radPositivo.checked && !radNegativo.checked) {
+                radPositivo.checked = true;
+            }
+        }
+    }
+
+    // --- SALVATAGGIO INTELLIGENTE ---
     let timerSalvataggio;
+    let hasUnsavedChanges = false;
+    
     function salvataggioIntelligente() {
+        hasUnsavedChanges = true;
         clearTimeout(timerSalvataggio);
         timerSalvataggio = setTimeout(() => {
-            aggiornaEsitoGlobale(); // Richiama il cervello
+            aggiornaEsitoGlobale(); 
             salvaStato(); 
+            hasUnsavedChanges = false;
             
-            // Mostra il feedback visivo
             let badge = document.getElementById('salvataggio-badge');
             if(badge) {
                 badge.style.opacity = '1';
@@ -1382,6 +1448,14 @@
             }
         }, 600); 
     }
+
+    // Protezione uscita accidentale
+    window.addEventListener('beforeunload', function (e) {
+        if (hasUnsavedChanges) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
 
     // --- CERVELLO (Valutazione Automatica Esito Globale) ---
     function aggiornaEsitoGlobale() {
@@ -1528,7 +1602,17 @@
                 let fotoId = canvas.getAttribute('data-foto-id');
                 if(fotoId && !backupData.immagini[fotoId]) {
                     let base64 = await idbKeyval.get(fotoId);
-                    if(base64) backupData.immagini[fotoId] = base64;
+                    if(dataImg) {
+                        if (dataImg instanceof Blob) {
+                            backupData.immagini[fotoId] = await new Promise(r => {
+                                const reader = new FileReader();
+                                reader.onloadend = () => r(reader.result);
+                                reader.readAsDataURL(dataImg);
+                            });
+                        } else {
+                            backupData.immagini[fotoId] = dataImg;
+                        }
+                    }
                 }
             }
         }
@@ -1554,7 +1638,13 @@
                 if (data.archivio && data.immagini) {
                     archivioDaImportare = data.archivio;
                     for (let fotoId in data.immagini) {
-                        await idbKeyval.set(fotoId, data.immagini[fotoId]);
+                        try {
+                            const res = await fetch(data.immagini[fotoId]);
+                            const blob = await res.blob();
+                            await idbKeyval.set(fotoId, blob);
+                        } catch(err) {
+                            await idbKeyval.set(fotoId, data.immagini[fotoId]);
+                        }
                     }
                 } else {
                     archivioDaImportare = data; 
@@ -1619,9 +1709,13 @@
             if (fotoId) {
                 const dataImg = await idbKeyval.get(fotoId);
                 if (dataImg) {
-                    const base64Data = dataImg.split(',')[1];
                     const nomeFile = `rilievo_${contatore + 1}.jpg`;
-                    fotoFolder.file(nomeFile, base64Data, {base64: true});
+                    if (dataImg instanceof Blob) {
+                        fotoFolder.file(nomeFile, dataImg);
+                    } else {
+                        const base64Data = dataImg.split(',')[1];
+                        fotoFolder.file(nomeFile, base64Data, {base64: true});
+                    }
                     contatore++;
                 }
             }
