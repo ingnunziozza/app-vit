@@ -149,30 +149,29 @@
     <div id="barra-strumenti" class="row align-items-center mb-3 mx-0 p-2 bg-light border border-secondary rounded shadow-sm no-print">
         <div class="col-12 d-flex flex-wrap gap-2 align-items-center justify-content-center justify-content-md-between">
             <div class="d-flex flex-wrap gap-1 align-items-center flex-grow-1 flex-md-grow-0 justify-content-center">
-                <button type="button" class="btn btn-sm btn-primary fw-bold" onclick="salvaInArchivio()">💾 Archivio</button>
-                <button type="button" class="btn btn-sm btn-warning fw-bold text-dark" onclick="duplicaVerbale()" title="Duplica Verbale Corrente">📑 Duplica</button>
+                <button type="button" class="btn btn-sm btn-primary fw-bold" onclick="salvaInArchivio()">💾</button>
+		<button type="button" class="btn btn-sm btn-outline-primary fw-bold ms-1" onclick="nuovoVerbale()" title="Inizia un nuovo verbale vuoto">📄+</button>
+                <button type="button" class="btn btn-sm btn-warning fw-bold text-dark" onclick="duplicaVerbale()" title="Duplica Verbale Corrente">📑📑</button>
+                <button type="button" class="btn btn-sm btn-outline-danger fw-bold" onclick="eliminaDaArchivio()" title="Elimina Verbale">🗑️</button>
                 <select id="archivio_select" class="form-select form-select-sm" style="width: auto; min-width: 100px; max-width: 140px; flex-grow: 1;">
                     <option value="">-- Verbali --</option>
                 </select>
-                <button type="button" class="btn btn-sm btn-success fw-bold" onclick="caricaDaArchivio()" title="Carica Verbale">📂</button>
-                <button type="button" class="btn btn-sm btn-outline-danger fw-bold" onclick="eliminaDaArchivio()" title="Elimina Verbale">🗑️</button>
-                
-                <button type="button" class="btn btn-sm btn-outline-primary fw-bold ms-1" onclick="nuovoVerbale()" title="Inizia un nuovo verbale vuoto">📄 Nuovo</button>
+                <button type="button" class="btn btn-sm btn-success fw-bold" onclick="caricaDaArchivio()" title="Carica Verbale">📂</button>                
             </div>
             
             <div class="d-flex flex-wrap gap-1 align-items-center justify-content-center">
-                <button type="button" class="btn btn-sm btn-secondary fw-bold" onclick="esportaDB()" title="Esporta Backup">📥 DB</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" onclick="importaDB()" title="Importa Backup">📤 DB</button>
+                <button type="button" class="btn btn-sm btn-secondary fw-bold" onclick="esportaDB()" title="Esporta Backup">📥db</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" onclick="importaDB()" title="Importa Backup">📤db</button>
                 <input type="file" id="importaFile" style="display:none" accept=".json" onchange="eseguiImportazione(event)">
                 
                 <span class="d-none d-md-inline-block mx-1 border-start border-secondary" style="height: 25px;"></span>
                 
                 <button type="button" class="btn btn-sm btn-dark fw-bold" onclick="toggleDarkMode()" id="btn-darkmode" title="Modalità Notturna">🌙</button>
 
-                <button type="button" class="btn btn-sm btn-info text-white fw-bold ms-md-1" onclick="esportaCSV()">📊 CSV</button>
-                <button type="button" class="btn btn-sm btn-danger text-white fw-bold" onclick="esportaXFDF()" title="Esporta per importare in un Modulo PDF">📑 XFDF</button>
+                <button type="button" class="btn btn-sm btn-info text-white fw-bold ms-md-1" onclick="esportaCSV()">📊csv</button>
+                <button type="button" class="btn btn-sm btn-danger text-white fw-bold" onclick="esportaXFDF()" title="Esporta per importare in un Modulo PDF">📑fdf</button>
                 
-                <button type="button" class="btn btn-sm btn-outline-warning fw-bold" onclick="scaricaFotoZip(this)" title="Scarica tutte le foto del verbale in ZIP">🖼️ ZIP</button>
+                <button type="button" class="btn btn-sm btn-outline-warning fw-bold" onclick="scaricaFotoZip(this)" title="Scarica tutte le foto del verbale in ZIP">🖼️zip</button>
 
                 <button type="button" class="btn btn-sm btn-success text-white fw-bold d-flex align-items-center" onclick="condividiCSV()" title="Condividi CSV">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -196,12 +195,12 @@
             </div>
             <div class="col-6 text-end">
                 <div class="d-flex flex-wrap justify-content-end align-items-center mb-1">
-                    <span class="me-2 fw-bold text-danger">* Data effettuazione:</span>
+                    <span class="me-2 fw-bold text-danger">Data effettuazione:</span>
                     <input type="date" name="data_verifica" id="data_verifica_obblig" class="form-control" style="width: 120px; background-color: var(--bg-light-blue);" onchange="calcolaProssimaVerifica()">
                 </div>
                 <div class="d-flex flex-wrap justify-content-end align-items-center">
                     <span class="me-2">verbale VIT n.</span>
-                    <input type="text" name="verbale_n1" class="form-control text-center" style="width: 60px; background-color: var(--bg-light-blue);"> <span class="mx-1">/</span> del 
+                    <input type="text" name="verbale_n1" class="form-control text-center" style="width: 60px; background-color: var(--bg-light-blue);"> <span class="mx-1"></span> del 
                     <input type="date" name="verbale_del" class="form-control ms-1" style="width: 120px; background-color: var(--bg-light-blue);">
                 </div>
             </div>
@@ -214,7 +213,7 @@
                 <div class="row align-items-center mx-0">
                     <div class="col-12 col-md-9 p-0 pr-md-2">
                         <div class="d-flex flex-wrap align-items-center mb-2">
-                            <span class="me-2 fw-bold text-danger" style="width: 80px;">* Ragione sociale</span>
+                            <span class="me-2 fw-bold text-danger" style="width: 100px;">Ragione sociale</span>
                             <input type="text" name="ragione_sociale" id="ragione_sociale_obblig" class="form-control flex-grow-1 bg-white">
                         </div>
                         <div class="d-flex flex-wrap align-items-center">
@@ -236,7 +235,7 @@
             <div class="bg-light-green border-green p-2 mb-2 rounded">
                 <div class="row align-items-center mx-0 mb-2">
                     <div class="col-12 d-flex align-items-center p-0">
-                        <span class="me-2 fw-bold text-danger" style="width: 90px;">* Denominazione</span>
+                        <span class="me-2 fw-bold text-danger" style="width: 100px;">Denominazione</span>
                         <input type="text" name="denominazione_imp" id="denominazione_imp" class="form-control flex-grow-1 bg-white">
                     </div>
                 </div>
