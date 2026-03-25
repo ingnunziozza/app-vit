@@ -1,11 +1,11 @@
-const CACHE_NAME = 'vit-app-offline-v4';
+const CACHE_NAME = 'vit-app-offline-v7'; // <-- Aggiornato per forzare il refresh
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
   './icona.png',
   './bootstrap.min.css',
-  './idb-keyval.js',
+  './umd.js',        // <-- NOME DEL FILE CORRETTO!
   './jszip.min.js'
 ];
 
