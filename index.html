@@ -761,7 +761,7 @@
         <button type="button" class="btn btn-sm btn-warning fw-bold shadow-sm no-print" onclick="nuovoVerbale()">
             🔄 Svuota VIT
         </button>
-        <button type="button" class="btn btn-sm btn-danger fw-bold shadow-sm no-print" onclick="stampaNativa()">
+        <button type="button" class="btn btn-sm btn-danger fw-bold shadow-sm no-print" onclick="avviaProcessoStampa()">
             🖨️ Stampa / Salva PDF
         </button>
     </div>
@@ -1570,13 +1570,8 @@
         return denom ? `${denom} - ${dataV}` : "Esportazione_VIT";
     }
 
-    // --- STAMPA PDF ---
-    async function stampaNativa() {
-        if (typeof window.html2pdf === 'undefined') {
-            alert("⚠️ La libreria html2pdf non è caricata. Uso la stampa di emergenza.");
-            eseguiStampaBase(); return;
-        }
-
+    // --- GESTIONE STAMPA E PDF (SCELTA UTENTE) ---
+    function avviaProcessoStampa() {
         const dataObblig = document.getElementById('data_verifica_obblig');
         const ragSocialeObblig = document.getElementById('ragione_sociale_obblig');
         const denomObblig = document.getElementById('denominazione_imp');
@@ -1586,11 +1581,53 @@
         if (!ragSocialeObblig || !ragSocialeObblig.value) { if(ragSocialeObblig) ragSocialeObblig.classList.add('campo-errore'); err = true; } else ragSocialeObblig.classList.remove('campo-errore');
         if (!denomObblig || !denomObblig.value) { if(denomObblig) denomObblig.classList.add('campo-errore'); err = true; } else denomObblig.classList.remove('campo-errore');
 
-        if (err) { alert("⚠️ Compila la Data, Ragione Sociale e Denominazione in rosso!"); return; }
+        if (err) { 
+            alert("⚠️ Compila la Data, Ragione Sociale e Denominazione evidenziate in rosso!"); 
+            return; 
+        }
 
-        const btnOriginale = document.querySelector('button[onclick="stampaNativa()"]');
+        // Se non ci sono errori, apre il modale di scelta
+        scegliTipoStampa();
+    }
+
+    function scegliTipoStampa() {
+        const modalHtml = `
+            <div class="modal fade show no-print" id="stampaModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" aria-modal="true" role="dialog">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-dark">
+                  <div class="modal-header bg-dark-blue text-white py-2">
+                    <h5 class="modal-title fw-bold m-0">🖨️ Opzioni di Stampa</h5>
+                    <button type="button" class="btn-close btn-close-white" onclick="document.getElementById('stampaModal').remove()"></button>
+                  </div>
+                  <div class="modal-body text-center py-4">
+                    <p class="mb-4">Scegli come desideri esportare il verbale:</p>
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-danger fw-bold shadow-sm py-2" onclick="document.getElementById('stampaModal').remove(); eseguiStampaPDF();">
+                            📄 Genera PDF
+                            <div class="fs-6 fw-normal"><small>Formato A4</small></div>
+                        </button>
+                        <button class="btn btn-secondary fw-bold shadow-sm py-2" onclick="document.getElementById('stampaModal').remove(); eseguiStampaBase();">
+                            🖨️ Stampa Nativa (Browser)
+                            <div class="fs-6 fw-normal"><small>Stampa di sistema classica</small></div>
+                        </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    async function eseguiStampaPDF() {
+        if (typeof window.html2pdf === 'undefined') {
+            alert("⚠️ La libreria html2pdf non è caricata. Verrà forzata la stampa di sistema.");
+            eseguiStampaBase(); return;
+        }
+
+        const btnOriginale = document.querySelector('button[onclick="avviaProcessoStampa()"]');
         const testoOriginaleBtn = btnOriginale ? btnOriginale.innerHTML : '';
-        if(btnOriginale) btnOriginale.innerHTML = "⏳ Generazione...";
+        if(btnOriginale) btnOriginale.innerHTML = "⏳ Generazione in corso...";
 
         try {
             fissaValoriHTML();
@@ -1614,7 +1651,7 @@
             await window.html2pdf().set(opt).from(elementoDaStampare).save();
         } catch(e) {
             console.error(e);
-            alert("❌ Limite di memoria del dispositivo.\nAvvio la stampa di emergenza.");
+            alert("❌ Limite di memoria del dispositivo.\nAvvio la stampa nativa di emergenza.");
             eseguiStampaBase();
         } finally {
             document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
@@ -1632,6 +1669,7 @@
         
         const titoloOriginale = document.title;
         document.title = getNomeFileEsportazione().replace(/[\/\\]/g, '-');
+        
         window.print();
         
         setTimeout(() => {
