@@ -151,10 +151,12 @@
             
             <div class="d-flex flex-nowrap gap-1 justify-content-center w-100 w-lg-auto">
                 <button type="button" class="btn btn-sm btn-primary fw-bold flex-fill" onclick="salvaInArchivio()">💾</button>
-                <button type="button" class="btn btn-sm btn-warning fw-bold text-dark flex-fill" onclick="duplicaVerbale()" title="Duplica Verbale Corrente">📑📑</button>
-                <button type="button" class="btn btn-sm btn-outline-primary fw-bold flex-fill" onclick="nuovoVerbale()" title="Inizia un nuovo verbale vuoto">📄+</button>
+                <button type="button" class="btn btn-sm btn-warning fw-bold text-dark flex-fill" onclick="duplicaVerbale()" title="Duplica Verbale Corrente">🗺️</button>
+                <button type="button" class="btn btn-sm btn-outline-primary fw-bold flex-fill" onclick="nuovoVerbale()" title="Inizia un nuovo verbale vuoto">✍️</button>
                 <button type="button" class="btn btn-sm btn-success fw-bold" onclick="caricaDaArchivio()" title="Carica Verbale Selezionato">📂</button>
                 <button type="button" class="btn btn-sm btn-outline-danger fw-bold" onclick="eliminaDaArchivio()" title="Elimina Verbale">🗑️</button>
+	<button type="button" class="btn btn-sm btn-info text-white fw-bold ms-1" onclick="mostraStatistiche()" title="Statistiche Archivio">📈</button>
+	<span id="salvataggio-badge" class="badge bg-success ms-2" style="opacity: 0; transition: opacity 0.5s;">Salvato</span>
             </div>
             
             <div class="d-flex flex-nowrap gap-1 justify-content-center w-100 w-lg-auto">
@@ -193,11 +195,11 @@
             </div>
             
             <div class="col-4">
-                <h5 class="text-blue fw-bold mb-0">DATI VIT</h5>
+                <h5 class="text-blue fw-bold mb-0">DATI VERIFICA VIT</h5>
             </div>
             <div class="col-6 text-end">
                 <div class="d-flex flex-wrap justify-content-end align-items-center mb-1">
-                    <span class="me-2 fw-bold text-danger">Data:</span>
+                    <span class="me-2 fw-bold text-danger">Data effettuazione:</span>
                     <input type="date" name="data_verifica" id="data_verifica_obblig" class="form-control" style="width: 120px; background-color: var(--bg-light-blue);" onchange="calcolaProssimaVerifica()">
                 </div>
                 <div class="d-flex flex-wrap justify-content-end align-items-center">
@@ -532,7 +534,7 @@
 
                 <div class="row g-1 mb-2 align-items-stretch mx-0">
                     <div class="col-md-7 d-flex overflow-auto p-0 pe-md-1 mb-2 mb-md-0">
-                        <table class="table table-bordered border-success table-sm text-center table-conduttori mb-0 w-100 h-100 rounded" style="min-width: 450px;">
+                        <table class="table table-bordered border-success table-sm text-center table-conduttori mb-0 w-80 h-80 rounded" style="min-width: 350px;">
                             <tbody>
                                 <tr>
                                     <td class="fw-bold text-end border-success" width="18%">Terra</td>
@@ -548,7 +550,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="fw-bold text-end border-success">Protezione</td>
+                                    <td class="fw-bold text-end border-success">PE</td>
                                     <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="cp_isolati" class="form-check-input border-success"><label class="form-check-label">Cavi</label></div></td>
                                     <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="cp_nudi" class="form-check-input border-success"><label class="form-check-label">Nudi</label></div></td>
                                     <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="cp_anime" class="form-check-input border-success"><label class="form-check-label">Anime</label></div></td>
@@ -561,7 +563,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="fw-bold text-end border-success">Equipotenz.</td>
+                                    <td class="fw-bold text-end border-success">EQ.</td>
                                     <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="ce_isolati" class="form-check-input border-success"><label class="form-check-label">Cavi</label></div></td>
                                     <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="ce_nudi" class="form-check-input border-success"><label class="form-check-label">Nudi</label></div></td>
                                     <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-center w-100"><input type="checkbox" name="ce_richiesti" class="form-check-input border-success"><label class="form-check-label">Richiesti</label></div></td>
@@ -743,7 +745,7 @@
     
     <div class="text-center mt-4 border-top pt-4 pb-4 d-flex justify-content-center flex-wrap gap-3" id="area-bottoni">
         <button type="button" class="btn btn-sm btn-warning fw-bold shadow-sm no-print" onclick="nuovoVerbale()">
-            🔄 Svuota Modulo
+            🔄 Svuota VIT
         </button>
         <button type="button" class="btn btn-sm btn-danger fw-bold shadow-sm no-print" onclick="stampaNativa()">
             🖨️ Stampa / Salva PDF
@@ -762,16 +764,85 @@
         });
     }
     
+    // --- GARBAGE COLLECTOR (Netturbino Foto) ---
+    async function pulisciFotoOrfane() {
+        try {
+            let keys = await idbKeyval.keys();
+            let stringaArchivio = localStorage.getItem('verbaleVIT_archivio') || "";
+            let stringaBackup = localStorage.getItem('verbaleVIT_backup') || "";
+            let tuttoIlTesto = stringaArchivio + stringaBackup;
+            
+            let orfane = 0;
+            for (let key of keys) {
+                // Se la foto non appartiene a nessun verbale in archivio o backup, eliminala!
+                if (key.startsWith('foto_') && !tuttoIlTesto.includes(key)) {
+                    await idbKeyval.del(key);
+                    orfane++;
+                }
+            }
+            if(orfane > 0) console.log(`Pulizia Automatica: rimosse ${orfane} foto residue.`);
+        } catch(e) { console.error(e); }
+    }
+
     // --- NUOVO VERBALE ---
     function nuovoVerbale() {
-        if(confirm("📄 Vuoi iniziare un NUOVO verbale?\\n\\n⚠️ Attenzione: tutti i dati attuali non salvati in Archivio andranno persi!")) {
-            document.querySelectorAll('canvas.foto-canvas').forEach(canvas => {
-                let imgId = canvas.getAttribute('data-foto-id');
-                if(imgId) idbKeyval.del(imgId);
-            });
+        if(confirm("📄 Vuoi iniziare un NUOVO verbale?\n\n⚠️ Attenzione: tutti i dati attuali non salvati in Archivio andranno persi!")) {
             localStorage.removeItem('verbaleVIT_backup');
             location.reload();
         }
+    }
+
+// --- CRUSCOTTO STATISTICHE RAPIDE ---
+    function mostraStatistiche() {
+        let archivio = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
+        let totali = 0, positivi = 0, negativi = 0;
+        let dateVerifiche = [];
+
+        for (let nome in archivio) {
+            totali++;
+            let html = archivio[nome];
+            if (html.includes('name="esito_globale" value="POSITIVO" checked')) positivi++;
+            else if (html.includes('name="esito_globale" value="NEGATIVO" checked')) negativi++;
+
+            let matchData = html.match(/name="data_verifica"[^>]*value="([^"]*)"/);
+            if (matchData && matchData[1]) dateVerifiche.push(new Date(matchData[1]));
+        }
+
+        if (totali === 0) { alert("📊 Nessun verbale presente in archivio."); return; }
+
+        let ultimaDataStr = "N/D";
+        if (dateVerifiche.length > 0) {
+            let maxDate = new Date(Math.max.apply(null, dateVerifiche));
+            ultimaDataStr = maxDate.toLocaleDateString('it-IT');
+        }
+
+        const modalHtml = `
+            <div class="modal fade show no-print" id="statsModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" aria-modal="true" role="dialog">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-dark">
+                  <div class="modal-header bg-dark-blue text-white py-2">
+                    <h5 class="modal-title fw-bold m-0">📈 Statistiche Archivio</h5>
+                  </div>
+                  <div class="modal-body text-center py-4">
+                    <h2 class="text-primary fw-bold mb-4">${totali} <span class="fs-6 fw-normal">Verbali in Memoria</span></h2>
+                    <div class="d-flex justify-content-around mb-4">
+                        <div class="p-2 border border-success rounded bg-light w-100 mx-1 shadow-sm">
+                            <h3 class="text-success m-0 fw-bold">${positivi}</h3><small class="text-success fw-bold">POSITIVI</small>
+                        </div>
+                        <div class="p-2 border border-danger rounded bg-light w-100 mx-1 shadow-sm">
+                            <h3 class="text-danger m-0 fw-bold">${negativi}</h3><small class="text-danger fw-bold">NEGATIVI</small>
+                        </div>
+                    </div>
+                    <p class="mb-0">Ultima ispezione registrata il: <strong>${ultimaDataStr}</strong></p>
+                  </div>
+                  <div class="modal-footer py-2 justify-content-center bg-light">
+                    <button type="button" class="btn btn-secondary fw-bold shadow-sm" onclick="document.getElementById('statsModal').remove()">Chiudi</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
     }
 
     // --- XFDF ESPORTAZIONE ---
@@ -985,7 +1056,7 @@
         recognition.start();
     }
 
-    // --- GESTIONE FOTO (INDEXEDDB) E TIMBRO LEGALE ---
+    // --- GESTIONE FOTO (INDEXEDDB) E TIMBRO LEGALE E APERTURA FOTOCAMERA---
     async function gestisciFoto(input) {
         const file = input.files[0];
         if (!file) return;
@@ -1038,12 +1109,19 @@
         };
 
         if (navigator.geolocation) {
+             // Imposta un timeout massimo di 3 secondi (3000 ms) per la ricerca GPS
+             const options = { enableHighAccuracy: false, timeout: 3000, maximumAge: 10000 };
+             
              navigator.geolocation.getCurrentPosition(
                  (pos) => {
                      geolocData = `Lat: ${pos.coords.latitude.toFixed(5)} Lon: ${pos.coords.longitude.toFixed(5)}`;
                      scatta();
                  },
-                 (err) => { scatta(); }
+                 (err) => { 
+                     console.warn("GPS non disponibile o troppo lento, scatto senza coordinate.");
+                     scatta(); 
+                 },
+                 options
              );
         } else {
             scatta();
@@ -1288,11 +1366,57 @@
         });
     }
 
+    // --- SALVATAGGIO INTELLIGENTE ANTI-LAG ---
+    let timerSalvataggio;
+    function salvataggioIntelligente() {
+        clearTimeout(timerSalvataggio);
+        timerSalvataggio = setTimeout(() => {
+            aggiornaEsitoGlobale(); // Richiama il cervello
+            salvaStato(); 
+            
+            // Mostra il feedback visivo
+            let badge = document.getElementById('salvataggio-badge');
+            if(badge) {
+                badge.style.opacity = '1';
+                setTimeout(() => badge.style.opacity = '0', 1500);
+            }
+        }, 600); 
+    }
+
+    // --- CERVELLO (Valutazione Automatica Esito Globale) ---
+    function aggiornaEsitoGlobale() {
+        let isNegativo = false;
+
+        // Se la tensione di contatto sfora o il TT non è soddisfatto
+        if (document.querySelector('input[name="tn_soddisf_2"][value="Non Risulta"]')?.checked) isNegativo = true;
+        if (document.querySelector('input[name="tt_soddisf"][value="Non Risulta"]')?.checked) isNegativo = true;
+
+        // Se ci sono Rilievi/NC scritti
+        document.querySelectorAll('input[name="nc_descrizione[]"]').forEach(el => {
+            if (el.value.trim() !== "") isNegativo = true;
+        });
+
+        const radPositivo = document.querySelector('input[name="esito_globale"][value="POSITIVO"]');
+        const radNegativo = document.querySelector('input[name="esito_globale"][value="NEGATIVO"]');
+
+        if (isNegativo) {
+            if(radNegativo && !radNegativo.checked) radNegativo.checked = true;
+        } else {
+            const denom = document.getElementById('denominazione_imp').value;
+            // Se c'è almeno la denominazione e zero difetti, promuovi a Positivo
+            if(denom && radPositivo && !radPositivo.checked && !radNegativo.checked) {
+                radPositivo.checked = true;
+            }
+        }
+    }
+
     function riattivaEventi() {
         document.getElementById('corr_guasto').addEventListener('input', calcolaUc);
         document.getElementById('tens_contatto').addEventListener('input', calcolaUc);
-        document.getElementById('area-dati').addEventListener('input', salvaStato);
-        document.getElementById('area-dati').addEventListener('change', salvaStato);
+        
+        // Sostituito salvaStato con salvataggioIntelligente
+        document.getElementById('area-dati').addEventListener('input', salvataggioIntelligente);
+        document.getElementById('area-dati').addEventListener('change', salvataggioIntelligente);
     }
 
     function salvaStato() {
@@ -1573,6 +1697,10 @@
         popolaSelectTF(); 
         inizializzaLibreria(); 
         aggiornaSelectArchivio();
+        
+        // Avviamo la pulizia silenziosa delle foto fantasma
+        pulisciFotoOrfane(); 
+
         const backup = localStorage.getItem('verbaleVIT_backup');
         if (backup) {
             document.getElementById('area-dati').innerHTML = backup;
