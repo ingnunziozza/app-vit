@@ -156,7 +156,8 @@
         .btn-undo { position: absolute; top: 5px; right: 5px; background: rgba(255,255,255,0.8); border: 1px solid #ccc; border-radius: 50%; width: 30px; height: 30px; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10; }
         .canvas-container { position: relative; display: inline-block; width: 100%; }
     </style>
-    <script src="./idb-keyval.js"></script>
+    <script src="./umd.js"></script>
+    <script src="./html2pdf.bundle.min.js"></script>
     <script src="./jszip.min.js"></script>
 </head>
 <body>
@@ -808,58 +809,7 @@
         }
     }
 
-// --- CRUSCOTTO STATISTICHE RAPIDE ---
-    function mostraStatistiche() {
-        let archivio = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
-        let totali = 0, positivi = 0, negativi = 0;
-        let dateVerifiche = [];
-
-        for (let nome in archivio) {
-            totali++;
-            let html = archivio[nome];
-            if (html.includes('name="esito_globale" value="POSITIVO" checked')) positivi++;
-            else if (html.includes('name="esito_globale" value="NEGATIVO" checked')) negativi++;
-
-            let matchData = html.match(/name="data_verifica"[^>]*value="([^"]*)"/);
-            if (matchData && matchData[1]) dateVerifiche.push(new Date(matchData[1]));
-        }
-
-        if (totali === 0) { alert("📊 Nessun verbale presente in archivio."); return; }
-
-        let ultimaDataStr = "N/D";
-        if (dateVerifiche.length > 0) {
-            let maxDate = new Date(Math.max.apply(null, dateVerifiche));
-            ultimaDataStr = maxDate.toLocaleDateString('it-IT');
-        }
-
-        const modalHtml = `
-            <div class="modal fade show no-print" id="statsModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" aria-modal="true" role="dialog">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content text-dark">
-                  <div class="modal-header bg-dark-blue text-white py-2">
-                    <h5 class="modal-title fw-bold m-0">📈 Statistiche Archivio</h5>
-                  </div>
-                  <div class="modal-body text-center py-4">
-                    <h2 class="text-primary fw-bold mb-4">${totali} <span class="fs-6 fw-normal text-dark">Verbali in Memoria</span></h2>
-                    <div class="d-flex justify-content-around mb-4">
-                        <div class="p-2 border border-success rounded bg-light-green w-100 mx-1 shadow-sm">
-                            <h3 class="text-success m-0 fw-bold">${positivi}</h3><small class="text-success fw-bold">POSITIVI</small>
-                        </div>
-                        <div class="p-2 border border-danger rounded bg-pink-light w-100 mx-1 shadow-sm">
-                            <h3 class="text-danger m-0 fw-bold">${negativi}</h3><small class="text-danger fw-bold">NEGATIVI</small>
-                        </div>
-                    </div>
-                    <p class="mb-0 text-muted">Ultima ispezione registrata il: <strong class="text-dark">${ultimaDataStr}</strong></p>
-                  </div>
-                  <div class="modal-footer py-2 justify-content-center bg-light">
-                    <button type="button" class="btn btn-secondary fw-bold shadow-sm" onclick="document.getElementById('statsModal').remove()">Chiudi</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
-    }
+// nunzio
 
     // --- XFDF ESPORTAZIONE ---
     function esportaXFDF() {
@@ -935,7 +885,7 @@
                 data.setFullYear(data.getFullYear() + 5);
             } else if (tipoSelezionato === 'straordinaria') {
                 campoProssima.value = "";
-                salvaStato();
+                salvataggioIntelligente();
                 return;
             }
             
@@ -944,7 +894,7 @@
             let giorno = ("0" + data.getDate()).slice(-2);
             campoProssima.value = `${anno}-${mese}-${giorno}`;
         }
-        salvaStato();
+        salvataggioIntelligente();
     }
 
     // --- DARK MODE ---
@@ -1027,7 +977,7 @@
             calcField.value = "";
             calcField.className = "form-control bg-warning text-center border-0 text-dark fw-bold ms-1 transition-all";
         }
-        salvaStato();
+        salvataggioIntelligente();
     }
 
     // --- GPS E DETTATURA ---
@@ -1048,7 +998,7 @@
                         const civico = data.address.house_number || "";
                         if (citta) document.getElementById('citta_imp').value = citta;
                         if (via) document.getElementById('indirizzo_imp').value = via + " " + civico;
-                        salvaStato(); btnGps.innerHTML = originalIcon;
+                        salvataggioIntelligente(); btnGps.innerHTML = originalIcon;
                     }
                 }).catch(() => btnGps.innerHTML = originalIcon);
         }, () => btnGps.innerHTML = originalIcon);
@@ -1065,7 +1015,7 @@
         recognition.onstart = () => btn.innerHTML = '🔴';
         recognition.onresult = (event) => {
             textarea.value += (textarea.value ? " " : "") + event.results[0][0].transcript;
-            salvaStato(); 
+            salvataggioIntelligente(); 
         };
         recognition.onerror = () => btn.innerHTML = originalIcon;
         recognition.onend = () => btn.innerHTML = originalIcon;
@@ -1152,6 +1102,14 @@
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
         
+        // 1. Inizializza la cronologia "In-Memory" per la Gomma
+        if(!canvas.undoHistory) {
+            canvas.undoHistory = [canvas.toDataURL()]; // Salva lo stato iniziale intatto
+        }
+        
+        const undoBtn = canvas.parentElement.querySelector('.btn-undo');
+        if(undoBtn && canvas.undoHistory.length > 1) undoBtn.style.display = 'flex';
+
         function getPos(evt) {
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
@@ -1167,20 +1125,30 @@
             isDrawing = true; const pos = getPos(e);
             ctx.beginPath(); ctx.moveTo(pos.x, pos.y); e.preventDefault();
         }
+        
         function draw(e) {
             if (!isDrawing) return;
             const pos = getPos(e);
             ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.strokeStyle = 'red';
             ctx.lineTo(pos.x, pos.y); ctx.stroke(); e.preventDefault();
         }
+        
         async function endDraw() {
             if(isDrawing) {
                 isDrawing = false;
+                
+                // 2. Salva il frame corretto nella cronologia RAM prima di toccare il DB
+                canvas.undoHistory.push(canvas.toDataURL());
+                if(canvas.undoHistory.length > 10) canvas.undoHistory.shift(); // Max 10 annullamenti per non saturare la RAM
+                
+                if(undoBtn) undoBtn.style.display = 'flex';
+
+                // 3. Salva su IndexedDB per sicurezza (così in caso di crash hai il disegno)
                 let fotoId = canvas.getAttribute('data-foto-id');
                 if (fotoId) {
                     const blob = await canvasToBlobAsync(canvas);
                     await idbKeyval.set(fotoId, blob);
-                    salvataggioIntelligente();
+                    salvataggioIntelligente(); // Aggiorna solo la data di ultima modifica HTML
                 }
             }
         }
@@ -1189,31 +1157,34 @@
         canvas.ontouchstart = startDraw; canvas.ontouchmove = draw; canvas.ontouchend = endDraw;
     }
 
-    async function ripristinaCanvas() {
-        const canvases = document.querySelectorAll('canvas.foto-canvas');
-        for (const canvas of canvases) {
-            const fotoId = canvas.getAttribute('data-foto-id');
-            if (fotoId) {
-                try {
-                    const dataImg = await idbKeyval.get(fotoId);
-                    if (dataImg) {
-                        const img = new Image();
-                        img.onload = function() {
-                            canvas.width = img.width; canvas.height = img.height;
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0);
-                            canvas.style.display = 'block';
-                            abilitareDisegno(canvas);
-                            if(dataImg instanceof Blob) URL.revokeObjectURL(img.src);
-                        };
-                        img.src = (dataImg instanceof Blob) ? URL.createObjectURL(dataImg) : dataImg;
-                    } else {
-                        canvas.style.display = 'none';
-                    }
-                } catch(err) {
-                    console.error("Errore recupero foto:", err);
+    // --- FUNZIONE ANNULLA TRATTO (UNDO IN-MEMORY) ---
+    async function undoCanvas(btn) {
+        const canvas = btn.parentElement.querySelector('canvas');
+        if(canvas && canvas.undoHistory && canvas.undoHistory.length > 1) {
+            
+            // 1. Rimuove l'ultimo frame (quello "sbagliato")
+            canvas.undoHistory.pop(); 
+            
+            // 2. Recupera il frame precedente (quello pulito) dalla RAM
+            const previousState = canvas.undoHistory[canvas.undoHistory.length - 1]; 
+            
+            const img = new Image();
+            img.onload = async function() {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0); // Ridisegna la foto pulita
+                
+                if(canvas.undoHistory.length <= 1) btn.style.display = 'none';
+                
+                // 3. ORA sovrascrive l'errore nel Database con l'immagine ripristinata!
+                let fotoId = canvas.getAttribute('data-foto-id');
+                if (fotoId) {
+                    const blob = await canvasToBlobAsync(canvas);
+                    await idbKeyval.set(fotoId, blob);
+                    salvataggioIntelligente();
                 }
-            }
+            };
+            img.src = previousState;
         }
     }
 
@@ -1306,10 +1277,10 @@
             const textarea = input.closest('tr').querySelector('textarea[name="nc_note[]"]');
             if(textarea && !textarea.value.trim()) { 
                 textarea.value = match.pres;
-                salvaStato();
+                salvataggioIntelligente();
             }
         }
-        salvaStato();
+        salvataggioIntelligente();
     }
 
     document.querySelectorAll('.perc-dropdown').forEach(select => {
@@ -1318,9 +1289,10 @@
         select.innerHTML = optionsHtml;
     });
 
-    // --- TABELLE ---
+    // --- TABELLE DIFFERENZIALI E RILIEVI ---
     function addRow() {
         const tbody = document.getElementById('diffTable');
+        if(!tbody) return;
         const tr = document.createElement('tr');
         tr.className = "diff-row";
         tr.innerHTML = `
@@ -1333,7 +1305,7 @@
             <td class="border-success p-1">
                 <div class="d-flex align-items-center gap-1">
                     <input type="text" name="diff_note[]" class="form-control border-0 bg-transparent w-100">
-                    <button type="button" class="btn btn-sm btn-outline-danger border-0 no-print btn-cestino px-1 py-0" onclick="this.closest('tr').remove(); salvaStato();">🗑️</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger border-0 no-print btn-cestino px-1 py-0" onclick="this.closest('tr').remove(); salvataggioIntelligente();">🗑️</button>
                 </div>
             </td>
         `;
@@ -1342,6 +1314,7 @@
 
     function addNCRow() {
         const tbody = document.getElementById('ncTable');
+        if(!tbody) return;
         const rowCount = tbody.children.length + 1;
         const tr = document.createElement('tr');
         tr.className = "nc-row";
@@ -1351,10 +1324,10 @@
                 <input type="text" name="nc_descrizione[]" class="form-control border-0 bg-transparent w-100 text-start mb-1" list="lista-nc" placeholder="Scrivi o seleziona difetto..." oninput="autoCompilaNC(this)">
                 <div class="d-flex gap-1 mb-1 w-100 no-print">
                     <label class="btn btn-sm btn-outline-primary flex-grow-1 m-0" title="Scatta direttamente dalla fotocamera">
-                        📸<input type="file" class="d-none" accept="image/*" capture="environment" onchange="gestisciFoto(this)">
+                        📸 Scatta <input type="file" class="d-none" accept="image/*" capture="environment" onchange="gestisciFoto(this)">
                     </label>
                     <label class="btn btn-sm btn-outline-secondary flex-grow-1 m-0" title="Scegli dalla galleria">
-                        🖼️<input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)">
+                        🖼️ Galleria <input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)">
                     </label>
                 </div>
                 <div class="canvas-container no-print">
@@ -1367,7 +1340,7 @@
                     <textarea name="nc_note[]" class="form-control border-0 bg-transparent w-100" rows="3" placeholder="Note / Adeguamento..."></textarea>
                     <div class="d-flex flex-column gap-1">
                         <button type="button" class="btn btn-sm btn-outline-secondary border-0 no-print btn-mic px-1 py-0" onclick="avviaDettatura(this)" title="Dettatura vocale">🎙️</button>
-                        <button type="button" class="btn btn-sm btn-outline-danger border-0 no-print btn-cestino px-1 py-0" onclick="this.closest('tr').remove(); salvaStato();">🗑️</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger border-0 no-print btn-cestino px-1 py-0" onclick="this.closest('tr').remove(); salvataggioIntelligente();">🗑️</button>
                     </div>
                 </div>
             </td>
@@ -1402,7 +1375,7 @@
         clearTimeout(timerSalvataggio);
         timerSalvataggio = setTimeout(() => {
             aggiornaEsitoGlobale(); 
-            salvaStato(); 
+            salvaStato(); // <--- QUI DEVE RESTARE COSÌ!
             hasUnsavedChanges = false;
             
             let badge = document.getElementById('salvataggio-badge');
@@ -1462,7 +1435,60 @@
         localStorage.setItem('verbaleVIT_backup', document.getElementById('area-dati').innerHTML);
     }
 
-       // --- MIGRAZIONE E NUOVO ARCHIVIO ILLIMITATO (INDEXEDDB) ---
+    // --- CRUSCOTTO STATISTICHE RAPIDE ---
+    async function mostraStatistiche() {
+        let archivio = await idbKeyval.get('vit_archivio_dati') || {};
+        let totali = 0, positivi = 0, negativi = 0;
+        let dateVerifiche = [];
+
+        for (let nome in archivio) {
+            totali++;
+            let html = archivio[nome];
+            if (html.includes('name="esito_globale" value="POSITIVO" checked')) positivi++;
+            else if (html.includes('name="esito_globale" value="NEGATIVO" checked')) negativi++;
+
+            let matchData = html.match(/name="data_verifica"[^>]*value="([^"]*)"/);
+            if (matchData && matchData[1]) dateVerifiche.push(new Date(matchData[1]));
+        }
+
+        if (totali === 0) { alert("📊 Nessun verbale presente in archivio."); return; }
+
+        let ultimaDataStr = "N/D";
+        if (dateVerifiche.length > 0) {
+            let maxDate = new Date(Math.max.apply(null, dateVerifiche));
+            ultimaDataStr = maxDate.toLocaleDateString('it-IT');
+        }
+
+        const modalHtml = `
+            <div class="modal fade show no-print" id="statsModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" aria-modal="true" role="dialog">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-dark">
+                  <div class="modal-header bg-dark-blue text-white py-2">
+                    <h5 class="modal-title fw-bold m-0">📈 Statistiche Archivio</h5>
+                  </div>
+                  <div class="modal-body text-center py-4">
+                    <h2 class="text-primary fw-bold mb-4">${totali} <span class="fs-6 fw-normal text-dark">Verbali in Memoria</span></h2>
+                    <div class="d-flex justify-content-around mb-4">
+                        <div class="p-2 border border-success rounded bg-light-green w-100 mx-1 shadow-sm">
+                            <h3 class="text-success m-0 fw-bold">${positivi}</h3><small class="text-success fw-bold">POSITIVI</small>
+                        </div>
+                        <div class="p-2 border border-danger rounded bg-pink-light w-100 mx-1 shadow-sm">
+                            <h3 class="text-danger m-0 fw-bold">${negativi}</h3><small class="text-danger fw-bold">NEGATIVI</small>
+                        </div>
+                    </div>
+                    <p class="mb-0 text-muted">Ultima ispezione registrata il: <strong class="text-dark">${ultimaDataStr}</strong></p>
+                  </div>
+                  <div class="modal-footer py-2 justify-content-center bg-light">
+                    <button type="button" class="btn btn-secondary fw-bold shadow-sm" onclick="document.getElementById('statsModal').remove()">Chiudi</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    // --- MIGRAZIONE E NUOVO ARCHIVIO ILLIMITATO (INDEXEDDB) ---
     async function migraArchivio() {
         let vecchioArchivio = localStorage.getItem('verbaleVIT_archivio');
         if (vecchioArchivio) {
@@ -1473,14 +1499,53 @@
         }
     }
 
-    async function aggiornaSelectArchivio() {
-        const select = document.getElementById('archivio_select');
-        select.innerHTML = '<option value="">-- Verbali --</option>';
+    async function aggiornaSelectArchivio() {} // Vuoto intenzionalmente
+
+    async function apriModaleArchivio() {
         let archivio = await idbKeyval.get('vit_archivio_dati') || {};
-        for (let nome in archivio) {
-            let opt = document.createElement('option'); opt.value = nome; opt.textContent = nome; select.appendChild(opt);
-        }
+        let listaNomi = Object.keys(archivio).sort((a, b) => b.localeCompare(a)); 
+
+        let listaHtml = listaNomi.map(nome => `
+            <div class="archivio-item d-flex justify-content-between align-items-center border-bottom py-2 px-1" data-nome="${nome.replace(/"/g, '&quot;')}">
+                <span class="fw-bold text-truncate me-2" style="max-width: 65%; font-size: 0.85rem;">${nome}</span>
+                <div class="d-flex gap-1 flex-shrink-0">
+                    <button class="btn btn-sm btn-success py-0 px-2 fw-bold" onclick="caricaDaArchivio('${nome.replace(/'/g, "\\'")}')">📂</button>
+                    <button class="btn btn-sm btn-danger py-0 px-2 fw-bold" onclick="eliminaDaArchivio('${nome.replace(/'/g, "\\'")}', this)">🗑️</button>
+                </div>
+            </div>
+        `).join('');
+
+        if(listaNomi.length === 0) listaHtml = `<p class="text-muted text-center mt-3">L'archivio è vuoto.</p>`;
+
+        const modalHtml = `
+            <div class="modal fade show no-print" id="archivioModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" aria-modal="true" role="dialog">
+              <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content text-dark">
+                  <div class="modal-header bg-dark-blue text-white py-2">
+                    <h5 class="modal-title fw-bold m-0">🗂️ Archivio Verbali</h5>
+                    <button type="button" class="btn-close btn-close-white" onclick="document.getElementById('archivioModal').remove()"></button>
+                  </div>
+                  <div class="modal-body p-2 p-md-3">
+                    <input type="text" id="ricercaArchivio" class="form-control mb-3 border-primary shadow-sm" placeholder="🔍 Cerca cliente, data o pod..." onkeyup="filtraArchivio()">
+                    <div id="listaVerbali" class="overflow-auto border rounded p-1 bg-white" style="max-height: 50vh;">
+                        ${listaHtml}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
     }
+
+    function filtraArchivio() {
+        let filtro = document.getElementById('ricercaArchivio').value.toLowerCase();
+        let items = document.querySelectorAll('.archivio-item');
+        items.forEach(item => {
+            let testo = item.getAttribute('data-nome').toLowerCase();
+            item.style.display = testo.includes(filtro) ? "flex" : "none";
+        });
+    }   
 
     async function salvaInArchivio() {
         fissaValoriHTML();
@@ -1495,7 +1560,14 @@
         await idbKeyval.set('vit_archivio_dati', archivio);
         
         alert(`✅ Verbale "${nome}" salvato in archivio sicuro!`);
-        await aggiornaSelectArchivio();
+
+        // --- PROMEMORIA SALVA-VITA BACKUP ---
+        let numeroVerbali = Object.keys(archivio).length;
+        if (numeroVerbali > 0 && numeroVerbali % 15 === 0) {
+            setTimeout(() => {
+                alert(`⚠️ PROMEMORIA BACKUP!\n\nHai raggiunto ${numeroVerbali} verbali in memoria.\nTi consigliamo caldamente di cliccare sul tasto "📥 DB" in alto per scaricare un file di backup aggiornato ed evitare di perdere il tuo lavoro in caso di guasto al dispositivo.`);
+            }, 500); 
+        }
     }
 
     async function duplicaVerbale() {
@@ -1521,27 +1593,25 @@
         archivio[nome] = containerClone.innerHTML;
         await idbKeyval.set('vit_archivio_dati', archivio);
         alert(`✅ Verbale duplicato e salvato come "${nome}"!`);
-        await aggiornaSelectArchivio();
     }
 
-    async function caricaDaArchivio() {
-        let nome = document.getElementById('archivio_select').value;
-        if (!nome) { alert("⚠️ Seleziona un verbale dalla tendina in alto!"); return; }
-        if(!confirm(`Vuoi caricare "${nome}"? I dati non salvati andranno persi.`)) return;
+    async function caricaDaArchivio(nome) {
+        if(!confirm(`Vuoi caricare "${nome}"?\nI dati attuali non salvati andranno persi.`)) return;
         
         let archivio = await idbKeyval.get('vit_archivio_dati') || {};
         if (archivio[nome]) {
             document.getElementById('area-dati').innerHTML = archivio[nome];
             riattivaEventi(); 
             await ripristinaCanvas(); 
-            salvaStato(); // oppure salvataggioIntelligente() se lo avevi rinominato
+            salvataggioIntelligente(); 
+            
+            // Chiude il modale se aperto
+            let modale = document.getElementById('archivioModal');
+            if (modale) modale.remove();
         }
     }
     
-    async function eliminaDaArchivio() {
-        let nome = document.getElementById('archivio_select').value;
-        if (!nome) return;
-        
+    async function eliminaDaArchivio(nome, btnElement) {
         if (confirm(`🗑️ Vuoi eliminare DEFINITIVAMENTE "${nome}"?`)) {
             let archivio = await idbKeyval.get('vit_archivio_dati') || {};
             const contenutoHtml = archivio[nome];
@@ -1555,7 +1625,9 @@
 
             delete archivio[nome];
             await idbKeyval.set('vit_archivio_dati', archivio);
-            await aggiornaSelectArchivio();
+            
+            // Rimuove la riga graficamente dal modale
+            if (btnElement) btnElement.closest('.archivio-item').remove();
         }
     }
 
@@ -1723,34 +1795,91 @@
         }
     }
 
-    // --- STAMPA PDF ASINCRONA ---
+    // --- STAMPA PDF (TRAMITE HTML2PDF) ---
     async function stampaNativa() {
+        if (typeof window.html2pdf === 'undefined') {
+            alert("⚠️ La libreria html2pdf non è caricata. Verrà usata la stampa di emergenza.");
+            eseguiStampaBase();
+            return;
+        }
+
         const dataObblig = document.getElementById('data_verifica_obblig');
         const ragSocialeObblig = document.getElementById('ragione_sociale_obblig');
         const denomObblig = document.getElementById('denominazione_imp');
         
         let errore = false;
-        if (!dataObblig.value) { dataObblig.classList.add('campo-errore'); errore = true; } else dataObblig.classList.remove('campo-errore');
-        if (!ragSocialeObblig.value) { ragSocialeObblig.classList.add('campo-errore'); errore = true; } else ragSocialeObblig.classList.remove('campo-errore');
-        if (!denomObblig.value) { denomObblig.classList.add('campo-errore'); errore = true; } else denomObblig.classList.remove('campo-errore');
+        if (!dataObblig || !dataObblig.value) { if(dataObblig) dataObblig.classList.add('campo-errore'); errore = true; } else { dataObblig.classList.remove('campo-errore'); }
+        if (!ragSocialeObblig || !ragSocialeObblig.value) { if(ragSocialeObblig) ragSocialeObblig.classList.add('campo-errore'); errore = true; } else { ragSocialeObblig.classList.remove('campo-errore'); }
+        if (!denomObblig || !denomObblig.value) { if(denomObblig) denomObblig.classList.add('campo-errore'); errore = true; } else { denomObblig.classList.remove('campo-errore'); }
 
-        if (errore) { alert("⚠️ Manca la Data, la Ragione Sociale o la Denominazione dell'impianto. Compila i campi evidenziati in rosso!"); return; }
+        if (errore) { alert("⚠️ Manca la Data, la Ragione Sociale o la Denominazione. Compila i campi rossi!"); return; }
 
+        const btnOriginale = document.querySelector('button[onclick="stampaNativa()"]');
+        const testoOriginaleBtn = btnOriginale ? btnOriginale.innerHTML : '';
+        if(btnOriginale) btnOriginale.innerHTML = "⏳ Generazione in corso...";
+
+        try {
+            fissaValoriHTML();
+            await ripristinaCanvas();
+
+            // Nascondiamo i bottoni inutili per il PDF
+            const elementiDaNascondere = document.querySelectorAll('.no-print');
+            elementiDaNascondere.forEach(el => el.style.display = 'none');
+            document.body.classList.add('fase-stampa');
+
+            const elementoDaStampare = document.getElementById('area-dati');
+            
+            // Pulisce il nome file da caratteri vietati (es. le barre della data)
+            const nomeFilePulito = getNomeFileEsportazione().replace(/[\/\\]/g, '-');
+
+            const opt = {
+                margin:       [10, 5, 15, 5],
+                filename:     nomeFilePulito + '.pdf',
+                image:        { type: 'jpeg', quality: 0.95 },
+                html2canvas:  { scale: 1, useCORS: true, logging: false }, // Scale a 1 impedisce il blocco memoria su iOS/Android
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            await window.html2pdf().set(opt).from(elementoDaStampare).save();
+
+            // Ripristino dell'app a schermo normale
+            elementiDaNascondere.forEach(el => el.style.display = '');
+            document.body.classList.remove('fase-stampa');
+            if(btnOriginale) btnOriginale.innerHTML = testoOriginaleBtn;
+
+        } catch(e) {
+            console.error("Errore html2pdf:", e);
+            alert("❌ Il PDF avanzato ha rilevato un limite di memoria del dispositivo.\nErrore: " + (e.message || "Sconosciuto") + "\n\n⚠️ Verrà avviata la stampa base di emergenza.");
+            
+            // Ripristina l'interfaccia prima di lanciare la stampa d'emergenza
+            const elementiDaNascondere = document.querySelectorAll('.no-print');
+            elementiDaNascondere.forEach(el => el.style.display = '');
+            document.body.classList.remove('fase-stampa');
+            if(btnOriginale) btnOriginale.innerHTML = testoOriginaleBtn;
+
+            // Lancia il "Piano B"
+            eseguiStampaBase();
+        }
+    }
+
+    // --- PIANO B: STAMPA NATIVA (USATA COME EMERGENZA) ---
+    function eseguiStampaBase() {
         const btnArea = document.getElementById('area-bottoni');
         const btnStrumenti = document.getElementById('barra-strumenti');
-        btnArea.style.display = 'none'; btnStrumenti.style.display = 'none';
+        
+        if(btnArea) btnArea.style.display = 'none'; 
+        if(btnStrumenti) btnStrumenti.style.display = 'none';
         document.querySelectorAll('.btn-cestino, .btn-mic, .btn-gps').forEach(btn => btn.style.display = 'none');
         
-        await ripristinaCanvas();
-
         const titoloOriginale = document.title;
-        document.title = getNomeFileEsportazione();
+        document.title = getNomeFileEsportazione().replace(/[\/\\]/g, '-');
 
         window.print();
         
         setTimeout(() => {
             document.title = titoloOriginale; 
-            btnArea.style.display = 'flex'; btnStrumenti.style.display = 'flex';
+            if(btnArea) btnArea.style.display = 'flex'; 
+            if(btnStrumenti) btnStrumenti.style.display = 'flex';
             document.querySelectorAll('.btn-cestino, .btn-mic, .btn-gps').forEach(btn => btn.style.display = 'inline-block');
         }, 1500);
     }
