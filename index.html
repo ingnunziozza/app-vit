@@ -135,9 +135,26 @@
                 max-width: 100% !important;
                 height: auto !important;
             }
+            
+            /* --- IMPAGINAZIONE PDF PERFETTA --- */
+            tr, .row {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .section-header {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+                page-break-inside: avoid !important;
+            }
         }
         
         .campo-errore { border: 2px solid red !important; background-color: #ffe6e6 !important; }
+        
+        /* Stili per Archivio e Undo */
+        .archivio-item { transition: background-color 0.2s; cursor: pointer; }
+        .archivio-item:hover { background-color: var(--bg-light-blue); }
+        .btn-undo { position: absolute; top: 5px; right: 5px; background: rgba(255,255,255,0.8); border: 1px solid #ccc; border-radius: 50%; width: 30px; height: 30px; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10; }
+        .canvas-container { position: relative; display: inline-block; width: 100%; }
     </style>
     <script src="./idb-keyval.js"></script>
     <script src="./jszip.min.js"></script>
@@ -154,16 +171,11 @@
                 <button type="button" class="btn btn-sm btn-warning fw-bold text-dark flex-fill" onclick="duplicaVerbale()" title="Duplica Verbale Corrente">🗺️</button>
                 <button type="button" class="btn btn-sm btn-outline-primary fw-bold flex-fill" onclick="nuovoVerbale()" title="Inizia un nuovo verbale vuoto">✍️</button>
 		<button type="button" class="btn btn-sm btn-info text-white fw-bold flex-fill" onclick="mostraStatistiche()" title="Statistiche Archivio">📈</button>
-                <button type="button" class="btn btn-sm btn-success fw-bold" onclick="caricaDaArchivio()" title="Carica Verbale Selezionato">📂</button>
                 <button type="button" class="btn btn-sm btn-outline-danger fw-bold" onclick="eliminaDaArchivio()" title="Elimina Verbale">🗑️</button>
-		<button type="button" class="btn btn-sm btn-info text-white fw-bold flex-fill" onclick="mostraStatistiche()" title="Statistiche Archivio">📈</button>
-	<span id="salvataggio-badge" class="badge bg-success ms-2" style="opacity: 0; transition: opacity 0.5s;">Salvato</span>
-            </div>
+       </div>
             
             <div class="d-flex flex-nowrap gap-1 justify-content-center w-100 w-lg-auto">
-                <select id="archivio_select" class="form-select form-select-sm flex-fill" style="min-width: 120px; max-width: 180px;">
-                    <option value="">-- Verbali --</option>
-                </select>
+                <button type="button" class="btn btn-sm btn-outline-dark fw-bold flex-fill bg-white" onclick="apriModaleArchivio()" title="Cerca e gestisci i verbali">🗂️ Archivio verbali</button>
                 
                 <button type="button" class="btn btn-sm btn-secondary fw-bold" onclick="esportaDB()" title="Esporta intero Backup">📥 DB</button>
                 <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" onclick="importaDB()" title="Importa intero Backup">📤 DB</button>
@@ -197,7 +209,7 @@
             
         <div class="col-4 d-flex align-items-center flex-wrap gap-2">
     	<h5 class="text-blue fw-bold mb-0">DATI VIT</h5>
-    	<span id="salvataggio-badge" class="badge bg-success" style="opacity: 0; transition: opacity 0.5s; font-size:0.6rem;">✅ Salvato</span>
+    	<span id="salvataggio-badge" class="badge bg-success" style="opacity: 0; transition: opacity 0.5s; font-size:0.6rem;">✅Salvato</span>
 	</div>
             <div class="col-6 text-end">
                 <div class="d-flex flex-wrap justify-content-end align-items-center mb-1">
@@ -358,7 +370,7 @@
                 </div>
                 <div class="row g-1 align-items-center mx-0">
                     <div class="col-12 d-flex flex-wrap align-items-center gap-1 p-0">
-                        <span class="me-2 fw-bold">Per sistemi TN-S: Comunicazione dati guasto gestore del</span>
+                        <span class="me-2 fw-bold">Per TN-S: Comunicazione dati gestore del</span>
                         <input type="date" name="tns_comunicazione" class="form-control bg-white" style="width: 130px;">
                     </div>
                 </div>
@@ -624,7 +636,7 @@
                     </div>
                 </div>
             </div>
-	<div class="section-header bg-dark-blue mt-3">🔍</span>% di Campionamento e Prova di continuità</div>
+	<div class="section-header bg-dark-blue mt-3">🔍% di Campionamento e Prova di continuità</div>
             
             <div class="bg-light-blue box-border p-2 mb-2 rounded">
                 
@@ -766,17 +778,19 @@
         });
     }
     
-    // --- GARBAGE COLLECTOR (Netturbino Foto) ---
+    // --- GARBAGE COLLECTOR (Netturbino Foto Aggiornato) ---
     async function pulisciFotoOrfane() {
         try {
             let keys = await idbKeyval.keys();
-            let stringaArchivio = localStorage.getItem('verbaleVIT_archivio') || "";
+            let archivio = await idbKeyval.get('vit_archivio_dati') || {};
+            // Unisce tutto il testo HTML dei verbali in una singola stringa gigante
+            let stringaArchivio = Object.values(archivio).join(""); 
             let stringaBackup = localStorage.getItem('verbaleVIT_backup') || "";
             let tuttoIlTesto = stringaArchivio + stringaBackup;
             
             let orfane = 0;
             for (let key of keys) {
-                // Se la foto non appartiene a nessun verbale in archivio o backup, eliminala!
+                // Ignora la chiave dell'archivio, cerca solo foto non citate nei verbali
                 if (key.startsWith('foto_') && !tuttoIlTesto.includes(key)) {
                     await idbKeyval.del(key);
                     orfane++;
@@ -1203,37 +1217,7 @@
         }
     }
 
-        canvas.onmousedown = startDraw; canvas.onmousemove = draw; canvas.onmouseup = endDraw; canvas.onmouseout = endDraw;
-        canvas.ontouchstart = startDraw; canvas.ontouchmove = draw; canvas.ontouchend = endDraw;
-    }
-
-    async function ripristinaCanvas() {
-        const canvases = document.querySelectorAll('canvas.foto-canvas');
-        for (const canvas of canvases) {
-            const fotoId = canvas.getAttribute('data-foto-id');
-            if (fotoId) {
-                try {
-                    const dataImg = await idbKeyval.get(fotoId);
-                    if (dataImg) {
-                        const img = new Image();
-                        img.onload = function() {
-                            canvas.width = img.width; canvas.height = img.height;
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0);
-                            canvas.style.display = 'block';
-                            abilitareDisegno(canvas);
-                        };
-                        img.src = dataImg;
-                    } else {
-                        canvas.style.display = 'none';
-                    }
-                } catch(err) {
-                    console.error("Errore nel recupero della foto:", err);
-                }
-            }
-        }
-    }
-
+    
     // --- LIBRERIA NC DINAMICA E AUTOCOMPILAZIONE ---
     let libreriaNC_Dinamica = [];
 
@@ -1373,7 +1357,10 @@
                         🖼️<input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)">
                     </label>
                 </div>
-                <canvas class="foto-canvas"></canvas>
+                <div class="canvas-container no-print">
+                    <button type="button" class="btn-undo no-print" onclick="undoCanvas(this)" title="Annulla ultimo tratto" style="display:none;">↩️</button>
+                    <canvas class="foto-canvas"></canvas>
+                </div>
             </td>
             <td class="border-primary p-1">
                 <div class="d-flex align-items-start gap-1 h-100">
@@ -1405,30 +1392,7 @@
         });
     }
 
-    // --- CERVELLO (Valutazione Automatica Esito Globale) ---
-    function aggiornaEsitoGlobale() {
-        let isNegativo = false;
-
-        if (document.querySelector('input[name="tn_soddisf_2"][value="Non Risulta"]')?.checked) isNegativo = true;
-        if (document.querySelector('input[name="tt_soddisf"][value="Non Risulta"]')?.checked) isNegativo = true;
-
-        document.querySelectorAll('input[name="nc_descrizione[]"]').forEach(el => {
-            if (el.value.trim() !== "") isNegativo = true;
-        });
-
-        const radPositivo = document.querySelector('input[name="esito_globale"][value="POSITIVO"]');
-        const radNegativo = document.querySelector('input[name="esito_globale"][value="NEGATIVO"]');
-
-        if (isNegativo) {
-            if(radNegativo && !radNegativo.checked) radNegativo.checked = true;
-        } else {
-            const denom = document.getElementById('denominazione_imp').value;
-            if(denom && radPositivo && !radPositivo.checked && !radNegativo.checked) {
-                radPositivo.checked = true;
-            }
-        }
-    }
-
+    
     // --- SALVATAGGIO INTELLIGENTE ---
     let timerSalvataggio;
     let hasUnsavedChanges = false;
@@ -1498,27 +1462,40 @@
         localStorage.setItem('verbaleVIT_backup', document.getElementById('area-dati').innerHTML);
     }
 
-    function aggiornaSelectArchivio() {
+       // --- MIGRAZIONE E NUOVO ARCHIVIO ILLIMITATO (INDEXEDDB) ---
+    async function migraArchivio() {
+        let vecchioArchivio = localStorage.getItem('verbaleVIT_archivio');
+        if (vecchioArchivio) {
+            let parsed = JSON.parse(vecchioArchivio);
+            await idbKeyval.set('vit_archivio_dati', parsed);
+            localStorage.removeItem('verbaleVIT_archivio');
+            console.log("✅ Migrazione archivio su IndexedDB completata con successo!");
+        }
+    }
+
+    async function aggiornaSelectArchivio() {
         const select = document.getElementById('archivio_select');
         select.innerHTML = '<option value="">-- Verbali --</option>';
-        let archivio = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
+        let archivio = await idbKeyval.get('vit_archivio_dati') || {};
         for (let nome in archivio) {
             let opt = document.createElement('option'); opt.value = nome; opt.textContent = nome; select.appendChild(opt);
         }
     }
 
-    function salvaInArchivio() {
+    async function salvaInArchivio() {
         fissaValoriHTML();
         let denominazione = document.getElementById('denominazione_imp').value || "SenzaNome";
         let dataVerb = document.getElementById('data_verifica_obblig').value || new Date().toLocaleDateString('it-IT');
         let nomeSuggerito = `${denominazione} - ${dataVerb}`;
         let nome = prompt("Nome del verbale da salvare in archivio:", nomeSuggerito);
         if (!nome) return;
-        let archivio = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
+        
+        let archivio = await idbKeyval.get('vit_archivio_dati') || {};
         archivio[nome] = document.getElementById('area-dati').innerHTML;
-        localStorage.setItem('verbaleVIT_archivio', JSON.stringify(archivio));
-        alert(`✅ Verbale "${nome}" salvato in archivio!`);
-        aggiornaSelectArchivio();
+        await idbKeyval.set('vit_archivio_dati', archivio);
+        
+        alert(`✅ Verbale "${nome}" salvato in archivio sicuro!`);
+        await aggiornaSelectArchivio();
     }
 
     async function duplicaVerbale() {
@@ -1540,11 +1517,11 @@
             }
         }
         
-        let archivio = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
+        let archivio = await idbKeyval.get('vit_archivio_dati') || {};
         archivio[nome] = containerClone.innerHTML;
-        localStorage.setItem('verbaleVIT_archivio', JSON.stringify(archivio));
+        await idbKeyval.set('vit_archivio_dati', archivio);
         alert(`✅ Verbale duplicato e salvato come "${nome}"!`);
-        aggiornaSelectArchivio();
+        await aggiornaSelectArchivio();
     }
 
     async function caricaDaArchivio() {
@@ -1552,12 +1529,12 @@
         if (!nome) { alert("⚠️ Seleziona un verbale dalla tendina in alto!"); return; }
         if(!confirm(`Vuoi caricare "${nome}"? I dati non salvati andranno persi.`)) return;
         
-        let archivio = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
+        let archivio = await idbKeyval.get('vit_archivio_dati') || {};
         if (archivio[nome]) {
             document.getElementById('area-dati').innerHTML = archivio[nome];
             riattivaEventi(); 
             await ripristinaCanvas(); 
-            salvaStato();
+            salvaStato(); // oppure salvataggioIntelligente() se lo avevi rinominato
         }
     }
     
@@ -1566,42 +1543,40 @@
         if (!nome) return;
         
         if (confirm(`🗑️ Vuoi eliminare DEFINITIVAMENTE "${nome}"?`)) {
-            let archivio = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
+            let archivio = await idbKeyval.get('vit_archivio_dati') || {};
             const contenutoHtml = archivio[nome];
             
             if(contenutoHtml) {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(contenutoHtml, 'text/html');
                 const fotoIds = Array.from(doc.querySelectorAll('canvas')).map(c => c.getAttribute('data-foto-id')).filter(id => id);
-                
-                for (const id of fotoIds) {
-                    await idbKeyval.del(id);
-                }
+                for (const id of fotoIds) { await idbKeyval.del(id); }
             }
 
             delete archivio[nome];
-            localStorage.setItem('verbaleVIT_archivio', JSON.stringify(archivio));
-            aggiornaSelectArchivio();
+            await idbKeyval.set('vit_archivio_dati', archivio);
+            await aggiornaSelectArchivio();
         }
     }
 
     async function esportaDB() {
-        let archivio = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
+        let archivio = await idbKeyval.get('vit_archivio_dati') || {};
         if (Object.keys(archivio).length === 0) { alert("L'archivio è vuoto."); return; }
         
-        let backupData = {
-            archivio: archivio,
-            immagini: {}
-        };
+        let backupData = { archivio: archivio, immagini: {} };
 
         for (let nome in archivio) {
             let tempDiv = document.createElement('div');
             tempDiv.innerHTML = archivio[nome];
             let canvases = tempDiv.querySelectorAll('canvas.foto-canvas');
+            
             for(let canvas of canvases) {
                 let fotoId = canvas.getAttribute('data-foto-id');
                 if(fotoId && !backupData.immagini[fotoId]) {
-                    let base64 = await idbKeyval.get(fotoId);
+                    
+                    // CORREZIONE: Dichiariamo e usiamo coerentemente 'dataImg'
+                    let dataImg = await idbKeyval.get(fotoId);
+                    
                     if(dataImg) {
                         if (dataImg instanceof Blob) {
                             backupData.immagini[fotoId] = await new Promise(r => {
@@ -1638,23 +1613,17 @@
                 if (data.archivio && data.immagini) {
                     archivioDaImportare = data.archivio;
                     for (let fotoId in data.immagini) {
-                        try {
-                            const res = await fetch(data.immagini[fotoId]);
-                            const blob = await res.blob();
-                            await idbKeyval.set(fotoId, blob);
-                        } catch(err) {
-                            await idbKeyval.set(fotoId, data.immagini[fotoId]);
-                        }
+                        await idbKeyval.set(fotoId, data.immagini[fotoId]);
                     }
                 } else {
                     archivioDaImportare = data; 
                 }
 
-                let archivioAttuale = JSON.parse(localStorage.getItem('verbaleVIT_archivio')) || {};
+                let archivioAttuale = await idbKeyval.get('vit_archivio_dati') || {};
                 Object.assign(archivioAttuale, archivioDaImportare);
-                localStorage.setItem('verbaleVIT_archivio', JSON.stringify(archivioAttuale));
+                await idbKeyval.set('vit_archivio_dati', archivioAttuale);
                 
-                aggiornaSelectArchivio(); 
+                await aggiornaSelectArchivio(); 
                 alert("✅ Database ripristinato con successo!");
             } catch(err) { alert("❌ Errore durante la lettura del file: " + err.message); }
         };
@@ -1790,9 +1759,12 @@
         applicaDarkMode();
         popolaSelectTF(); 
         inizializzaLibreria(); 
-        aggiornaSelectArchivio();
         
-        // Avviamo la pulizia silenziosa delle foto fantasma
+        // 1. Sposta i vecchi verbali nel nuovo sistema illimitato
+        await migraArchivio();
+        // 2. Aggiorna la tendina
+        await aggiornaSelectArchivio();
+        // 3. Pulisce la memoria sporca
         pulisciFotoOrfane(); 
 
         const backup = localStorage.getItem('verbaleVIT_backup');
