@@ -6,6 +6,7 @@ const urlsToCache = [
   './icona.png',
   './bootstrap.min.css',
   './umd.js',        // <-- NOME DEL FILE CORRETTO!
+  './html2pdf.min.js'
   './jszip.min.js'
 ];
 
