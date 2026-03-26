@@ -701,196 +701,152 @@
         </div>
 
             <div class="section-header bg-dark-green mt-3">Esame Conduttori</div>
-            <div class="bg-light-green border-green p-2 mb-2 rounded">
-                
-                <div class="border border-success rounded mb-2 mx-0 py-2 shadow-sm bg-light-green border-opacity-50">
-    
-    <div class="d-flex align-items-center flex-nowrap px-3 py-1">
-        <span class="text-success fw-bold text-nowrap" style="min-width: 120px;">di Terra:</span>
-        <div class="d-flex align-items-center flex-nowrap gap-3">
-            <div class="form-check m-0 d-flex align-items-center">
-                <input type="radio" name="id_terra" id="terra_ok" value="idonei" class="form-check-input border-success me-1">
-                <label class="form-check-label text-success fw-bold" for="terra_ok">idonei</label>
-            </div>
-            <div class="form-check m-0 d-flex align-items-center">
-                <input type="radio" name="id_terra" id="terra_ko" value="non idonei" class="form-check-input border-danger me-1">
-                <label class="form-check-label text-danger fw-bold" for="terra_ko">non idonei</label>
-            </div>
-        </div>
-    </div>
-
-    <div class="border-top border-success border-opacity-10 mx-3 my-1"></div>
-
-    <div class="d-flex align-items-center flex-nowrap px-3 py-1">
-        <span class="text-success fw-bold text-nowrap" style="min-width: 120px;">di Protezione:</span>
-        <div class="d-flex align-items-center flex-nowrap gap-3">
-            <div class="form-check m-0 d-flex align-items-center">
-                <input type="radio" name="id_prot" id="prot_ok" value="idonei" class="form-check-input border-success me-1">
-                <label class="form-check-label text-success fw-bold" for="prot_ok">idonei</label>
-            </div>
-            <div class="form-check m-0 d-flex align-items-center">
-                <input type="radio" name="id_prot" id="prot_ko" value="non idonei" class="form-check-input border-danger me-1">
-                <label class="form-check-label text-danger fw-bold" for="prot_ko">non idonei</label>
-            </div>
-        </div>
-    </div>
-
-    <div class="border-top border-success border-opacity-10 mx-3 my-1"></div>
-
-    <div class="d-flex align-items-center flex-nowrap px-3 py-1">
-        <span class="text-success fw-bold text-nowrap" style="min-width: 120px;">Giunzioni:</span>
-        <div class="d-flex align-items-center flex-nowrap gap-3">
-            <div class="form-check m-0 d-flex align-items-center">
-                <input type="radio" name="id_giunz" id="giunz_ok" value="idonee" class="form-check-input border-success me-1">
-                <label class="form-check-label text-success fw-bold" for="giunz_ok">idonee</label>
-            </div>
-            <div class="form-check m-0 d-flex align-items-center">
-                <input type="radio" name="id_giunz" id="giunz_ko" value="non idonee" class="form-check-input border-danger me-1">
-                <label class="form-check-label text-danger fw-bold" for="giunz_ko">non idonee</label>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-                <div class="row g-1 mb-2 align-items-stretch mx-0">
-    <div class="col-md-7 d-flex overflow-auto p-0 pe-md-1 mb-2 mb-md-0">
-        <table class="table table-bordered border-success table-sm text-start table-conduttori mb-0 w-100 rounded" style="min-width: 450px;">
-            <tbody>
-                <tr>
-                    <td class="fw-bold border-success text-start" style="white-space: nowrap; width: 1%;">Terra</td>
-                    <td class="border-success" style="white-space: nowrap; width: 1%;">
-                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
-                            <input type="checkbox" id="ct_isolati" name="ct_isolati" class="form-check-input border-success me-1">
-                            <label class="form-check-label" for="ct_isolati">Cavi</label>
+        <div class="bg-light-green border-green p-2 mb-2 rounded">
+            
+            <div class="border border-success rounded mb-2 mx-0 py-2 shadow-sm bg-light-green border-opacity-50">
+                <div class="d-flex align-items-center flex-nowrap px-3 py-1">
+                    <span class="text-success fw-bold text-nowrap" style="min-width: 120px;">di Terra:</span>
+                    <div class="d-flex align-items-center flex-nowrap gap-3">
+                        <div class="form-check m-0 d-flex align-items-center">
+                            <input type="radio" name="id_terra" id="terra_ok" value="idonei" class="form-check-input border-success me-1">
+                            <label class="form-check-label text-success fw-bold" for="terra_ok">idonei</label>
                         </div>
-                    </td>
-                    <td class="border-success" style="white-space: nowrap; width: 1%;">
-                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
-                            <input type="checkbox" id="ct_rame" name="ct_rame" class="form-check-input border-success me-1">
-                            <label class="form-check-label" for="ct_rame">Corde</label>
+                        <div class="form-check m-0 d-flex align-items-center">
+                            <input type="radio" name="id_terra" id="terra_ko" value="non idonei" class="form-check-input border-danger me-1">
+                            <label class="form-check-label text-danger fw-bold" for="terra_ko">non idonei</label>
                         </div>
-                    </td>
-                    <td class="border-success" style="white-space: nowrap; width: 1%;">
-                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
-                            <input type="checkbox" id="ct_nastri" name="ct_nastri" class="form-check-input border-success me-1">
-                            <label class="form-check-label" for="ct_nastri">Tondi</label>
-                        </div>
-                    </td>
-                    <td class="border-success" style="white-space: nowrap; width: 1%;">
-                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
-                            <input type="checkbox" id="ct_strutt" name="ct_strutt" class="form-check-input border-success me-1">
-                            <label class="form-check-label" for="ct_strutt">Strutturali</label>
-                        </div>
-                    </td>
-                    <td class="align-middle border-success" style="width: 95%;">
-                        <div class="d-flex justify-content-start align-items-center ps-2">
-                            <label class="me-1 mb-0 fw-bold" style="font-size:0.75rem;">Sez.</label>
-                            <input type="number" step="any" inputmode="decimal" name="sez_terra" class="form-control p-0 text-center bg-white" style="width: 60px; height: 1.6rem;" placeholder="mm²">
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="fw-bold border-success text-start" style="white-space: nowrap;">PE</td>
-                    <td class="border-success">
-                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
-                            <input type="checkbox" id="cp_isolati" name="cp_isolati" class="form-check-input border-success me-1">
-                            <label class="form-check-label" for="cp_isolati">Cavi</label>
-                        </div>
-                    </td>
-                    <td class="border-success">
-                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
-                            <input type="checkbox" id="cp_nudi" name="cp_nudi" class="form-check-input border-success me-1">
-                            <label class="form-check-label" for="cp_nudi">Nudi</label>
-                        </div>
-                    </td>
-                    <td class="border-success">
-                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
-                            <input type="checkbox" id="cp_anime" name="cp_anime" class="form-check-input border-success me-1">
-                            <label class="form-check-label" for="cp_anime">Anime</label>
-                        </div>
-                    </td>
-                    <td class="border-success">
-                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
-                            <input type="checkbox" id="cp_involucri" name="cp_involucri" class="form-check-input border-success me-1">
-                            <label class="form-check-label" for="cp_involucri">Metallo</label>
-                        </div>
-                    </td>
-                    <td class="align-middle border-success">
-                        <div class="d-flex justify-content-start align-items-center ps-2">
-                            <label class="me-1 mb-0 fw-bold" style="font-size:0.75rem;">Sez.</label>
-                            <input type="number" step="any" inputmode="decimal" name="sez_prot" class="form-control p-0 text-center bg-white" style="width: 60px; height: 1.6rem;" placeholder="mm²">
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="fw-bold border-success text-start" style="white-space: nowrap;">EQ.</td>
-                    <td class="border-success">
-                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
-                            <input type="checkbox" id="ce_isolati" name="ce_isolati" class="form-check-input border-success me-1">
-                            <label class="form-check-label" for="ce_isolati">Cavi</label>
-                        </div>
-                    </td>
-                    <td class="border-success">
-                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
-                            <input type="checkbox" id="ce_nudi" name="ce_nudi" class="form-check-input border-success me-1">
-                            <label class="form-check-label" for="ce_nudi">Nudi</label>
-                        </div>
-                    </td>
-                    <td class="border-success">
-                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
-                            <input type="checkbox" id="ce_richiesti" name="ce_richiesti" class="form-check-input border-success me-1">
-                            <label class="form-check-label" for="ce_richiesti">Richiesti</label>
-                        </div>
-                    </td>
-                    <td class="border-success">
-                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
-                            <input type="checkbox" id="ce_non_richiesti" name="ce_non_richiesti" class="form-check-input border-success me-1">
-                            <label class="form-check-label" for="ce_non_richiesti">Non rich.</label>
-                        </div>
-                    </td>
-                    <td class="align-middle border-success">
-                        <div class="d-flex justify-content-start align-items-center ps-2">
-                            <label class="me-1 mb-0 fw-bold" style="font-size:0.75rem;">Sez.</label>
-                            <input type="number" step="any" inputmode="decimal" name="sez_eq" class="form-control p-0 text-center bg-white" style="width: 60px; height: 1.6rem;" placeholder="mm²">
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-                    <div class="col-md-5 d-flex overflow-auto p-0 ps-md-1">
-                        <table class="table table-bordered border-success table-sm mb-0 w-100 h-100 rounded" style="min-width: 250px;">
-                            <thead>
-                                <tr class="border-success">
-                                    <th class="fw-bold text-start align-middle border-success fs-6 border-end-0">Continuità</th>
-                                    <th class="text-center align-middle border-success border-start-0 border-end-0 fw-normal">Si</th>
-                                    <th class="text-center align-middle border-success border-start-0 border-end-0 fw-normal">No</th>
-                                    <th class="text-center align-middle border-success border-start-0 fw-normal">N/A</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="text-end align-middle border-success">conduttori e collettori</td>
-                                    <td class="text-center align-middle border-success"><input type="radio" name="cont_cond" value="Si" class="form-check-input border-success m-0 mx-auto d-block"></td>
-                                    <td class="text-center align-middle border-success"><input type="radio" name="cont_cond" value="No" class="form-check-input border-success m-0 mx-auto d-block"></td>
-                                    <td class="text-center align-middle border-success"><input type="radio" name="cont_cond" value="N/A" class="form-check-input border-success m-0 mx-auto d-block"></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-end align-middle border-success">equipotenziali supplementari</td>
-                                    <td class="text-center align-middle border-success"><input type="radio" name="cont_eq" value="Si" class="form-check-input border-success m-0 mx-auto d-block"></td>
-                                    <td class="text-center align-middle border-success"><input type="radio" name="cont_eq" value="No" class="form-check-input border-success m-0 mx-auto d-block"></td>
-                                    <td class="text-center align-middle border-success"><input type="radio" name="cont_eq" value="N/A" class="form-check-input border-success m-0 mx-auto d-block"></td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
-                <div class="border border-success rounded mx-0 py-2 shadow-sm bg-light-green border-opacity-50 mt-2">
+
+                <div class="border-top border-success border-opacity-10 mx-3 my-1"></div>
+
+                <div class="d-flex align-items-center flex-nowrap px-3 py-1">
+                    <span class="text-success fw-bold text-nowrap" style="min-width: 120px;">di Protezione:</span>
+                    <div class="d-flex align-items-center flex-nowrap gap-3">
+                        <div class="form-check m-0 d-flex align-items-center">
+                            <input type="radio" name="id_prot" id="prot_ok" value="idonei" class="form-check-input border-success me-1">
+                            <label class="form-check-label text-success fw-bold" for="prot_ok">idonei</label>
+                        </div>
+                        <div class="form-check m-0 d-flex align-items-center">
+                            <input type="radio" name="id_prot" id="prot_ko" value="non idonei" class="form-check-input border-danger me-1">
+                            <label class="form-check-label text-danger fw-bold" for="prot_ko">non idonei</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-top border-success border-opacity-10 mx-3 my-1"></div>
+
+                <div class="d-flex align-items-center flex-nowrap px-3 py-1">
+                    <span class="text-success fw-bold text-nowrap" style="min-width: 120px;">Giunzioni:</span>
+                    <div class="d-flex align-items-center flex-nowrap gap-3">
+                        <div class="form-check m-0 d-flex align-items-center">
+                            <input type="radio" name="id_giunz" id="giunz_ok" value="idonee" class="form-check-input border-success me-1">
+                            <label class="form-check-label text-success fw-bold" for="giunz_ok">idonee</label>
+                        </div>
+                        <div class="form-check m-0 d-flex align-items-center">
+                            <input type="radio" name="id_giunz" id="giunz_ko" value="non idonee" class="form-check-input border-danger me-1">
+                            <label class="form-check-label text-danger fw-bold" for="giunz_ko">non idonee</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-1 mb-2 align-items-stretch mx-0">
+                <div class="col-md-7 d-flex overflow-auto p-0 pe-md-1 mb-2 mb-md-0">
+                    <table class="table table-bordered border-success table-sm text-start table-conduttori mb-0 w-100 rounded shadow-sm bg-white" style="min-width: 450px;">
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold border-success text-start" style="white-space: nowrap; width: 1%;">Terra</td>
+                                <td class="border-success" style="white-space: nowrap; width: 1%;">
+                                    <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                                        <input type="checkbox" id="ct_isolati" name="ct_isolati" class="form-check-input border-success me-1">
+                                        <label class="form-check-label" for="ct_isolati">Cavi</label>
+                                    </div>
+                                </td>
+                                <td class="border-success" style="white-space: nowrap; width: 1%;">
+                                    <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                                        <input type="checkbox" id="ct_rame" name="ct_rame" class="form-check-input border-success me-1">
+                                        <label class="form-check-label" for="ct_rame">Corde</label>
+                                    </div>
+                                </td>
+                                <td class="border-success" style="white-space: nowrap; width: 1%;">
+                                    <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                                        <input type="checkbox" id="ct_nastri" name="ct_nastri" class="form-check-input border-success me-1">
+                                        <label class="form-check-label" for="ct_nastri">Tondi</label>
+                                    </div>
+                                </td>
+                                <td class="border-success" style="white-space: nowrap; width: 1%;">
+                                    <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                                        <input type="checkbox" id="ct_strutt" name="ct_strutt" class="form-check-input border-success me-1">
+                                        <label class="form-check-label" for="ct_strutt">Strutturali</label>
+                                    </div>
+                                </td>
+                                <td class="align-middle border-success" style="width: 95%;">
+                                    <div class="d-flex justify-content-start align-items-center ps-2">
+                                        <label class="me-1 mb-0 fw-bold" style="font-size:0.75rem;">Sez.</label>
+                                        <input type="number" step="any" inputmode="decimal" name="sez_terra" class="form-control p-0 text-center bg-white" style="width: 50px; height: 1.6rem;" placeholder="mm²">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold border-success text-start" style="white-space: nowrap;">PE</td>
+                                <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="cp_isolati" name="cp_isolati" class="form-check-input border-success me-1"><label class="form-check-label" for="cp_isolati">Cavi</label></div></td>
+                                <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="cp_nudi" name="cp_nudi" class="form-check-input border-success me-1"><label class="form-check-label" for="cp_nudi">Nudi</label></div></td>
+                                <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="cp_anime" name="cp_anime" class="form-check-input border-success me-1"><label class="form-check-label" for="cp_anime">Anime</label></div></td>
+                                <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="cp_involucri" name="cp_involucri" class="form-check-input border-success me-1"><label class="form-check-label" for="cp_involucri">Metallo</label></div></td>
+                                <td class="align-middle border-success">
+                                    <div class="d-flex justify-content-start align-items-center ps-2">
+                                        <label class="me-1 mb-0 fw-bold" style="font-size:0.75rem;">Sez.</label>
+                                        <input type="number" step="any" inputmode="decimal" name="sez_prot" class="form-control p-0 text-center bg-white" style="width: 50px; height: 1.6rem;" placeholder="mm²">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold border-success text-start" style="white-space: nowrap;">EQ.</td>
+                                <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="ce_isolati" name="ce_isolati" class="form-check-input border-success me-1"><label class="form-check-label" for="ce_isolati">Cavi</label></div></td>
+                                <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="ce_nudi" name="ce_nudi" class="form-check-input border-success me-1"><label class="form-check-label" for="ce_nudi">Nudi</label></div></td>
+                                <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="ce_richiesti" name="ce_richiesti" class="form-check-input border-success me-1"><label class="form-check-label" for="ce_richiesti">Richiesti</label></div></td>
+                                <td class="border-success"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="ce_non_richiesti" name="ce_non_richiesti" class="form-check-input border-success me-1"><label class="form-check-label" for="ce_non_richiesti">Non rich.</label></div></td>
+                                <td class="align-middle border-success">
+                                    <div class="d-flex justify-content-start align-items-center ps-2">
+                                        <label class="me-1 mb-0 fw-bold" style="font-size:0.75rem;">Sez.</label>
+                                        <input type="number" step="any" inputmode="decimal" name="sez_eq" class="form-control p-0 text-center bg-white" style="width: 50px; height: 1.6rem;" placeholder="mm²">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-md-5 d-flex overflow-auto p-0 ps-md-1">
+                    <table class="table table-bordered border-success table-sm mb-0 w-100 h-100 rounded shadow-sm bg-white" style="min-width: 250px;">
+                        <thead>
+                            <tr class="border-success">
+                                <th class="fw-bold text-start align-middle border-success fs-6 border-end-0">Continuità</th>
+                                <th class="text-center align-middle border-success border-start-0 border-end-0 fw-normal">Si</th>
+                                <th class="text-center align-middle border-success border-start-0 border-end-0 fw-normal">No</th>
+                                <th class="text-center align-middle border-success border-start-0 fw-normal">N/A</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-end align-middle border-success">conduttori e collettori</td>
+                                <td class="text-center align-middle border-success"><input type="radio" name="cont_cond" value="Si" class="form-check-input border-success m-0 mx-auto d-block"></td>
+                                <td class="text-center align-middle border-success"><input type="radio" name="cont_cond" value="No" class="form-check-input border-success m-0 mx-auto d-block"></td>
+                                <td class="text-center align-middle border-success"><input type="radio" name="cont_cond" value="N/A" class="form-check-input border-success m-0 mx-auto d-block"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-end align-middle border-success">equipotenziali supplem.</td>
+                                <td class="text-center align-middle border-success"><input type="radio" name="cont_eq" value="Si" class="form-check-input border-success m-0 mx-auto d-block"></td>
+                                <td class="text-center align-middle border-success"><input type="radio" name="cont_eq" value="No" class="form-check-input border-success m-0 mx-auto d-block"></td>
+                                <td class="text-center align-middle border-success"><input type="radio" name="cont_eq" value="N/A" class="form-check-input border-success m-0 mx-auto d-block"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="border border-success rounded mx-0 py-2 shadow-sm bg-light-green border-opacity-50 mt-2">
                 <div class="d-flex align-items-center flex-nowrap px-3 py-1">
                     <span class="text-success fw-bold text-nowrap" style="min-width: 110px;">Interruttori adottati:</span>
                     <div class="d-flex align-items-center flex-nowrap gap-3">
@@ -909,7 +865,7 @@
 
                 <div class="d-flex align-items-center flex-nowrap px-3 py-1">
                     <span class="text-success fw-bold text-nowrap" style="min-width: 110px;">Condizioni:</span>
-                    <div class="d-flex align-items-center flex-nowrap gap-3" style="overflow-x: auto; white-space: nowrap;">
+                    <div class="d-flex align-items-center flex-nowrap gap-2" style="overflow-x: auto; white-space: nowrap;">
                         <div class="form-check m-0 d-flex align-items-center">
                             <input type="radio" name="condizioni" id="cond_b" value="buone" class="form-check-input border-success me-1">
                             <label class="form-check-label" for="cond_b">buone</label>
@@ -929,6 +885,8 @@
                     </div>
                 </div>
             </div>
+
+        </div>
 
 	<div class="section-header bg-dark-blue mt-3">🔍% di Campionamento e Prova di continuità</div>
             
