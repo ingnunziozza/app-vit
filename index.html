@@ -2,7 +2,2032 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verifica 462/01 - VIT</title>
+    <link rel="manifest" href="manifest.json">
+    <link href="./bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* --- VARIABILI CSS (TEMA CHIARO) --- */
+        :root {
+            --bg-body: #f0f2f5;
+            --text-main: #212529;
+            --bg-container: #ffffff;
+            --bg-input: #ffffff;
+            --border-input: #ccc;
+            --border-general: #dee2e6;
+
+            /* Colori Sezioni Blue */
+            --header-blue: #1f4e79;
+            --bg-light-blue: #d9e1f2;
+            --border-blue: #b4c6e7;
+            --text-blue: #2f5597;
+
+            /* Colori Sezioni Green */
+            --header-green: #4a7e33;
+            --bg-light-green: #e2efda;
+            --border-green: #c6e0b4;
+            --text-green: #385723;
+
+            /* Altri Colori */
+            --bg-light-grey: #f2f2f2;
+            --bg-nodo: #8da6c9;
+            
+            /* Colori Evidenza */
+            --bs-primary: #0d6efd;
+            --bs-success: #198754;
+            --bs-danger: #dc3545;
+        }
+
+        /* --- VARIABILI CSS (TEMA SCURO) --- */
+        body.dark-mode {
+            --bg-body: #121212;
+            --text-main: #e0e0e0;
+            --bg-container: #1e1e1e;
+            --bg-input: #333333;
+            --border-input: #555555;
+            --border-general: #555555;
+
+            /* Adattamento Colori Sezioni Blue */
+            --bg-light-blue: #2a3b5c;
+            --border-blue: #4a6b9c;
+            --text-blue: #90caf9;
+
+            /* Adattamento Colori Sezioni Green */
+            --bg-light-green: #2a402a;
+            --border-green: #4a704a;
+            --text-green: #81c784;
+
+            /* Altri Colori */
+            --bg-light-grey: #2c2c2c;
+            --bg-nodo: #4a5c75;
+            
+            /* Adattamento Colori Evidenza */
+            --bs-primary: #90caf9;
+            --bs-success: #81c784;
+            --bs-danger: #e57373;
+        }
+
+        /* --- STILI GENERALI --- */
+        body { font-size: 0.7rem; background-color: var(--bg-body); color: var(--text-main); font-family: Arial, sans-serif; transition: background-color 0.3s, color 0.3s; }
+        .container { background-color: var(--bg-container); padding: 15px 25px; box-shadow: 0 0 15px rgba(0,0,0,0.15); margin-top: 15px; margin-bottom: 20px; max-width: 1150px; transition: background-color 0.3s; }
+        
+        /* --- STRUTTURA E COLORI --- */
+        .section-header { color: white; padding: 3px 8px; font-weight: bold; text-transform: uppercase; margin-top: 10px; margin-bottom: 4px; border-radius: 2px; font-size: 0.75rem; display: flex; align-items: center; justify-content: space-between; }
+        .bg-dark-blue { background-color: var(--header-blue); }
+        .bg-dark-green { background-color: var(--header-green); }
+        .bg-light-blue { background-color: var(--bg-light-blue); }
+        .bg-light-green { background-color: var(--bg-light-green); }
+        .bg-light-grey { background-color: var(--bg-light-grey); }
+        
+        .box-border { border: 1px solid var(--border-blue); padding: 4px; }
+        .border-green { border: 1px solid var(--border-green); padding: 4px; }
+        .text-blue { color: var(--text-blue); }
+        .text-green { color: var(--text-green); }
+        .bg-nodo-collettore { background-color: var(--bg-nodo); }
+
+        /* --- FORM E INPUT --- */
+        .form-control, .form-select, .input-group-text { font-size: 0.7rem; padding: 0.1rem 0.3rem; border-radius: 2px; border: 1px solid var(--border-input); height: 1.8rem; background-color: var(--bg-input); color: var(--text-main); }
+        .form-control:focus, .form-select:focus { background-color: var(--bg-input); color: var(--text-main); }
+        .form-check-label { font-size: 0.7rem; margin-left: 2px; white-space: nowrap; cursor: pointer; }
+        .row { margin-bottom: 2px; }
+        
+        .form-check-input { width: 0.85rem; height: 0.85rem; min-width: 0.85rem; min-height: 0.85rem; flex-shrink: 0; margin-top: 0.2rem; border-radius: 2px !important; border: 1px solid var(--bg-nodo); background-color: var(--bg-input); cursor: pointer; }
+        .form-check-input:checked { background-color: var(--bs-primary) !important; border-color: var(--bs-primary) !important; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important; background-size: 85% 85%; background-position: center; }
+        
+        /* --- TABELLE E LAYOUT --- */
+        .table { color: var(--text-main); border-color: var(--border-general); }
+        .table td, .table th { border-color: var(--border-general); }
+        .table-conduttori td { padding: 0.2rem; vertical-align: middle; }
+        .table-diff th { padding: 0.2rem; font-size: 0.7rem; }
+        .table-diff td { padding: 0.1rem; }
+        
+        /* Lavagna Foto */
+        canvas.foto-canvas { touch-action: none; cursor: crosshair; max-height: 200px; border-radius: 4px; border: 1px solid var(--border-input); margin-top: 5px; width: 100%; display: none; }
+
+        /* Integrazioni BootStrap per Dark Mode elegante */
+        body.dark-mode .bg-white, body.dark-mode .bg-light { background-color: var(--bg-input) !important; color: var(--text-main) !important; }
+        body.dark-mode .border { border-color: var(--border-general) !important; }
+        body.dark-mode .text-primary { color: var(--bs-primary) !important; }
+        body.dark-mode .text-danger { color: var(--bs-danger) !important; }
+        body.dark-mode .text-success { color: var(--bs-success) !important; }
+        body.dark-mode .border-primary { border-color: var(--bs-primary) !important; }
+        body.dark-mode .border-success { border-color: var(--bs-success) !important; }
+
+        @media (min-width: 768px) { .border-md-start { border-left: 1px solid var(--border-general) !important; } }
+        @media (max-width: 767px) { .border-sm-bottom { border-bottom: 1px solid var(--border-general) !important; } .border-sm-top { border-top: 1px solid var(--border-general) !important; } }
+        
+        /* --- STAMPA --- */
+        @media print {
+            body, body.dark-mode { background-color: white !important; color: black !important; font-size: 0.65rem; }
+            .container, body.dark-mode .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; border: none !important; background-color: white !important;}
+            #barra-strumenti, #area-bottoni, .btn-cestino, .btn-mic, .btn-gps, .no-print { display: none !important; }
+            .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .bg-light-blue, .bg-light-green, .bg-light-grey, .bg-pink-light { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .form-control, .form-select { border: none !important; border-bottom: 1px dotted #999 !important; border-radius: 0; padding: 0; height: auto; background: transparent !important; -webkit-appearance: none; -moz-appearance: none; appearance: none; color: black !important;}
+            input[type="checkbox"], input[type="radio"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .form-check-input:checked { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .bg-nodo-collettore { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #8da6c9 !important; }
+            
+            /* Evita il taglio delle foto in stampa */
+            canvas.foto-canvas {
+                page-break-inside: avoid;
+                break-inside: avoid;
+                max-width: 100% !important;
+                height: auto !important;
+            }
+            
+            /* --- IMPAGINAZIONE PDF PERFETTA --- */
+            tr, .row {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .section-header {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+                page-break-inside: avoid !important;
+            }
+        }
+        
+        .campo-errore { border: 2px solid red !important; background-color: #ffe6e6 !important; }
+        
+        /* Regole per la stampa PDF pulita */
+        body.fase-stampa { background-color: #ffffff; }
+        body.fase-stampa input, body.fase-stampa textarea, body.fase-stampa select { border: none !important; background: transparent !important; }
+        body.fase-stampa .border-0 { border: 1px solid transparent !important; }
+    </style>
+    <script src="./umd.js"></script>
+    <script src="./html2pdf.bundle.min.js"></script>
+    <script src="./jszip.min.js"></script>
+</head>
+<body>
+
+<div class="container" id="modulo-principale">
+    
+    <div id="barra-strumenti" class="mb-3 p-2 bg-light border border-secondary rounded shadow-sm no-print">
+        <div class="d-flex flex-column flex-lg-row gap-2 align-items-center justify-content-between">
+            
+            <div class="d-flex flex-nowrap gap-1 justify-content-center w-100 w-lg-auto">
+                <button type="button" class="btn btn-sm btn-primary fw-bold flex-fill" onclick="salvaInArchivio()">💾</button>
+                <button type="button" class="btn btn-sm btn-warning fw-bold text-dark flex-fill" onclick="duplicaVerbale()" title="Duplica Verbale Corrente">🗺️</button>
+                <button type="button" class="btn btn-sm btn-outline-primary fw-bold flex-fill" onclick="nuovoVerbale()" title="Inizia un nuovo verbale vuoto">✍️</button>
+		<button type="button" class="btn btn-sm btn-info text-white fw-bold flex-fill" onclick="mostraStatistiche()" title="Statistiche Archivio">📈</button>
+                <button type="button" class="btn btn-sm btn-outline-danger fw-bold" onclick="eliminaDaArchivio()" title="Elimina Verbale">🗑️</button>
+       </div>
+            
+            <div class="d-flex flex-nowrap gap-1 justify-content-center w-100 w-lg-auto">
+                <button type="button" class="btn btn-sm btn-outline-dark fw-bold flex-fill bg-white" onclick="apriModaleArchivio()" title="Cerca e gestisci i verbali">🗂️ Archivio verbali</button>
+                
+                <button type="button" class="btn btn-sm btn-secondary fw-bold" onclick="esportaDB()" title="Esporta intero Backup">📥 DB</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" onclick="importaDB()" title="Importa intero Backup">📤 DB</button>
+                <input type="file" id="importaFile" style="display:none" accept=".json" onchange="eseguiImportazione(event)">
+            </div>
+            
+            <div class="d-flex flex-nowrap gap-1 justify-content-center w-100 w-lg-auto">
+                <button type="button" class="btn btn-sm btn-dark fw-bold" onclick="toggleDarkMode()" id="btn-darkmode" title="Modalità Notturna">🌙</button>
+
+                <button type="button" class="btn btn-sm btn-info text-white fw-bold flex-fill" onclick="esportaCSV()" title="Esporta dati in Excel">📊csv</button>
+                <button type="button" class="btn btn-sm btn-danger text-white fw-bold flex-fill" onclick="esportaXFDF()" title="Esporta per Modulo PDF">📑fdf</button>
+                <button type="button" class="btn btn-sm btn-outline-warning fw-bold flex-fill" onclick="scaricaFotoZip(this)" title="Scarica le foto in un archivio ZIP">🖼️zip</button>
+                
+                <button type="button" class="btn btn-sm btn-success text-white fw-bold d-flex align-items-center justify-content-center" onclick="condividiCSV()" title="Condividi">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/>
+                    </svg>
+                </button>
+            </div>
+            
+        </div>
+    </div>
+
+    <div id="area-dati">
+        <div class="row align-items-center mb-2 mx-0">
+            <div class="col-2 text-center">
+                <div id="logo_text">
+                    <img src="icona.png" alt="Logo" style="max-height: 55px; max-width: 100%;">
+                </div>
+            </div>
+            
+        <div class="col-4 d-flex align-items-center flex-wrap gap-2">
+    	<h5 class="text-blue fw-bold mb-0">DATI VIT</h5>
+    	<span id="salvataggio-badge" class="badge bg-success" style="opacity: 0; transition: opacity 0.5s; font-size:0.6rem;">✅Salvato</span>
+	</div>
+            <div class="col-6 text-end">
+                <div class="d-flex flex-wrap justify-content-end align-items-center mb-1">
+                    <span class="me-2 fw-bold text-danger">Data effettuazione:</span>
+                    <input type="date" name="data_verifica" id="data_verifica_obblig" class="form-control" style="width: 120px; background-color: var(--bg-light-blue);" onchange="calcolaProssimaVerifica()">
+                </div>
+                <div class="d-flex flex-wrap justify-content-end align-items-center">
+                    <span class="me-2">verbale VIT n.</span>
+                    <input type="text" name="verbale_n1" class="form-control text-center" style="width: 80px; background-color: var(--bg-light-blue);">
+                </div>
+
+            </div>
+        </div>
+
+        <form id="verificaForm">
+            
+            <div class="section-header bg-dark-blue">DATI DEL COMMITTENTE</div>
+        <div class="bg-light-blue box-border p-2 mb-2 rounded">
+            <div class="row align-items-center mx-0">
+                
+                <div class="col-12 col-md-9 p-0 pr-md-2">
+                    
+                    <div class="d-flex align-items-center flex-nowrap mb-2">
+                        <span class="me-2 fw-bold text-danger" style="min-width: 110px;">Ragione sociale</span>
+                        <input type="text" name="ragione_sociale" id="ragione_sociale_obblig" class="form-control flex-grow-1 bg-white">
+                    </div>
+                    
+                    <div class="d-flex align-items-center flex-nowrap mb-2">
+                        <span class="me-2 fw-bold" style="min-width: 110px;">Città</span>
+                        <input type="text" name="citta_comm" class="form-control flex-grow-1 bg-white">
+                    </div>
+                    
+                    <div class="d-flex align-items-center flex-nowrap mb-2">
+                        <span class="me-2 fw-bold" style="min-width: 110px;">Indirizzo</span>
+                        <input type="text" name="indirizzo_comm" class="form-control flex-grow-1 bg-white">
+                    </div>
+                    
+                </div>
+                
+                <div class="col-12 col-md-3 border border-primary rounded p-2 mt-2 mt-md-0 d-flex align-items-center">
+                    <div class="d-flex flex-wrap justify-content-around w-100 gap-2">
+                        
+                        <div class="form-check d-flex align-items-center m-0">
+                            <input class="form-check-input border-primary" type="radio" name="tipo_verifica" value="biennale" id="ver_bienn" onchange="calcolaProssimaVerifica()">
+                            <label class="form-check-label ms-1 fw-bold" for="ver_bienn">Verifica Biennale</label>
+                        </div>
+                        
+                        <div class="form-check d-flex align-items-center m-0">
+                            <input class="form-check-input border-primary" type="radio" name="tipo_verifica" value="quinquennale" id="ver_quinq" onchange="calcolaProssimaVerifica()">
+                            <label class="form-check-label ms-1 fw-bold" for="ver_quinq">Verifica Quinquennale</label>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+            <div class="section-header bg-dark-green mt-3">Impianto soggetto a verifica</div>
+            <div class="bg-light-green border-green p-2 mb-2 rounded">
+                <div class="row align-items-center mx-0 mb-2">
+                    <div class="col-12 d-flex align-items-center p-0">
+                        <span class="me-2 fw-bold text-danger" style="width: 100px;">Denominazione</span>
+                        <input type="text" name="denominazione_imp" id="denominazione_imp" class="form-control flex-grow-1 bg-white">
+                    </div>
+                </div>
+                <div class="row flex-wrap align-items-center mx-0 gap-2 mb-3">
+                    <div class="d-flex align-items-center flex-grow-1 p-0">
+                        <span class="me-2 fw-bold" style="width: 90px;">Città</span>
+                        <input type="text" name="citta_imp" id="citta_imp" class="form-control bg-white flex-grow-1" style="min-width: 100px;">
+                    </div>
+                    <div class="d-flex align-items-center flex-grow-1 p-0">
+                        <span class="me-2 fw-bold">Indirizzo</span>
+                        <input type="text" name="indirizzo_imp" id="indirizzo_imp" class="form-control bg-white flex-grow-1" style="min-width: 150px;">
+                        <button type="button" class="btn btn-sm btn-outline-primary ms-1 px-2 no-print btn-gps" onclick="trovaPosizione()" title="Trova la mia posizione GPS">📍</button>
+                    </div>
+                    <div class="d-flex align-items-center flex-grow-1 p-0">
+                        <span class="me-2 fw-bold">Uso:</span>
+                        <input type="text" name="locale_uso" class="form-control bg-white flex-grow-1">
+                    </div>
+                </div>
+
+                <div class="border-bottom border-success pb-2 mb-2">
+                        
+                        <div class="d-flex flex-wrap align-items-center justify-content-start gap-1 gap-md-3 mb-2">
+                            
+                            <div class="fw-bold text-success me-1" style="white-space: nowrap;">Dati impianto</div>
+                            
+                            <div class="d-flex align-items-center gap-1 me-1">
+                                <div class="form-check form-check-inline m-0 d-flex align-items-center">
+                                    <input name="sistema" type="radio" value="TT" class="form-check-input border-success" onchange="autoSelezionaArea(this)">
+                                    <label class="form-check-label fw-bold ms-1" style="white-space: nowrap;">TT</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0 d-flex align-items-center">
+                                    <input name="sistema" type="radio" value="TN-S" class="form-check-input border-success" onchange="autoSelezionaArea(this)">
+                                    <label class="form-check-label fw-bold ms-1" style="white-space: nowrap;">TN-S</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0 d-flex align-items-center">
+                                    <input name="sistema" type="radio" value="IT" class="form-check-input border-success" onchange="autoSelezionaArea(this)">
+                                    <label class="form-check-label fw-bold ms-1" style="white-space: nowrap;">IT</label>
+                                </div>
+                            </div>
+                            
+                            <div class="border-start border-success ps-2 d-flex align-items-center gap-1">
+                                <span class="fw-bold text-secondary d-none d-sm-inline">Area:</span>
+                                <div class="form-check form-check-inline m-0 d-flex align-items-center">
+                                    <input name="area" type="radio" value="II" class="form-check-input border-success" onchange="salvataggioIntelligente()">
+                                    <label class="form-check-label ms-1" style="white-space: nowrap;">II (TT)</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0 d-flex align-items-center">
+                                    <input name="area" type="radio" value="III" class="form-check-input border-success" onchange="salvataggioIntelligente()">
+                                    <label class="form-check-label ms-1" style="white-space: nowrap;">III (TN)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap align-items-center justify-content-start gap-2 gap-md-4 mt-2">
+                            
+                            <div class="d-flex align-items-center">
+                                <span class="me-1 fw-bold">POD:</span>
+                                <input type="text" name="pod" class="form-control bg-light px-2 fw-bold text-primary" style="width: 150px;" 
+                                    value="IT001E" 
+                                    onkeydown="if((event.key === 'Backspace' || event.key === 'Delete') && this.selectionStart <= 6) event.preventDefault();"
+                                    oninput="if(!this.value.toUpperCase().startsWith('IT001E')) this.value = 'IT001E'; else this.value = this.value.toUpperCase(); salvataggioIntelligente();"
+                                    onclick="if(this.selectionStart < 6) this.setSelectionRange(this.value.length, this.value.length);">
+                            </div>
+
+                            <div class="d-flex align-items-center">
+                                <span class="me-1 fw-bold">kW:</span>
+                                <input type="number" step="any" inputmode="decimal" name="kw" class="form-control bg-light px-1 text-center" style="width: 40px;" oninput="salvataggioIntelligente()">
+                            </div>
+
+                            <div class="d-flex align-items-center">
+                                <span class="me-1 fw-bold">Volt:</span>
+                                <select name="volt" class="form-select bg-light px-1 text-center" style="width: 60px;" onchange="salvataggioIntelligente()">
+                                    <option value=""></option>
+                                    <option value="230">230</option>
+                                    <option value="380">380</option>
+                                    <option value="400">400</option>
+                                </select>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center justify-content-between flex-nowrap w-100 pt-1 mx-0 mt-2">
+                        
+                        <div class="d-flex align-items-center me-1">
+                            <span class="me-1 fw-bold text-nowrap" title="Tensione Nominale">kV:</span>
+                            <input type="number" step="any" inputmode="decimal" name="tens_nominale" class="form-control bg-light px-1 text-center" style="width: 40px; oninput="salvataggioIntelligente()">
+                        </div>
+                        
+                        <div class="d-flex align-items-center me-1">
+                            <span class="me-1 fw-bold text-nowrap" title="Corrente di Guasto">I<sub>f</sub>(A):</span>
+                            <input type="number" step="any" inputmode="decimal" name="corr_guasto" id="corr_guasto" class="form-control bg-light px-1 text-center" style="width: 50px; oninput="calcolaUc()">
+                        </div>
+                        
+                        <div class="d-flex align-items-center me-1">
+                            <span class="me-1 fw-bold text-nowrap" title="Tempo di Guasto">T<sub>f</sub>(s):</span>
+                            <select name="tempo_guasto" id="tempo_guasto" class="form-select bg-light px-1 text-center" style="width: 50px; padding-right: 15px; background-position: right 0.2rem center;" onchange="autoCompilaTensione(this)">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        
+                        <div class="d-flex align-items-center">
+                            <span class="me-1 fw-bold text-nowrap" title="Tensione di Contatto Limite">U<sub>TP</sub>(V):</span>
+                            <input type="number" step="any" inputmode="decimal" name="tens_contatto" id="tens_contatto" class="form-control bg-light px-1 text-center" style="width: 50px;  oninput="calcolaUc()">
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+<div class="section-header bg-dark-blue">ESAME DOCUMENTALE</div>
+        <div class="bg-light-blue box-border p-2 mb-3 rounded">
+            
+            <div class="border border-primary rounded p-2 mb-2 shadow-sm">
+                <div class="d-flex align-items-center flex-nowrap mb-2">
+                    <div class="form-check m-0 d-flex align-items-center" style="min-width: 100px;">
+                        <input type="checkbox" name="chk_doc_conf" class="form-check-input border-primary me-2" id="chk_dico" onchange="salvataggioIntelligente()">
+                        <label class="form-check-label fw-bold text-primary text-nowrap" for="chk_dico">Di.Co.</label>
+                    </div>
+                    <div class="d-flex align-items-center flex-grow-1">
+                        <span class="me-2 fw-bold text-secondary text-nowrap">il</span>
+                        <input type="date" name="doc_conf_il" class="form-control bg-light px-2 w-100" onchange="salvataggioIntelligente()">
+                    </div>
+                </div>
+                <div class="d-flex align-items-center flex-nowrap">
+                    <span class="me-2 fw-bold text-secondary text-nowrap" style="min-width: 100px; text-align: right;">di</span>
+                    <input type="text" name="doc_conf_da" class="form-control bg-light px-2 w-100" placeholder="Azienda installatrice..." oninput="salvataggioIntelligente()">
+                </div>
+            </div>
+
+            <div class="border border-primary rounded p-2 mb-2 shadow-sm">
+                <div class="d-flex align-items-center flex-nowrap mb-2">
+                    <div class="form-check m-0 d-flex align-items-center" style="min-width: 100px;">
+                        <input type="checkbox" name="chk_doc_risp" class="form-check-input border-primary me-2" id="chk_diri" onchange="salvataggioIntelligente()">
+                        <label class="form-check-label fw-bold text-primary text-nowrap" for="chk_diri">Di.Ri.</label>
+                    </div>
+                    <div class="d-flex align-items-center flex-grow-1">
+                        <span class="me-2 fw-bold text-secondary text-nowrap">il</span>
+                        <input type="date" name="doc_risp_il" class="form-control bg-light px-2 w-100" onchange="salvataggioIntelligente()">
+                    </div>
+                </div>
+                <div class="d-flex align-items-center flex-nowrap">
+                    <span class="me-2 fw-bold text-secondary text-nowrap" style="min-width: 100px; text-align: right;">di</span>
+                    <input type="text" name="doc_risp_da" class="form-control bg-light px-2 w-100" placeholder="Professionista incaricato..." oninput="salvataggioIntelligente()">
+                </div>
+            </div>
+
+            <div class="border border-primary rounded p-2 mb-2 shadow-sm">
+                <div class="d-flex align-items-center flex-nowrap mb-2">
+                    <div class="form-check m-0 d-flex align-items-center" style="min-width: 100px;">
+                        <input type="checkbox" name="chk_doc_prog" class="form-check-input border-primary me-2" id="chk_prog" onchange="salvataggioIntelligente()">
+                        <label class="form-check-label fw-bold text-primary text-nowrap" for="chk_prog">Progetto</label>
+                    </div>
+                    <div class="d-flex align-items-center flex-grow-1">
+                        <span class="me-2 fw-bold text-secondary text-nowrap">il</span>
+                        <input type="date" name="doc_prog_il" class="form-control bg-light px-2 w-100" onchange="salvataggioIntelligente()">
+                    </div>
+                </div>
+                <div class="d-flex align-items-center flex-nowrap">
+                    <span class="me-2 fw-bold text-secondary text-nowrap" style="min-width: 100px; text-align: right;">di</span>
+                    <input type="text" name="doc_prog_da" class="form-control bg-light px-2 w-100" placeholder="Studio tecnico / Progettista..." oninput="salvataggioIntelligente()">
+                </div>
+            </div>
+
+            <div class="border border-primary rounded p-2 mb-2 shadow-sm">
+                <div class="d-flex align-items-center flex-nowrap w-100">
+                    <div class="form-check m-0 d-flex align-items-center" style="min-width: 140px;">
+                        <input type="checkbox" name="chk_inail" class="form-check-input border-primary me-2" id="chk_inail" onchange="salvataggioIntelligente()">
+                        <label class="form-check-label fw-bold text-primary text-nowrap" for="chk_inail">Denuncia INAIL</label>
+                    </div>
+                    <div class="d-flex align-items-center flex-grow-1 mx-1 mx-md-2">
+                        <span class="me-1 fw-bold text-secondary text-nowrap">Matr.</span>
+                        <input type="text" name="inail_matr" class="form-control bg-light px-2 w-100" placeholder="..." oninput="salvataggioIntelligente()">
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="me-1 fw-bold text-secondary text-nowrap">Data</span>
+                        <input type="date" name="inail_data" class="form-control bg-light px-1 text-center" style="width: 130px;" onchange="salvataggioIntelligente()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="border border-primary rounded p-2 shadow-sm mb-2">
+                <div class="d-flex align-items-center flex-nowrap w-100">
+                    <div class="form-check m-0 d-flex align-items-center" style="min-width: 140px;">
+                        <input type="checkbox" name="chk_asl" class="form-check-input border-primary me-2" id="chk_asl" onchange="salvataggioIntelligente()">
+                        <label class="form-check-label fw-bold text-primary text-nowrap" for="chk_asl">Denuncia ASL</label>
+                    </div>
+                    <div class="d-flex align-items-center flex-grow-1 mx-1 mx-md-2">
+                        <span class="me-1 fw-bold text-secondary text-nowrap">Matr.</span>
+                        <input type="text" name="asl_matr" class="form-control bg-light px-2 w-100" placeholder="..." oninput="salvataggioIntelligente()">
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="me-1 fw-bold text-secondary text-nowrap">Data</span>
+                        <input type="date" name="asl_data" class="form-control bg-light px-1 text-center" style="width: 130px;" onchange="salvataggioIntelligente()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-2 pt-2 mt-1 border-top border-primary opacity-75">
+                <div class="d-flex align-items-center justify-content-between flex-nowrap w-100 overflow-hidden">
+                    
+                    <div class="form-check m-0 d-flex align-items-center flex-shrink-1 me-1">
+                        <input class="form-check-input border-primary me-1" type="checkbox" name="doc_schemi" id="chk_schemi" onchange="salvataggioIntelligente()">
+                        <label class="form-check-label fw-bold text-dark text-nowrap" for="chk_schemi">Schemi elettrici</label>
+                    </div>
+
+                    <div class="border-start border-primary opacity-50 d-none d-sm-block mx-1" style="height: 15px;"></div>
+
+                    <div class="form-check m-0 d-flex align-items-center flex-shrink-1 me-1">
+                        <input class="form-check-input border-primary me-1" type="checkbox" name="doc_planimetria" id="chk_plani" onchange="salvataggioIntelligente()">
+                        <label class="form-check-label fw-bold text-dark text-nowrap" for="chk_plani">Planimetria impianto</label>
+                    </div>
+
+                    <div class="border-start border-primary opacity-50 d-none d-sm-block mx-1" style="height: 15px;"></div>
+
+                    <div class="form-check m-0 d-flex align-items-center flex-shrink-1">
+                        <input class="form-check-input border-primary me-1 bg-light-blue" type="checkbox" name="doc_verbale_prec" id="chk_verb" onchange="salvataggioIntelligente()">
+                        <label class="form-check-label fw-bold text-dark text-nowrap" for="chk_verb">Verbale precedente</label>
+                    </div>
+
+                </div>
+		<div class="px-2 pt-2 mt-2 border-top border-primary opacity-75">
+                <div class="d-flex align-items-center flex-nowrap w-100">
+                    <span class="me-2 fw-bold text-dark text-nowrap">Per TN-S: Comunic. dati gestore del</span>
+                    <input type="date" name="tns_comunicazione" class="form-control bg-light px-2" style="width: 140px;" onchange="salvataggioIntelligente()">
+                </div>
+            </div>
+            </div>
+
+        </div>
+            <div class="section-header bg-dark-green mt-3">Esame Strumentale</div>
+            <div class="bg-light-green border-green p-2 mb-2 rounded">
+                <div class="row g-1 align-items-center mx-0 mb-2 border border-success rounded p-2">
+                
+                <div class="col-12 p-0 d-flex align-items-center flex-nowrap w-100" style="overflow-x: auto; white-space: nowrap;">
+                    
+                    <div class="d-flex align-items-center me-3">
+                        <span class="fw-bold me-1 text-success" title="Misura resistenza Terra">R<sub>t</sub>:</span>
+                        <input type="number" step="any" inputmode="decimal" name="misura_resistenza_terra" id="val_resistenza_terra" class="form-control border-success bg-light px-1 text-center" style="width: 50px;" placeholder="&Omega;" oninput="calcolaUc(); salvataggioIntelligente();">
+                    </div>
+                    
+                    <div class="d-flex align-items-center border-start border-success ps-3">
+                        <span class="fw-bold me-2 text-success">Metodo:</span>
+                        
+                        <div class="form-check form-check-inline m-0 d-flex align-items-center me-3">
+                            <input type="radio" name="metodo_misura" id="met_anello" value="Anello Guasto" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()">
+                            <label class="form-check-label text-success fw-bold" for="met_anello">Anello Guasto</label>
+                        </div>
+                        
+                        <div class="form-check form-check-inline m-0 d-flex align-items-center">
+                            <input type="radio" name="metodo_misura" id="met_volt" value="Voltamperometrico" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()">
+                            <label class="form-check-label text-success fw-bold" for="met_volt">Voltamperometrico</label>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+                
+                <div class="row g-1 align-items-center mx-0 mb-2 border border-success rounded p-2">
+    <div class="col-12 p-0 d-flex align-items-center flex-nowrap w-100" style="overflow-x: auto; white-space: nowrap;">
+        
+        <span class="fw-bold me-2 text-success">Sistemi TT:</span> 
+        
+        <div class="form-check form-check-inline d-flex align-items-center m-0 me-2">
+            <input type="radio" name="tt_soddisf" id="tt_ris" value="Risulta" class="form-check-input border-success me-1">
+            <label class="form-check-label fw-bold" for="tt_ris">Risulta</label>
+        </div>
+        
+        <div class="form-check form-check-inline d-flex align-items-center m-0 me-3">
+            <input type="radio" name="tt_soddisf" id="tt_non_ris" value="Non Risulta" class="form-check-input border-success me-1">
+            <label class="form-check-label" for="tt_non_ris">Non Risulta</label>
+        </div>
+        
+        <div class="d-flex align-items-center border-start border-success ps-3">
+            <span class="me-1 fw-bold">U<sub>L</sub> &le;</span>
+            
+            <select id="calc_ul" name="val_ul_scelta" class="form-select border-success text-center bg-light text-danger fw-bold" style="width: 70px; padding-right: 25px;" onchange="salvataggioIntelligente()">
+                <option value="50Volt" selected>50Volt</option>
+                <option value="25Volt">25Volt</option>
+            </select>
+            
+            <span class="ms-1 fw-bold text-secondary">(50V/25V)</span>
+        </div>
+
+    </div>
+</div>
+                
+                <div class="row g-1 align-items-center mx-0 mb-2 border border-success rounded p-2">
+    <div class="col-12 p-0">
+        
+        <div class="d-flex align-items-center flex-nowrap mb-2 w-100" style="overflow-x: auto; white-space: nowrap;">
+            <span class="fw-bold me-2 text-success">Sistemi TN:</span> 
+            
+            <div class="form-check form-check-inline d-flex align-items-center m-0 me-2">
+                <input type="radio" name="tn_soddisf_2" id="tn2_ris" value="Risulta" class="form-check-input border-success me-1">
+                <label class="form-check-label fw-bold text-success" for="tn2_ris">Risulta</label>
+            </div>
+            
+            <div class="form-check form-check-inline d-flex align-items-center m-0">
+                <input type="radio" name="tn_soddisf_2" id="tn2_non_ris" value="Non Risulta" class="form-check-input border-success me-1">
+                <label class="form-check-label fw-bold text-success me-1" for="tn2_non_ris">Non Risulta</label>
+                <span class="ms-2 fw-bold text-dark">U<sub>0</sub> &le; U<sub>tp</sub> e U<sub>0</sub> / Z<sub>s</sub> &le; I<sub>a</sub></span>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center flex-nowrap pt-1 border-top border-success border-opacity-25">
+            <span class="fw-bold text-dark">
+                [U<sub>c</sub> = R<sub>E</sub> x I<sub>E</sub> =
+            </span>
+            <input type="text" id="tn_val_uc" name="tn_val_uc" 
+                   class="form-control bg-light text-center border-success fw-bold ms-1" 
+                   style="width: 70px; height: 30px;" readonly>
+            <strong class="ms-1 text-dark">V]</strong>
+        </div>
+
+    </div>
+</div>
+                
+                <div class="row g-1 align-items-center mx-0">
+                    <div class="col-12 d-flex flex-wrap align-items-center p-0">
+                        <span class="fw-bold me-3">ESITO FINALE:</span>
+                        <div class="form-check form-check-inline bg-transparent px-2 rounded d-flex align-items-center py-1 m-0 border border-success me-2 shadow-sm"><input type="radio" name="esito_globale" value="POSITIVO" class="form-check-input mt-0"><label class="form-check-label fw-bold text-success fs-6">POSITIVO</label></div>
+                        <div class="form-check form-check-inline bg-transparent px-2 rounded d-flex align-items-center py-1 m-0 border border-danger shadow-sm"><input type="radio" name="esito_globale" value="NEGATIVO" class="form-check-input mt-0"><label class="form-check-label fw-bold text-danger fs-6">NEGATIVO</label></div>
+                        
+                        <div class="d-flex flex-wrap align-items-center ms-md-auto mt-2 mt-md-0 w-100 w-md-auto">
+                            <span class="me-2 fw-bold">Tempo (ore):</span>
+                            <input type="number" step="any" inputmode="decimal" name="tempo_impiegato" class="form-control bg-white me-3" style="width: 80px;">
+                            <span class="me-2 mt-2 mt-md-0 fw-bold">Prossima verifica:</span>
+                            <input type="date" name="prossima_verifica" id="prossima_verifica" class="form-control bg-white mt-2 mt-md-0" style="width: 120px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header bg-dark-blue mt-3">Esame a Vista</div>
+        <div class="bg-light-blue box-border p-2 mb-2 rounded">
+            
+            <div class="border border-primary rounded mb-2 p-2 shadow-sm">
+                <div class="fw-bold text-primary mb-1">Sistema disperdente</div>
+                <div class="d-flex align-items-center flex-nowrap gap-2 w-100" style="overflow-x: auto; white-space: nowrap;">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0">
+                        <input type="radio" name="sist_disp_ispez" value="Ispezionabile" class="form-check-input border-primary me-1">
+                        <label class="form-check-label">Ispezionabile</label>
+                    </div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0">
+                        <input type="radio" name="sist_disp_ispez" value="Non Ispezionabile" class="form-check-input border-primary me-1">
+                        <label class="form-check-label text-muted">Non Ispez.</label>
+                    </div>
+                    <div class="border-start border-primary opacity-50 mx-1" style="height: 15px;"></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0">
+                        <input type="radio" name="sist_disp_regol" value="Regolamentare" class="form-check-input border-primary me-1">
+                        <label class="form-check-label">Regolamentare</label>
+                    </div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0">
+                        <input type="radio" name="sist_disp_regol" value="Non Regolamentare" class="form-check-input border-primary me-1">
+                        <label class="form-check-label text-muted">Non Regolam.</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border border-primary rounded mb-2 p-2 shadow-sm">
+ 		<div class="fw-bold text-primary mb-1">Picchetto</div>
+                <div class="d-flex align-items-center flex-nowrap gap-2 w-100" style="overflow-x: auto; white-space: nowrap;">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_tubo" class="form-check-input border-primary me-1"><label class="form-check-label">Tubo</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_profilo" class="form-check-input border-primary me-1"><label class="form-check-label">Profilato</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_mass" class="form-check-input border-primary me-1"><label class="form-check-label">Massiccio</label></div>
+                    <div class="border-start border-primary opacity-50 mx-1" style="height: 15px;"></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_inf_zinc" class="form-check-input border-primary me-1"><label class="form-check-label">Acciaio Zincato</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_inf_rame" class="form-check-input border-primary me-1"><label class="form-check-label">Rame</label></div>
+                </div>
+            </div>
+
+            <div class="border border-primary rounded mb-2 p-2 shadow-sm">
+                <div class="d-flex align-items-center flex-nowrap w-100" style="overflow-x: auto; white-space: nowrap;">
+                    <span class="fw-bold me-3 text-primary">Picchetti N°:</span>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="radio" name="picchetti_num" value="1" class="form-check-input border-primary me-1"><label class="form-check-label fw-bold">1</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="radio" name="picchetti_num" value="2" class="form-check-input border-primary me-1"><label class="form-check-label fw-bold">2</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="radio" name="picchetti_num" value="3" class="form-check-input border-primary me-1"><label class="form-check-label fw-bold">3</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="radio" name="picchetti_num" value="4" class="form-check-input border-primary me-1"><label class="form-check-label fw-bold">4</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="picchetti_num" value="vari" class="form-check-input border-primary me-1"><label class="form-check-label fw-bold">vari</label></div>
+                </div>
+            </div>
+
+            <div class="border border-primary rounded mb-2 p-2 shadow-sm">
+                <div class="fw-bold text-primary mb-1">Per Posa</div>
+                <div class="d-flex align-items-center flex-nowrap gap-2 w-100" style="overflow-x: auto; white-space: nowrap;">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_nastro" class="form-check-input border-primary me-1"><label class="form-check-label">Nastro</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_tondino" class="form-check-input border-primary me-1"><label class="form-check-label">Tondino</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_cordato" class="form-check-input border-primary me-1"><label class="form-check-label">Cordato</label></div>
+                    <div class="border-start border-primary opacity-50 mx-1" style="height: 15px;"></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_posa_zinc" class="form-check-input border-primary me-1"><label class="form-check-label">Acciaio Zincato</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_posa_rame" class="form-check-input border-primary me-1"><label class="form-check-label">Rame</label></div>
+                </div>
+            </div>
+
+            <div class="border border-primary rounded mb-2 p-2 shadow-sm">
+                <div class="fw-bold text-primary mb-1">Nodo/Collettore di terra</div>
+                <div class="d-flex align-items-center flex-nowrap gap-3 w-100" style="overflow-x: auto; white-space: nowrap;">
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="nodo_collettore" value="Acciaio Zincato" class="form-check-input border-primary me-1"><label class="form-check-label">Acciaio Zincato</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="nodo_collettore" value="Morsetto" class="form-check-input border-primary me-1"><label class="form-check-label">Morsetto</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="nodo_collettore" value="Rame" class="form-check-input border-primary me-1"><label class="form-check-label">Rame</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="nodo_collettore" value="Non Identificato" class="form-check-input border-primary me-1"><label class="form-check-label">Non Identificato</label></div>
+                </div>
+            </div>
+
+            <div class="border border-primary rounded p-2 shadow-sm">
+                <div class="d-flex align-items-center flex-nowrap w-100 mb-2">
+                    <span class="fw-bold text-primary me-3 text-nowrap">Stato delle connessioni</span>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0 me-3">
+                        <input type="radio" name="stato_conn" value="idonee" class="form-check-input border-success me-1">
+                        <label class="form-check-label text-success fw-bold">idonee</label>
+                    </div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0">
+                        <input type="radio" name="stato_conn" value="non idonee" class="form-check-input border-danger me-1">
+                        <label class="form-check-label text-danger fw-bold">non idonee</label>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center flex-nowrap w-100 pt-1 border-top border-primary border-opacity-25">
+                    <span class="fw-bold text-primary me-3 text-nowrap">Realizzate con</span>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="checkbox" name="realiz_bulloni" class="form-check-input border-primary me-1"><label class="form-check-label">Bulloni</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="checkbox" name="realiz_morsetti" class="form-check-input border-primary me-1"><label class="form-check-label">Morsetti</label></div>
+                    <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="realiz_capicorda" class="form-check-input border-primary me-1"><label class="form-check-label">Capicorda</label></div>
+                </div>
+            </div>
+
+        </div>
+
+            <div class="section-header bg-dark-green mt-3">Esame Conduttori</div>
+            <div class="bg-light-green border-green p-2 mb-2 rounded">
+                
+                <div class="border border-success rounded mb-2 mx-0 py-2 shadow-sm bg-light-green border-opacity-50">
+    
+    <div class="d-flex align-items-center flex-nowrap px-3 py-1">
+        <span class="text-success fw-bold text-nowrap" style="min-width: 120px;">di Terra:</span>
+        <div class="d-flex align-items-center flex-nowrap gap-3">
+            <div class="form-check m-0 d-flex align-items-center">
+                <input type="radio" name="id_terra" id="terra_ok" value="idonei" class="form-check-input border-success me-1">
+                <label class="form-check-label text-success fw-bold" for="terra_ok">idonei</label>
+            </div>
+            <div class="form-check m-0 d-flex align-items-center">
+                <input type="radio" name="id_terra" id="terra_ko" value="non idonei" class="form-check-input border-danger me-1">
+                <label class="form-check-label text-danger fw-bold" for="terra_ko">non idonei</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="border-top border-success border-opacity-10 mx-3 my-1"></div>
+
+    <div class="d-flex align-items-center flex-nowrap px-3 py-1">
+        <span class="text-success fw-bold text-nowrap" style="min-width: 120px;">di Protezione:</span>
+        <div class="d-flex align-items-center flex-nowrap gap-3">
+            <div class="form-check m-0 d-flex align-items-center">
+                <input type="radio" name="id_prot" id="prot_ok" value="idonei" class="form-check-input border-success me-1">
+                <label class="form-check-label text-success fw-bold" for="prot_ok">idonei</label>
+            </div>
+            <div class="form-check m-0 d-flex align-items-center">
+                <input type="radio" name="id_prot" id="prot_ko" value="non idonei" class="form-check-input border-danger me-1">
+                <label class="form-check-label text-danger fw-bold" for="prot_ko">non idonei</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="border-top border-success border-opacity-10 mx-3 my-1"></div>
+
+    <div class="d-flex align-items-center flex-nowrap px-3 py-1">
+        <span class="text-success fw-bold text-nowrap" style="min-width: 120px;">Giunzioni:</span>
+        <div class="d-flex align-items-center flex-nowrap gap-3">
+            <div class="form-check m-0 d-flex align-items-center">
+                <input type="radio" name="id_giunz" id="giunz_ok" value="idonee" class="form-check-input border-success me-1">
+                <label class="form-check-label text-success fw-bold" for="giunz_ok">idonee</label>
+            </div>
+            <div class="form-check m-0 d-flex align-items-center">
+                <input type="radio" name="id_giunz" id="giunz_ko" value="non idonee" class="form-check-input border-danger me-1">
+                <label class="form-check-label text-danger fw-bold" for="giunz_ko">non idonee</label>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+                <div class="row g-1 mb-2 align-items-stretch mx-0">
+    <div class="col-md-7 d-flex overflow-auto p-0 pe-md-1 mb-2 mb-md-0">
+        <table class="table table-bordered border-success table-sm text-start table-conduttori mb-0 w-100 rounded" style="min-width: 450px;">
+            <tbody>
+                <tr>
+                    <td class="fw-bold border-success text-start" style="white-space: nowrap; width: 1%;">Terra</td>
+                    <td class="border-success" style="white-space: nowrap; width: 1%;">
+                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                            <input type="checkbox" id="ct_isolati" name="ct_isolati" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="ct_isolati">Cavi</label>
+                        </div>
+                    </td>
+                    <td class="border-success" style="white-space: nowrap; width: 1%;">
+                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                            <input type="checkbox" id="ct_rame" name="ct_rame" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="ct_rame">Corde</label>
+                        </div>
+                    </td>
+                    <td class="border-success" style="white-space: nowrap; width: 1%;">
+                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                            <input type="checkbox" id="ct_nastri" name="ct_nastri" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="ct_nastri">Tondi</label>
+                        </div>
+                    </td>
+                    <td class="border-success" style="white-space: nowrap; width: 1%;">
+                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                            <input type="checkbox" id="ct_strutt" name="ct_strutt" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="ct_strutt">Strutturali</label>
+                        </div>
+                    </td>
+                    <td class="align-middle border-success" style="width: 95%;">
+                        <div class="d-flex justify-content-start align-items-center ps-2">
+                            <label class="me-1 mb-0 fw-bold" style="font-size:0.75rem;">Sez.</label>
+                            <input type="number" step="any" inputmode="decimal" name="sez_terra" class="form-control p-0 text-center bg-white" style="width: 50px; height: 1.6rem;" placeholder="mm²">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="fw-bold border-success text-start" style="white-space: nowrap;">PE</td>
+                    <td class="border-success">
+                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                            <input type="checkbox" id="cp_isolati" name="cp_isolati" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="cp_isolati">Cavi</label>
+                        </div>
+                    </td>
+                    <td class="border-success">
+                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                            <input type="checkbox" id="cp_nudi" name="cp_nudi" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="cp_nudi">Nudi</label>
+                        </div>
+                    </td>
+                    <td class="border-success">
+                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                            <input type="checkbox" id="cp_anime" name="cp_anime" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="cp_anime">Anime</label>
+                        </div>
+                    </td>
+                    <td class="border-success">
+                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                            <input type="checkbox" id="cp_involucri" name="cp_involucri" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="cp_involucri">Metallo</label>
+                        </div>
+                    </td>
+                    <td class="align-middle border-success">
+                        <div class="d-flex justify-content-start align-items-center ps-2">
+                            <label class="me-1 mb-0 fw-bold" style="font-size:0.75rem;">Sez.</label>
+                            <input type="number" step="any" inputmode="decimal" name="sez_prot" class="form-control p-0 text-center bg-white" style="width: 50px; height: 1.6rem;" placeholder="mm²">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="fw-bold border-success text-start" style="white-space: nowrap;">EQ.</td>
+                    <td class="border-success">
+                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                            <input type="checkbox" id="ce_isolati" name="ce_isolati" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="ce_isolati">Cavi</label>
+                        </div>
+                    </td>
+                    <td class="border-success">
+                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                            <input type="checkbox" id="ce_nudi" name="ce_nudi" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="ce_nudi">Nudi</label>
+                        </div>
+                    </td>
+                    <td class="border-success">
+                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                            <input type="checkbox" id="ce_richiesti" name="ce_richiesti" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="ce_richiesti">Richiesti</label>
+                        </div>
+                    </td>
+                    <td class="border-success">
+                        <div class="form-check d-inline-flex align-items-center justify-content-start w-100">
+                            <input type="checkbox" id="ce_non_richiesti" name="ce_non_richiesti" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="ce_non_richiesti">Non rich.</label>
+                        </div>
+                    </td>
+                    <td class="align-middle border-success">
+                        <div class="d-flex justify-content-start align-items-center ps-2">
+                            <label class="me-1 mb-0 fw-bold" style="font-size:0.75rem;">Sez.</label>
+                            <input type="number" step="any" inputmode="decimal" name="sez_eq" class="form-control p-0 text-center bg-white" style="width: 50px; height: 1.6rem;" placeholder="mm²">
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+                    <div class="col-md-5 d-flex overflow-auto p-0 ps-md-1">
+                        <table class="table table-bordered border-success table-sm mb-0 w-100 h-100 rounded" style="min-width: 250px;">
+                            <thead>
+                                <tr class="border-success">
+                                    <th class="fw-bold text-start align-middle border-success fs-6 border-end-0">Continuità</th>
+                                    <th class="text-center align-middle border-success border-start-0 border-end-0 fw-normal">Si</th>
+                                    <th class="text-center align-middle border-success border-start-0 border-end-0 fw-normal">No</th>
+                                    <th class="text-center align-middle border-success border-start-0 fw-normal">N/A</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-end align-middle border-success">conduttori e collettori</td>
+                                    <td class="text-center align-middle border-success"><input type="radio" name="cont_cond" value="Si" class="form-check-input border-success m-0 mx-auto d-block"></td>
+                                    <td class="text-center align-middle border-success"><input type="radio" name="cont_cond" value="No" class="form-check-input border-success m-0 mx-auto d-block"></td>
+                                    <td class="text-center align-middle border-success"><input type="radio" name="cont_cond" value="N/A" class="form-check-input border-success m-0 mx-auto d-block"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-end align-middle border-success">equipotenziali supplementari</td>
+                                    <td class="text-center align-middle border-success"><input type="radio" name="cont_eq" value="Si" class="form-check-input border-success m-0 mx-auto d-block"></td>
+                                    <td class="text-center align-middle border-success"><input type="radio" name="cont_eq" value="No" class="form-check-input border-success m-0 mx-auto d-block"></td>
+                                    <td class="text-center align-middle border-success"><input type="radio" name="cont_eq" value="N/A" class="form-check-input border-success m-0 mx-auto d-block"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="border border-success rounded mx-0 py-2 shadow-sm bg-light-green border-opacity-50 mt-2">
+                <div class="d-flex align-items-center flex-nowrap px-3 py-1">
+                    <span class="text-success fw-bold text-nowrap" style="min-width: 110px;">Interruttori adottati:</span>
+                    <div class="d-flex align-items-center flex-nowrap gap-3">
+                        <div class="form-check m-0 d-flex align-items-center">
+                            <input type="checkbox" name="int_diff" id="int_diff" class="form-check-input border-success me-1">
+                            <label class="form-check-label fw-bold" for="int_diff">differenziali</label>
+                        </div>
+                        <div class="form-check m-0 d-flex align-items-center">
+                            <input type="checkbox" name="int_max_corr" id="int_max" class="form-check-input border-success me-1">
+                            <label class="form-check-label fw-bold" for="int_max">max corrente</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-top border-success border-opacity-10 mx-3 my-1"></div>
+
+                <div class="d-flex align-items-center flex-nowrap px-3 py-1">
+                    <span class="text-success fw-bold text-nowrap" style="min-width: 110px;">Condizioni:</span>
+                    <div class="d-flex align-items-center flex-nowrap gap-3" style="overflow-x: auto; white-space: nowrap;">
+                        <div class="form-check m-0 d-flex align-items-center">
+                            <input type="radio" name="condizioni" id="cond_b" value="buone" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="cond_b">buone</label>
+                        </div>
+                        <div class="form-check m-0 d-flex align-items-center">
+                            <input type="radio" name="condizioni" id="cond_d" value="discrete" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="cond_d">discrete</label>
+                        </div>
+                        <div class="form-check m-0 d-flex align-items-center">
+                            <input type="radio" name="condizioni" id="cond_m" value="mediocri" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="cond_m">mediocri</label>
+                        </div>
+                        <div class="form-check m-0 d-flex align-items-center">
+                            <input type="radio" name="condizioni" id="cond_s" value="scarse" class="form-check-input border-success me-1">
+                            <label class="form-check-label" for="cond_s">scarse</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+	<div class="section-header bg-dark-blue mt-3">🔍% di Campionamento e Prova di continuità</div>
+            
+            <div class="bg-light-blue box-border p-2 mb-2 rounded">
+                
+                <div class="row g-1 align-items-center py-2 border border-primary rounded mb-2 mx-0 text-center flex-wrap shadow-sm">
+                    <div class="col-12 d-flex flex-wrap justify-content-center gap-4">
+                        <div class="form-check d-flex align-items-center m-0">
+                            <input type="radio" name="tipo_ambiente" value="Ordinario" class="form-check-input me-2 mt-0" style="width: 1.2rem; height: 1.2rem;">
+                            <label class="form-check-label fw-bold text-primary" style="font-size: 0.85rem;">Ambiente Ordinario</label>
+                        </div>
+                        <div class="form-check d-flex align-items-center m-0">
+                            <input type="radio" name="tipo_ambiente" value="Speciale" class="form-check-input me-2 mt-0" style="width: 1.2rem; height: 1.2rem;">
+                            <label class="form-check-label fw-bold text-primary" style="font-size: 0.85rem;">Ambiente Speciale</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row g-2 align-items-center py-3 border border-primary rounded mx-0 mb-2 flex-wrap">
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between mb-2 mb-md-0 px-md-3">
+                        <span class="me-2 text-start flex-grow-1 fw-bold">Tra dispersore accessibile e collettore:</span>
+                        <div class="d-flex align-items-center">
+                            <select name="perc_disp" class="form-select bg-white text-center perc-dropdown border-primary" style="width: 80px; padding-right: 15px;"></select>
+                            <span class="ms-1 fw-bold fs-6">%</span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between px-md-3 border-md-start border-primary border-sm-top pt-2 pt-md-0">
+                        <span class="me-2 text-start flex-grow-1 fw-bold">Tra collettori di terra:</span>
+                        <div class="d-flex align-items-center">
+                            <select name="perc_coll" class="form-select bg-white text-center perc-dropdown border-primary" style="width: 80px; padding-right: 15px;"></select>
+                            <span class="ms-1 fw-bold fs-6">%</span>
+                        </div>
+                    </div>
+                    <div class="col-12 border-top border-primary my-2 d-none d-md-block"></div>
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between mb-2 mb-md-0 px-md-3 border-sm-top border-primary pt-2 pt-md-0">
+                        <span class="me-2 text-start flex-grow-1 fw-bold">Tra PE ed EQ:</span>
+                        <div class="d-flex align-items-center">
+                            <select name="perc_pe" class="form-select bg-white text-center perc-dropdown border-primary" style="width: 80px; padding-right: 15px;"></select>
+                            <span class="ms-1 fw-bold fs-6">%</span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between px-md-3 border-md-start border-primary border-sm-top pt-2 pt-md-0">
+                        <span class="me-2 text-start flex-grow-1 fw-bold">Tra masse e collettori:</span>
+                        <div class="d-flex align-items-center">
+                            <select name="perc_masse_coll" class="form-select bg-white text-center perc-dropdown border-primary" style="width: 80px; padding-right: 15px;"></select>
+                            <span class="ms-1 fw-bold fs-6">%</span>
+                        </div>
+                    </div>
+                    <div class="col-12 border-top border-primary my-2 d-none d-md-block"></div>
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between px-md-3 border-sm-top border-primary pt-2 pt-md-0">
+                        <span class="me-2 text-start flex-grow-1 fw-bold">Tra masse estranee e verso le masse:</span>
+                        <div class="d-flex align-items-center">
+                            <select name="perc_masse_est" class="form-select bg-white text-center perc-dropdown border-primary" style="width: 80px; padding-right: 15px;"></select>
+                            <span class="ms-1 fw-bold fs-6">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-1 align-items-center py-2 border border-primary rounded mx-0 flex-wrap">
+                    <div class="col-12 d-flex flex-wrap align-items-center gap-2 px-md-2">
+                        <span class="fw-bold me-2 text-primary">Durante la verifica era presente il Sig.:</span>
+                        <input type="text" name="presente_verifica" class="form-control flex-grow-1 bg-white border-primary" style="min-width: 150px;">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="section-header bg-dark-green mt-3">Prova di intervento dei differenziali</div>
+            <div class="bg-light-green border-green p-2 rounded mb-2">
+                <div class="overflow-auto border border-success rounded p-1">
+                    <table class="table table-bordered text-center table-diff border-success mb-0" style="min-width: 600px;">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" class="align-middle bg-light" style="width: 33%;">Quadro</th>
+                                <th rowspan="2" class="align-middle bg-light" style="width: 6%;">No.</th>
+                                <th colspan="4" class="align-middle text-white bg-success">Corrente di intervento (I&Delta;n)</th>
+                                <th rowspan="2" class="align-middle bg-light" style="width: 33%;">Note</th>
+                            </tr>
+                            <tr>
+                                <th class="text-success bg-light border-success">0,03</th><th class="text-success bg-light border-success">0,3</th><th class="text-success bg-light border-success">0,5</th><th class="text-success bg-light border-success">1</th>
+                            </tr>
+                        </thead>
+                        <tbody id="diffTable"></tbody>
+                    </table>
+                </div>
+                
+                <div class="text-end mt-2 no-print">
+                    <button type="button" class="btn btn-sm btn-success fw-bold px-3 shadow-sm" onclick="addRow()">+ Aggiungi Riga</button>
+                </div>
+            </div>
+
+            <div class="section-header bg-dark-blue mt-3">
+                <span>Rilievi / Non Conformità</span>
+                <div class="no-print ms-auto">
+                    <button type="button" class="btn btn-sm btn-outline-light py-0 px-2 fw-bold" onclick="document.getElementById('importaNC').click()" title="Aggiorna libreria da CSV">📥 Importa CSV Libreria NC</button>
+                    <input type="file" id="importaNC" style="display:none" accept=".csv" onchange="gestisciImportazioneNC(event)">
+                </div>
+            </div>
+            <div class="bg-light-blue box-border p-2 rounded mb-2">
+                <div class="overflow-auto border border-primary rounded p-1">
+                    <table class="table table-bordered text-center table-diff border-primary mb-0" style="min-width: 600px;">
+                        <thead>
+                            <tr>
+                                <th class="align-middle bg-light border-primary" style="width: 5%;">N°</th>
+                                <th class="align-middle text-white bg-primary border-primary" style="width: 45%;">Descrizione Rilievo / Non Conformità</th>
+                                <th class="align-middle bg-light border-primary" style="width: 50%;">Note / Adeguamento</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ncTable"></tbody>
+                    </table>
+                </div>
+                
+                <div class="text-end mt-2 no-print">
+                    <button type="button" class="btn btn-sm btn-primary fw-bold px-3 shadow-sm" onclick="addNCRow()">+ Aggiungi Rilievo</button>
+                </div>
+            </div>
+
+            <datalist id="lista-nc">
+            </datalist>
+        </form>
+    </div> 
+    
+    <div class="text-center mt-4 border-top pt-4 pb-4 d-flex justify-content-center flex-wrap gap-3" id="area-bottoni">
+        <button type="button" class="btn btn-sm btn-warning fw-bold shadow-sm no-print" onclick="nuovoVerbale()">
+            🔄 Svuota VIT
+        </button>
+        <button type="button" class="btn btn-sm btn-danger fw-bold shadow-sm no-print" onclick="avviaProcessoStampa()">
+            🖨️ Stampa / Salva PDF
+        </button>
+    </div>
+
+</div>
+
+<script>
+   // --- 1. MOTORE OFFLINE ---
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('sw.js').then(function(registration) {
+                console.log('App pronta per l\'uso Offline!');
+            });
+        });
+    }
+    
+    // --- GARBAGE COLLECTOR (Netturbino Foto) ---
+    async function pulisciFotoOrfane() {
+        try {
+            let keys = await idbKeyval.keys();
+            let archivio = await idbKeyval.get('vit_archivio_dati') || {};
+            let stringaArchivio = Object.values(archivio).join(""); 
+            let stringaBackup = localStorage.getItem('verbaleVIT_backup') || "";
+            let tuttoIlTesto = stringaArchivio + stringaBackup;
+            
+            let orfane = 0;
+            for (let key of keys) {
+                if (key.startsWith('foto_') && !tuttoIlTesto.includes(key)) {
+                    await idbKeyval.del(key);
+                    orfane++;
+                }
+            }
+            if(orfane > 0) console.log(`Pulizia: rimosse ${orfane} foto orfane.`);
+        } catch(e) { console.error(e); }
+    }
+
+    // --- NUOVO VERBALE ---
+    function nuovoVerbale() {
+        if(confirm("📄 Vuoi iniziare un NUOVO verbale?\n\n⚠️ Attenzione: tutti i dati attuali non salvati in Archivio andranno persi!")) {
+            localStorage.removeItem('verbaleVIT_backup');
+            location.reload();
+        }
+    }
+
+    // --- CRUSCOTTO STATISTICHE RAPIDE ---
+    async function mostraStatistiche() {
+        let archivio = await idbKeyval.get('vit_archivio_dati') || {};
+        let totali = 0, positivi = 0, negativi = 0;
+        let dateVerifiche = [];
+
+        for (let nome in archivio) {
+            totali++;
+            let html = archivio[nome];
+            if (html.includes('name="esito_globale" value="POSITIVO" checked')) positivi++;
+            else if (html.includes('name="esito_globale" value="NEGATIVO" checked')) negativi++;
+
+            let matchData = html.match(/name="data_verifica"[^>]*value="([^"]*)"/);
+            if (matchData && matchData[1]) dateVerifiche.push(new Date(matchData[1]));
+        }
+
+        if (totali === 0) { alert("📊 Nessun verbale presente in archivio."); return; }
+
+        let ultimaDataStr = "N/D";
+        if (dateVerifiche.length > 0) {
+            let maxDate = new Date(Math.max.apply(null, dateVerifiche));
+            ultimaDataStr = maxDate.toLocaleDateString('it-IT');
+        }
+
+        const modalHtml = `
+            <div class="modal fade show no-print" id="statsModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" aria-modal="true" role="dialog">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-dark">
+                  <div class="modal-header bg-dark-blue text-white py-2">
+                    <h5 class="modal-title fw-bold m-0">📈 Statistiche Archivio</h5>
+                  </div>
+                  <div class="modal-body text-center py-4">
+                    <h2 class="text-primary fw-bold mb-4">${totali} <span class="fs-6 fw-normal text-dark">Verbali in Memoria</span></h2>
+                    <div class="d-flex justify-content-around mb-4">
+                        <div class="p-2 border border-success rounded bg-light-green w-100 mx-1 shadow-sm">
+                            <h3 class="text-success m-0 fw-bold">${positivi}</h3><small class="text-success fw-bold">POSITIVI</small>
+                        </div>
+                        <div class="p-2 border border-danger rounded bg-pink-light w-100 mx-1 shadow-sm">
+                            <h3 class="text-danger m-0 fw-bold">${negativi}</h3><small class="text-danger fw-bold">NEGATIVI</small>
+                        </div>
+                    </div>
+                    <p class="mb-0 text-muted">Ultima ispezione registrata il: <strong class="text-dark">${ultimaDataStr}</strong></p>
+                  </div>
+                  <div class="modal-footer py-2 justify-content-center bg-light">
+                    <button type="button" class="btn btn-secondary fw-bold shadow-sm" onclick="document.getElementById('statsModal').remove()">Chiudi</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    // --- MACCHINA DEL TEMPO (Calcolo Prossima Verifica) ---
+    function calcolaProssimaVerifica() {
+        const dataInizioStr = document.getElementById('data_verifica_obblig').value;
+        const tipoVerificaElems = document.getElementsByName('tipo_verifica');
+        const campoProssima = document.getElementById('prossima_verifica');
+        
+        let tipoSelezionato = null;
+        for (let radio of tipoVerificaElems) {
+            if (radio.checked) { tipoSelezionato = radio.value; break; }
+        }
+
+        if (dataInizioStr && tipoSelezionato) {
+            let data = new Date(dataInizioStr);
+            // Calcola la data in base alla periodicità normativa
+            if (tipoSelezionato === 'biennale') { 
+                data.setFullYear(data.getFullYear() + 2); 
+            } else if (tipoSelezionato === 'quinquennale') { 
+                data.setFullYear(data.getFullYear() + 5); 
+            } 
+            
+            let anno = data.getFullYear();
+            let mese = ("0" + (data.getMonth() + 1)).slice(-2);
+            let giorno = ("0" + data.getDate()).slice(-2);
+            campoProssima.value = `${anno}-${mese}-${giorno}`;
+        }
+        salvataggioIntelligente();
+    }
+
+    // --- DARK MODE ---
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        document.getElementById('btn-darkmode').innerHTML = isDark ? '☀️' : '🌙';
+        localStorage.setItem('vit_darkmode', isDark);
+    }
+    function applicaDarkMode() {
+        if(localStorage.getItem('vit_darkmode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('btn-darkmode').innerHTML = '☀️';
+        }
+    }
+
+    // --- TABELLA CEI 99-3 E VALIDAZIONE SEMAFORO ---
+    const tabellaCEI99_3 = {
+        "0,01": "790", "0,02": "770", "0,03": "750", "0,04": "732", "0,05": "716", "0,06": "703", "0,07": "690", "0,08": "677", "0,09": "666",
+        "0,1": "654", "0,11": "643", "0,12": "632", "0,13": "621", "0,14": "610", "0,15": "599", "0,16": "587", "0,17": "574", "0,18": "562", "0,19": "549",
+        "0,2": "537", "0,21": "522", "0,22": "508", "0,23": "493", "0,24": "479", "0,25": "464", "0,26": "451", "0,27": "437", "0,28": "424", "0,29": "410",
+        "0,3": "397", "0,31": "386", "0,32": "374", "0,33": "363", "0,34": "351", "0,35": "340", "0,36": "330", "0,37": "321", "0,38": "311", "0,39": "302",
+        "0,4": "292", "0,41": "284", "0,42": "276", "0,43": "268", "0,44": "260", "0,45": "252", "0,46": "246", "0,47": "239", "0,48": "233", "0,49": "226",
+        "0,5": "220", "0,51": "215", "0,52": "211", "0,53": "206", "0,54": "202", "0,55": "197", "0,56": "194", "0,57": "190", "0,58": "187", "0,59": "183",
+        "0,6": "180", "0,61": "177", "0,62": "175", "0,63": "172", "0,64": "170", "0,65": "167", "0,66": "165", "0,67": "163", "0,68": "161", "0,69": "159",
+        "0,7": "157", "0,71": "155", "0,72": "154", "0,73": "153", "0,74": "150", "0,75": "148", "0,76": "146", "0,77": "144", "0,78": "143", "0,79": "141",
+        "0,8": "139", "0,81": "138", "0,82": "137", "0,83": "135", "0,84": "134", "0,85": "133", "0,86": "132", "0,87": "131", "0,88": "129", "0,89": "128",
+        "0,9": "127", "1": "117", "1,1": "114", "1,2": "111", "1,3": "108", "1,4": "105", "1,5": "102", "1,6": "101", "1,7": "100", "1,8": "98", "1,9": "97",
+        "2": "96", "2,2": "95", "2,4": "94", "2,6": "92", "2,8": "91", "3": "90", "3,67": "89", "4,3": "87", "5": "86", "7": "85", "10": "85", ">10": "80"
+    };
+
+    function popolaSelectTF() {
+        const selectTF = document.getElementById('tempo_guasto');
+        if(!selectTF) return;
+        selectTF.innerHTML = '<option value=""></option>';
+        for (let tf in tabellaCEI99_3) {
+            let option = document.createElement('option');
+            option.value = tf; option.textContent = tf;
+            selectTF.appendChild(option);
+        }
+    }
+
+    function autoCompilaTensione(selectElement) {
+        const tf = selectElement.value;
+        const tensioneInput = document.getElementById('tens_contatto');
+        if (tabellaCEI99_3[tf]) { tensioneInput.value = tabellaCEI99_3[tf]; } else { tensioneInput.value = ""; }
+        calcolaUc();
+    }
+
+    function calcolaUc() {
+        const iGuasto = parseFloat(document.getElementById('corr_guasto').value) || 0;
+        const rTerra = parseFloat(document.getElementById('val_resistenza_terra').value) || 0;
+        const calcField = document.getElementById('tn_val_uc');
+        const tensContattoStr = document.getElementById('tens_contatto').value;
+        const tensContatto = parseFloat(tensContattoStr.replace(',', '.')) || 0;
+
+        if (iGuasto > 0 && rTerra > 0) {
+            let uc = iGuasto * rTerra;
+            calcField.value = uc.toFixed(2);
+            
+            if (tensContatto > 0) {
+                if (uc <= tensContatto) {
+                    calcField.classList.remove('bg-warning', 'bg-danger', 'text-dark');
+                    calcField.classList.add('bg-success', 'text-white');
+                    document.querySelector('input[name="tn_soddisf_2"][value="Risulta"]').checked = true;
+                } else {
+                    calcField.classList.remove('bg-warning', 'bg-success', 'text-dark');
+                    calcField.classList.add('bg-danger', 'text-white');
+                    document.querySelector('input[name="tn_soddisf_2"][value="Non Risulta"]').checked = true;
+                }
+            } else {
+                calcField.className = "form-control bg-warning text-center border-0 text-dark fw-bold ms-1 transition-all";
+            }
+        } else {
+            calcField.value = "";
+            calcField.className = "form-control bg-warning text-center border-0 text-dark fw-bold ms-1 transition-all";
+        }
+        salvataggioIntelligente();
+    }
+
+// --- AUTODETECTION AREA DA SISTEMA TT/TN ---
+    function autoSelezionaArea(radioSistema) {
+        const checkAreaII = document.querySelector('input[name="area"][value="II"]');
+        const checkAreaIII = document.querySelector('input[name="area"][value="III"]');
+        
+        if (!checkAreaII || !checkAreaIII) return;
+
+        if (radioSistema.value === 'TT') {
+            checkAreaII.checked = true;
+        } else if (radioSistema.value === 'TN-S') {
+            checkAreaIII.checked = true;
+        } 
+        // Se viene selezionato 'IT', i radio rimangono come sono 
+        // lasciando la scelta libera all'utente.
+        
+        salvataggioIntelligente();
+    }
+
+    // --- GPS E DETTATURA ---
+    function trovaPosizione() {
+        if (!navigator.geolocation) { alert("⚠️ Il browser non supporta la geolocalizzazione."); return; }
+        const btnGps = document.querySelector('.btn-gps');
+        const originalIcon = btnGps.innerHTML;
+        btnGps.innerHTML = '⏳';
+        navigator.geolocation.getCurrentPosition(position => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data && data.address) {
+                        const citta = data.address.city || data.address.town || data.address.village || "";
+                        const via = data.address.road || "";
+                        const civico = data.address.house_number || "";
+                        if (citta) document.getElementById('citta_imp').value = citta;
+                        if (via) document.getElementById('indirizzo_imp').value = via + " " + civico;
+                        salvataggioIntelligente(); btnGps.innerHTML = originalIcon;
+                    }
+                }).catch(() => btnGps.innerHTML = originalIcon);
+        }, () => btnGps.innerHTML = originalIcon);
+    }
+
+    function avviaDettatura(btn) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) { alert("⚠️ Dettatura non supportata."); return; }
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'it-IT';
+        const textarea = btn.parentElement.querySelector('textarea');
+        const originalIcon = btn.innerHTML;
+        
+        recognition.onstart = () => btn.innerHTML = '🔴';
+        recognition.onresult = (event) => {
+            textarea.value += (textarea.value ? " " : "") + event.results[0][0].transcript;
+            salvataggioIntelligente(); 
+        };
+        recognition.onerror = () => btn.innerHTML = originalIcon;
+        recognition.onend = () => btn.innerHTML = originalIcon;
+        recognition.start();
+    }
+
+    // --- HELPERS BLOB ---
+    function canvasToBlobAsync(canvas, mimeType='image/jpeg', quality=0.6) {
+        return new Promise(resolve => canvas.toBlob(resolve, mimeType, quality));
+    }
+
+    // --- GESTIONE FOTO E DISEGNO ---
+    async function gestisciFoto(input) {
+        const file = input.files[0];
+        if (!file) return;
+        let geolocData = "";
+        
+        const scatta = () => {
+             const reader = new FileReader();
+             reader.onload = async function(e) {
+                 const img = new Image();
+                 img.onload = async function() {
+                     const canvas = input.parentElement.parentElement.querySelector('.foto-canvas'); 
+                     const MAX_WIDTH = 800; 
+                     let width = img.width; let height = img.height;
+                     if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                     canvas.width = width; canvas.height = height;
+                     const ctx = canvas.getContext('2d');
+                     ctx.drawImage(img, 0, 0, width, height);
+                     
+                     const d = new Date();
+                     const dataOra = d.toLocaleString('it-IT');
+                     ctx.font = "bold 16px Arial";
+                     ctx.fillStyle = "#FFEB3B"; 
+                     ctx.shadowColor = "black";
+                     ctx.shadowBlur = 4;
+                     ctx.fillText(dataOra, 10, height - 15);
+                     if(geolocData) {
+                         ctx.font = "12px Arial";
+                         ctx.fillText(geolocData, 10, height - 35);
+                     }
+                     
+                     canvas.style.display = 'block';
+                     
+                     let fotoId = canvas.getAttribute('data-foto-id');
+                     if (!fotoId) {
+                         fotoId = 'foto_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                         canvas.setAttribute('data-foto-id', fotoId);
+                     }
+                     
+                     // Reset undo history for new photo
+                     canvas.undoHistory = [canvas.toDataURL()];
+                     const undoBtn = canvas.parentElement.querySelector('.btn-undo');
+                     if(undoBtn) undoBtn.style.display = 'none';
+
+                     const blob = await canvasToBlobAsync(canvas);
+                     await idbKeyval.set(fotoId, blob);
+                     
+                     abilitareDisegno(canvas);
+                     salvataggioIntelligente(); 
+                 }
+                 img.src = e.target.result;
+             }
+             reader.readAsDataURL(file);
+        };
+
+        if (navigator.geolocation) {
+             const options = { enableHighAccuracy: false, timeout: 3000, maximumAge: 10000 };
+             navigator.geolocation.getCurrentPosition(
+                 (pos) => {
+                     geolocData = `Lat: ${pos.coords.latitude.toFixed(5)} Lon: ${pos.coords.longitude.toFixed(5)}`;
+                     scatta();
+                 },
+                 (err) => { scatta(); },
+                 options
+             );
+        } else { scatta(); }
+    }
+
+    function abilitareDisegno(canvas) {
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        
+        if(!canvas.undoHistory) { canvas.undoHistory = [canvas.toDataURL()]; }
+        
+        const undoBtn = canvas.parentElement.querySelector('.btn-undo');
+        if(undoBtn && canvas.undoHistory.length > 1) undoBtn.style.display = 'flex';
+
+        function getPos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let clientX = evt.clientX; let clientY = evt.clientY;
+            if(evt.touches && evt.touches.length > 0) {
+                clientX = evt.touches[0].clientX; clientY = evt.touches[0].clientY;
+            }
+            return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+        }
+
+        function startDraw(e) {
+            isDrawing = true; const pos = getPos(e);
+            ctx.beginPath(); ctx.moveTo(pos.x, pos.y); e.preventDefault();
+        }
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = getPos(e);
+            ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.strokeStyle = 'red';
+            ctx.lineTo(pos.x, pos.y); ctx.stroke(); e.preventDefault();
+        }
+        async function endDraw() {
+            if(isDrawing) {
+                isDrawing = false;
+                canvas.undoHistory.push(canvas.toDataURL());
+                if(canvas.undoHistory.length > 10) canvas.undoHistory.shift();
+                
+                if(undoBtn) undoBtn.style.display = 'flex';
+
+                let fotoId = canvas.getAttribute('data-foto-id');
+                if (fotoId) {
+                    const blob = await canvasToBlobAsync(canvas);
+                    await idbKeyval.set(fotoId, blob);
+                    salvataggioIntelligente();
+                }
+            }
+        }
+        canvas.onmousedown = startDraw; canvas.onmousemove = draw; canvas.onmouseup = endDraw; canvas.onmouseout = endDraw;
+        canvas.ontouchstart = startDraw; canvas.ontouchmove = draw; canvas.ontouchend = endDraw;
+    }
+
+    // UNDO: GOMMA PER LE FOTO IN-MEMORY
+    async function undoCanvas(btn) {
+        const canvas = btn.parentElement.querySelector('canvas');
+        if(canvas && canvas.undoHistory && canvas.undoHistory.length > 1) {
+            canvas.undoHistory.pop(); 
+            const previousState = canvas.undoHistory[canvas.undoHistory.length - 1]; 
+            
+            const img = new Image();
+            img.onload = async function() {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0); 
+                
+                if(canvas.undoHistory.length <= 1) btn.style.display = 'none';
+                
+                let fotoId = canvas.getAttribute('data-foto-id');
+                if (fotoId) {
+                    const blob = await canvasToBlobAsync(canvas);
+                    await idbKeyval.set(fotoId, blob);
+                    salvataggioIntelligente();
+                }
+            };
+            img.src = previousState;
+        }
+    }
+
+    // RIPRISTINO DELLE FOTO SALVATE (CON FIX APPLE/IOS)
+    async function ripristinaCanvas() {
+        const canvases = document.querySelectorAll('canvas.foto-canvas');
+        for (const canvas of canvases) {
+            const fotoId = canvas.getAttribute('data-foto-id');
+            if (fotoId) {
+                try {
+                    let dataImg = await idbKeyval.get(fotoId);
+                    if (dataImg) {
+                        if (dataImg instanceof Blob) {
+                            dataImg = await new Promise(r => {
+                                const reader = new FileReader();
+                                reader.onloadend = () => r(reader.result);
+                                reader.readAsDataURL(dataImg);
+                            });
+                        }
+                        const img = new Image();
+                        img.crossOrigin = "Anonymous";
+                        
+                        img.onload = function() {
+                            canvas.width = img.width; canvas.height = img.height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0);
+                            canvas.style.display = 'block';
+                            abilitareDisegno(canvas);
+                        };
+                        img.src = dataImg;
+                    } else { canvas.style.display = 'none'; }
+                } catch(err) { console.error("Errore recupero foto:", err); }
+            }
+        }
+    }
+
+    // --- LIBRERIA NC DINAMICA ---
+    let libreriaNC_Dinamica = [];
+    function inizializzaLibreria() {
+        let salvata = localStorage.getItem('libreriaNC_custom');
+        if (salvata) { libreriaNC_Dinamica = JSON.parse(salvata); } 
+        else {
+            libreriaNC_Dinamica = [
+                { desc: "Non è stata esibita la documentazione tecnica dell’impianto", pres: "Mettere a disposizione dichiarazione di conformità, schemi e verbali." },
+                { desc: "Documentazione tecnica incompleta o non aggiornata", pres: "Aggiornare la documentazione tecnica." },
+                { desc: "Quadro elettrico con pannelli rotti, no protezione contatti diretti", pres: "Sostituire i pannelli danneggiati con elementi originali." },
+                { desc: "Moduli liberi privi di coprifori, riduzione IP", pres: "Installare idonei elementi di chiusura modulari." },
+                { desc: "Quadro elettrico accesso a parti attive", pres: "Provvedere all’immediata messa in sicurezza." },
+                { desc: "Quadri non accessibili", pres: "Rendere accessibili" },
+                { desc: "Scarsa pulizia / polvere nel quadro", pres: "Pulizia e verifica" },
+                { desc: "Differenziali non funzionanti", pres: "Sostituire i dispositivi non conformi." },
+                { desc: "Dispersori non accessibili / privi di pozzetti", pres: "Realizzare idonei punti di ispezione." },
+                { desc: "Nodo equipotenziale non ispezionabile", pres: "Rendere accessibile il nodo equipotenziale." },
+                { desc: "Valore di resistenza di terra non compatibile", pres: "Adeguare l’impianto di terra e ripetere le misure." }
+            ];
+        }
+        popolaDatalistNC();
+    }
+
+    function popolaDatalistNC() {
+        const datalistNC = document.getElementById('lista-nc');
+        datalistNC.innerHTML = '';
+        libreriaNC_Dinamica.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.desc;
+            datalistNC.appendChild(option);
+        });
+    }
+
+    function gestisciImportazioneNC(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const text = e.target.result;
+            const rows = text.split(/\r?\n/);
+            let nuovaLibreria = [];
+            const separator = text.indexOf(';') > -1 ? ';' : ',';
+            for(let i=1; i<rows.length; i++) {
+                if(rows[i].trim() === '') continue;
+                const re = new RegExp(`${separator}(?=(?:(?:[^"]*"){2})*[^"]*$)`);
+                const cols = rows[i].split(re).map(c => c.replace(/^"|"$/g, '').trim());
+                if(cols.length > 5) nuovaLibreria.push({ desc: cols[3], pres: cols[5] });
+                else if(cols.length >= 2) nuovaLibreria.push({ desc: cols[0], pres: cols[1] });
+            }
+            if(nuovaLibreria.length > 0) {
+                localStorage.setItem('libreriaNC_custom', JSON.stringify(nuovaLibreria));
+                libreriaNC_Dinamica = nuovaLibreria;
+                popolaDatalistNC();
+                alert(`✅ Libreria aggiornata! (${nuovaLibreria.length} voci)`);
+            } else { alert('❌ Formato CSV non riconosciuto.'); }
+        };
+        reader.readAsText(file, 'UTF-8');
+        event.target.value = '';
+    }
+
+    function autoCompilaNC(input) {
+        const desc = input.value;
+        const match = libreriaNC_Dinamica.find(item => item.desc === desc);
+        if (match) {
+            const textarea = input.closest('tr').querySelector('textarea[name="nc_note[]"]');
+            if(textarea && !textarea.value.trim()) { textarea.value = match.pres; }
+        }
+        salvataggioIntelligente();
+    }
+
+    document.querySelectorAll('.perc-dropdown').forEach(select => {
+        let optionsHtml = '<option value=""></option>';
+        for(let i = 100; i >= 0; i -= 5) optionsHtml += `<option value="${i}%">${i}%</option>`;
+        select.innerHTML = optionsHtml;
+    });
+
+    // --- TABELLE DINAMICHE ---
+    function addRow() {
+        const tbody = document.getElementById('diffTable');
+        if(!tbody) return;
+        const tr = document.createElement('tr');
+        tr.className = "diff-row";
+        tr.innerHTML = `
+            <td class="border-success p-1"><input type="text" name="diff_quadro[]" class="form-control border-0 bg-transparent text-center w-100"></td>
+            <td class="border-success p-1"><input type="number" step="any" inputmode="decimal" name="diff_no[]" class="form-control border-0 bg-transparent text-center w-100"></td>
+            <td class="align-middle border-success"><input type="checkbox" name="diff_003[]" class="form-check-input m-0 border-success"></td>
+            <td class="align-middle border-success"><input type="checkbox" name="diff_03[]" class="form-check-input m-0 border-success"></td>
+            <td class="align-middle border-success"><input type="checkbox" name="diff_05[]" class="form-check-input m-0 border-success"></td>
+            <td class="align-middle border-success"><input type="checkbox" name="diff_1[]" class="form-check-input m-0 border-success"></td>
+            <td class="border-success p-1">
+                <div class="d-flex align-items-center gap-1">
+                    <input type="text" name="diff_note[]" class="form-control border-0 bg-transparent w-100">
+                    <button type="button" class="btn btn-sm btn-outline-danger border-0 no-print btn-cestino px-1 py-0" onclick="this.closest('tr').remove(); salvataggioIntelligente();">🗑️</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    }
+
+    function addNCRow() {
+        const tbody = document.getElementById('ncTable');
+        if(!tbody) return;
+        const rowCount = tbody.children.length + 1;
+        const tr = document.createElement('tr');
+        tr.className = "nc-row";
+        tr.innerHTML = `
+            <td class="align-middle border-primary fw-bold text-primary">${rowCount}</td>
+            <td class="border-primary p-1 text-start">
+                <input type="text" name="nc_descrizione[]" class="form-control border-0 bg-transparent w-100 text-start mb-1" list="lista-nc" placeholder="Scrivi o seleziona difetto..." oninput="autoCompilaNC(this)">
+                <div class="d-flex gap-1 mb-1 w-100 no-print">
+                    <label class="btn btn-sm btn-outline-primary flex-grow-1 m-0" title="Scatta dalla fotocamera">
+                        📸 Scatta <input type="file" class="d-none" accept="image/*" capture="environment" onchange="gestisciFoto(this)">
+                    </label>
+                    <label class="btn btn-sm btn-outline-secondary flex-grow-1 m-0" title="Scegli dalla galleria">
+                        🖼️ Galleria <input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)">
+                    </label>
+                </div>
+                <div class="canvas-container no-print">
+                    <button type="button" class="btn-undo no-print" onclick="undoCanvas(this)" title="Annulla ultimo tratto" style="display:none;">↩️</button>
+                    <canvas class="foto-canvas"></canvas>
+                </div>
+            </td>
+            <td class="border-primary p-1">
+                <div class="d-flex align-items-start gap-1 h-100">
+                    <textarea name="nc_note[]" class="form-control border-0 bg-transparent w-100" rows="3" placeholder="Note..."></textarea>
+                    <div class="d-flex flex-column gap-1">
+                        <button type="button" class="btn btn-sm btn-outline-secondary border-0 no-print btn-mic px-1 py-0" onclick="avviaDettatura(this)" title="Dettatura vocale">🎙️</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger border-0 no-print btn-cestino px-1 py-0" onclick="this.closest('tr').remove(); salvataggioIntelligente();">🗑️</button>
+                    </div>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    }
+
+    // --- SALVATAGGIO INTELLIGENTE ---
+    function fissaValoriHTML() {
+        document.getElementById('area-dati').querySelectorAll('input, select, textarea').forEach(el => {
+            if (el.type === 'checkbox' || el.type === 'radio') {
+                if (el.checked) el.setAttribute('checked', 'checked'); else el.removeAttribute('checked');
+            } else if (el.type !== 'file') {
+                el.setAttribute('value', el.value);
+                if(el.tagName.toLowerCase() === 'textarea') el.innerHTML = el.value;
+                if (el.tagName.toLowerCase() === 'select') {
+                    Array.from(el.options).forEach(opt => {
+                        if (opt.value === el.value) opt.setAttribute('selected', 'selected'); else opt.removeAttribute('selected');
+                    });
+                }
+            }
+        });
+    }
+
+    let timerSalvataggio;
+    let hasUnsavedChanges = false;
+    
+    function salvataggioIntelligente() {
+        hasUnsavedChanges = true;
+        clearTimeout(timerSalvataggio);
+        timerSalvataggio = setTimeout(() => {
+            aggiornaEsitoGlobale(); 
+            fissaValoriHTML();
+            localStorage.setItem('verbaleVIT_backup', document.getElementById('area-dati').innerHTML);
+            hasUnsavedChanges = false;
+            
+            let badge = document.getElementById('salvataggio-badge');
+            if(badge) {
+                badge.style.opacity = '1';
+                setTimeout(() => badge.style.opacity = '0', 1500);
+            }
+        }, 600); 
+    }
+
+    window.addEventListener('beforeunload', function (e) {
+        if (hasUnsavedChanges) { e.preventDefault(); e.returnValue = ''; }
+    });
+
+    function aggiornaEsitoGlobale() {
+        let isNegativo = false;
+        if (document.querySelector('input[name="tn_soddisf_2"][value="Non Risulta"]')?.checked) isNegativo = true;
+        if (document.querySelector('input[name="tt_soddisf"][value="Non Risulta"]')?.checked) isNegativo = true;
+        document.querySelectorAll('input[name="nc_descrizione[]"]').forEach(el => { if (el.value.trim() !== "") isNegativo = true; });
+
+        const radPositivo = document.querySelector('input[name="esito_globale"][value="POSITIVO"]');
+        const radNegativo = document.querySelector('input[name="esito_globale"][value="NEGATIVO"]');
+
+        if (isNegativo) {
+            if(radNegativo && !radNegativo.checked) radNegativo.checked = true;
+        } else {
+            const denom = document.getElementById('denominazione_imp').value;
+            if(denom && radPositivo && !radPositivo.checked && !radNegativo.checked) radPositivo.checked = true;
+        }
+    }
+
+    function riattivaEventi() {
+        document.getElementById('corr_guasto').addEventListener('input', calcolaUc);
+        document.getElementById('tens_contatto').addEventListener('input', calcolaUc);
+        document.getElementById('area-dati').addEventListener('input', salvataggioIntelligente);
+        document.getElementById('area-dati').addEventListener('change', salvataggioIntelligente);
+    }
+
+    // --- ARCHIVIO INDEXEDDB ---
+    async function migraArchivio() {
+        let vecchioArchivio = localStorage.getItem('verbaleVIT_archivio');
+        if (vecchioArchivio) {
+            let parsed = JSON.parse(vecchioArchivio);
+            await idbKeyval.set('vit_archivio_dati', parsed);
+            localStorage.removeItem('verbaleVIT_archivio');
+        }
+    }
+
+    async function aggiornaSelectArchivio() {} // Vuoto intenzionalmente
+
+    async function apriModaleArchivio() {
+        let archivio = await idbKeyval.get('vit_archivio_dati') || {};
+        let listaNomi = Object.keys(archivio).sort((a, b) => b.localeCompare(a)); 
+        let listaHtml = listaNomi.map(nome => `
+            <div class="archivio-item d-flex justify-content-between align-items-center border-bottom py-2 px-1" data-nome="${nome.replace(/"/g, '&quot;')}">
+                <span class="fw-bold text-truncate me-2" style="max-width: 65%; font-size: 0.85rem;">${nome}</span>
+                <div class="d-flex gap-1 flex-shrink-0">
+                    <button class="btn btn-sm btn-success py-0 px-2 fw-bold" onclick="caricaDaArchivio('${nome.replace(/'/g, "\\'")}')">📂</button>
+                    <button class="btn btn-sm btn-danger py-0 px-2 fw-bold" onclick="eliminaDaArchivio('${nome.replace(/'/g, "\\'")}', this)">🗑️</button>
+                </div>
+            </div>
+        `).join('');
+
+        if(listaNomi.length === 0) listaHtml = `<p class="text-muted text-center mt-3">L'archivio è vuoto.</p>`;
+        const modalHtml = `
+            <div class="modal fade show no-print" id="archivioModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" aria-modal="true" role="dialog">
+              <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content text-dark">
+                  <div class="modal-header bg-dark-blue text-white py-2">
+                    <h5 class="modal-title fw-bold m-0">🗂️ Archivio Verbali</h5>
+                    <button type="button" class="btn-close btn-close-white" onclick="document.getElementById('archivioModal').remove()"></button>
+                  </div>
+                  <div class="modal-body p-2 p-md-3">
+                    <input type="text" id="ricercaArchivio" class="form-control mb-3 border-primary shadow-sm" placeholder="🔍 Cerca..." onkeyup="filtraArchivio()">
+                    <div id="listaVerbali" class="overflow-auto border rounded p-1 bg-white" style="max-height: 50vh;">${listaHtml}</div>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    function filtraArchivio() {
+        let filtro = document.getElementById('ricercaArchivio').value.toLowerCase();
+        document.querySelectorAll('.archivio-item').forEach(item => {
+            let testo = item.getAttribute('data-nome').toLowerCase();
+            item.style.display = testo.includes(filtro) ? "flex" : "none";
+        });
+    }
+
+    async function salvaInArchivio() {
+        fissaValoriHTML();
+        let denominazione = document.getElementById('denominazione_imp').value || "SenzaNome";
+        let dataVerb = document.getElementById('data_verifica_obblig').value || new Date().toLocaleDateString('it-IT');
+        let nomeSuggerito = `${denominazione} - ${dataVerb}`;
+        let nome = prompt("Nome verbale da salvare:", nomeSuggerito);
+        if (!nome) return;
+        
+        let archivio = await idbKeyval.get('vit_archivio_dati') || {};
+        archivio[nome] = document.getElementById('area-dati').innerHTML;
+        await idbKeyval.set('vit_archivio_dati', archivio);
+        alert(`✅ Verbale "${nome}" salvato!`);
+    }
+
+    async function duplicaVerbale() {
+        let denominazione = document.getElementById('denominazione_imp').value || "Copia";
+        let nome = prompt("Duplica e salva come:", `${denominazione} - Copia`);
+        if (!nome) return;
+        fissaValoriHTML();
+        
+        let containerClone = document.getElementById('area-dati').cloneNode(true);
+        let canvases = containerClone.querySelectorAll('canvas.foto-canvas');
+        for(let canvas of canvases) {
+            let oldId = canvas.getAttribute('data-foto-id');
+            if(oldId) {
+                let newId = 'foto_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                canvas.setAttribute('data-foto-id', newId);
+                let base64 = await idbKeyval.get(oldId);
+                if(base64) await idbKeyval.set(newId, base64);
+            }
+        }
+        let archivio = await idbKeyval.get('vit_archivio_dati') || {};
+        archivio[nome] = containerClone.innerHTML;
+        await idbKeyval.set('vit_archivio_dati', archivio);
+        alert(`✅ Duplicato salvato come "${nome}"!`);
+    }
+
+    async function caricaDaArchivio(nome) {
+        if(!confirm(`Vuoi caricare "${nome}"?\nI dati attuali andranno persi.`)) return;
+        let archivio = await idbKeyval.get('vit_archivio_dati') || {};
+        if (archivio[nome]) {
+            document.getElementById('area-dati').innerHTML = archivio[nome];
+            riattivaEventi(); 
+            await ripristinaCanvas(); 
+            salvataggioIntelligente(); 
+            let modale = document.getElementById('archivioModal');
+            if (modale) modale.remove();
+        }
+    }
+    
+    async function eliminaDaArchivio(nome, btnElement) {
+        if (confirm(`🗑️ Eliminare "${nome}"?`)) {
+            let archivio = await idbKeyval.get('vit_archivio_dati') || {};
+            const contenutoHtml = archivio[nome];
+            if(contenutoHtml) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(contenutoHtml, 'text/html');
+                const fotoIds = Array.from(doc.querySelectorAll('canvas')).map(c => c.getAttribute('data-foto-id')).filter(id => id);
+                for (const id of fotoIds) { await idbKeyval.del(id); }
+            }
+            delete archivio[nome];
+            await idbKeyval.set('vit_archivio_dati', archivio);
+            if (btnElement) btnElement.closest('.archivio-item').remove();
+        }
+    }
+
+    // --- DB & ESPORTAZIONE ---
+    async function esportaDB() {
+        let archivio = await idbKeyval.get('vit_archivio_dati') || {};
+        if (Object.keys(archivio).length === 0) { alert("L'archivio è vuoto."); return; }
+        let backupData = { archivio: archivio, immagini: {} };
+
+        for (let nome in archivio) {
+            let tempDiv = document.createElement('div');
+            tempDiv.innerHTML = archivio[nome];
+            let canvases = tempDiv.querySelectorAll('canvas.foto-canvas');
+            
+            for(let canvas of canvases) {
+                let fotoId = canvas.getAttribute('data-foto-id');
+                if(fotoId && !backupData.immagini[fotoId]) {
+                    let dataImg = await idbKeyval.get(fotoId);
+                    if(dataImg) {
+                        if (dataImg instanceof Blob) {
+                            backupData.immagini[fotoId] = await new Promise(r => {
+                                const reader = new FileReader();
+                                reader.onloadend = () => r(reader.result);
+                                reader.readAsDataURL(dataImg);
+                            });
+                        } else { backupData.immagini[fotoId] = dataImg; }
+                    }
+                }
+            }
+        }
+        let blob = new Blob([JSON.stringify(backupData)], {type: "application/json"});
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "Backup_Verbali_VIT_" + new Date().toISOString().split('T')[0] + ".json";
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    }
+
+    function importaDB() { document.getElementById('importaFile').click(); }
+
+    function eseguiImportazione(event) {
+        let file = event.target.files[0];
+        if (!file) return;
+        let reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                let data = JSON.parse(e.target.result);
+                let archivioDaImportare = (data.archivio && data.immagini) ? data.archivio : data;
+                if (data.immagini) {
+                    for (let fotoId in data.immagini) { await idbKeyval.set(fotoId, data.immagini[fotoId]); }
+                }
+                let archivioAttuale = await idbKeyval.get('vit_archivio_dati') || {};
+                Object.assign(archivioAttuale, archivioDaImportare);
+                await idbKeyval.set('vit_archivio_dati', archivioAttuale);
+                alert("✅ Database ripristinato con successo!");
+            } catch(err) { alert("❌ Errore file: " + err.message); }
+        };
+        reader.readAsText(file);
+        event.target.value = ''; 
+    }
+
+    function getNomeFileEsportazione() {
+        let denom = document.getElementById('denominazione_imp') ? document.getElementById('denominazione_imp').value : "";
+        let dataV = document.getElementById('data_verifica_obblig') ? document.getElementById('data_verifica_obblig').value : "";
+        return denom ? `${denom} - ${dataV}` : "Esportazione_VIT";
+    }
+
+    // --- GESTIONE STAMPA E PDF (SCELTA UTENTE) ---
+    function avviaProcessoStampa() {
+        const dataObblig = document.getElementById('data_verifica_obblig');
+        const ragSocialeObblig = document.getElementById('ragione_sociale_obblig');
+        const denomObblig = document.getElementById('denominazione_imp');
+        
+        let err = false;
+        if (!dataObblig || !dataObblig.value) { if(dataObblig) dataObblig.classList.add('campo-errore'); err = true; } else dataObblig.classList.remove('campo-errore');
+        if (!ragSocialeObblig || !ragSocialeObblig.value) { if(ragSocialeObblig) ragSocialeObblig.classList.add('campo-errore'); err = true; } else ragSocialeObblig.classList.remove('campo-errore');
+        if (!denomObblig || !denomObblig.value) { if(denomObblig) denomObblig.classList.add('campo-errore'); err = true; } else denomObblig.classList.remove('campo-errore');
+
+        if (err) { 
+            alert("⚠️ Compila la Data, Ragione Sociale e Denominazione evidenziate in rosso!"); 
+            return; 
+        }
+
+        // Se non ci sono errori, apre il modale di scelta
+        scegliTipoStampa();
+    }
+
+    function scegliTipoStampa() {
+        const modalHtml = `
+            <div class="modal fade show no-print" id="stampaModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" aria-modal="true" role="dialog">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-dark">
+                  <div class="modal-header bg-dark-blue text-white py-2">
+                    <h5 class="modal-title fw-bold m-0">🖨️ Opzioni di Stampa</h5>
+                    <button type="button" class="btn-close btn-close-white" onclick="document.getElementById('stampaModal').remove()"></button>
+                  </div>
+                  <div class="modal-body text-center py-4">
+                    <p class="mb-4">Scegli come desideri esportare il verbale:</p>
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-danger fw-bold shadow-sm py-2" onclick="document.getElementById('stampaModal').remove(); eseguiStampaPDF();">
+                            📄 Genera PDF
+                            <div class="fs-6 fw-normal"><small>Formato A4</small></div>
+                        </button>
+                        <button class="btn btn-secondary fw-bold shadow-sm py-2" onclick="document.getElementById('stampaModal').remove(); eseguiStampaBase();">
+                            🖨️ Stampa Nativa (Browser)
+                            <div class="fs-6 fw-normal"><small>Stampa di sistema classica</small></div>
+                        </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    async function eseguiStampaPDF() {
+        if (typeof window.html2pdf === 'undefined') {
+            alert("⚠️ La libreria html2pdf non è caricata. Verrà forzata la stampa di sistema.");
+            eseguiStampaBase(); return;
+        }
+
+        const btnOriginale = document.querySelector('button[onclick="avviaProcessoStampa()"]');
+        const testoOriginaleBtn = btnOriginale ? btnOriginale.innerHTML : '';
+        if(btnOriginale) btnOriginale.innerHTML = "⏳ Generazione in corso...";
+
+        try {
+            fissaValoriHTML();
+            await ripristinaCanvas();
+
+            const elemHide = document.querySelectorAll('.no-print');
+            elemHide.forEach(el => el.style.display = 'none');
+            document.body.classList.add('fase-stampa');
+
+            const elementoDaStampare = document.getElementById('area-dati');
+            const nomeFilePulito = getNomeFileEsportazione().replace(/[\/\\]/g, '-');
+
+            const opt = {
+                margin:       [10, 5, 15, 5],
+                filename:     nomeFilePulito + '.pdf',
+                image:        { type: 'jpeg', quality: 0.95 },
+                html2canvas:  { scale: 1, useCORS: true, logging: false },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            await window.html2pdf().set(opt).from(elementoDaStampare).save();
+        } catch(e) {
+            console.error(e);
+            alert("❌ Limite di memoria del dispositivo.\nAvvio la stampa nativa di emergenza.");
+            eseguiStampaBase();
+        } finally {
+            document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
+            document.body.classList.remove('fase-stampa');
+            if(btnOriginale) btnOriginale.innerHTML = testoOriginaleBtn;
+        }
+    }
+
+    function eseguiStampaBase() {
+        const btnArea = document.getElementById('area-bottoni');
+        const btnStrumenti = document.getElementById('barra-strumenti');
+        if(btnArea) btnArea.style.display = 'none'; 
+        if(btnStrumenti) btnStrumenti.style.display = 'none';
+        document.querySelectorAll('.btn-cestino, .btn-mic, .btn-gps').forEach(btn => btn.style.display = 'none');
+        
+        const titoloOriginale = document.title;
+        document.title = getNomeFileEsportazione().replace(/[\/\\]/g, '-');
+        
+        window.print();
+        
+        setTimeout(() => {
+            document.title = titoloOriginale; 
+            if(btnArea) btnArea.style.display = 'flex'; 
+            if(btnStrumenti) btnStrumenti.style.display = 'flex';
+            document.querySelectorAll('.btn-cestino, .btn-mic, .btn-gps').forEach(btn => btn.style.display = 'inline-block');
+        }, 1500);
+    }
+
+    // --- AVVIO APP BLINDATO ---
+    window.onload = async function() {
+        applicaDarkMode();
+        popolaSelectTF(); 
+        inizializzaLibreria(); 
+        
+        try {
+            // 1. Esegue la migrazione bloccando il resto dell'app
+            await migraArchivio();
+            
+            // 2. SOLO SE la migrazione ha avuto successo al 100%, avvia il netturbino
+            await pulisciFotoOrfane();
+            
+        } catch (errore) {
+            console.error("⚠️ Errore critico in avvio: la pulizia foto è stata disabilitata per sicurezza.", errore);
+            // In caso di errore, il netturbino NON parte, salvando le foto da cancellazioni accidentali!
+        }
+
+        const backup = localStorage.getItem('verbaleVIT_backup');
+        if (backup) {
+            document.getElementById('area-dati').innerHTML = backup;
+            await ripristinaCanvas();
+        } else {
+            for(let i=0; i<6; i++) addRow();
+            for(let i=0; i<2; i++) addNCRow();
+        }
+        riattivaEventi();
+    };
+</script>
+</body>
+</html>
+, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Verifica 462/01 - VIT</title>
     <link rel="manifest" href="manifest.json">
     <link href="./bootstrap.min.css" rel="stylesheet">
