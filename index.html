@@ -497,34 +497,47 @@
 
                 <div class="row g-1 mb-2 align-items-stretch mx-0">
                     <div class="col-md-7 d-flex overflow-auto p-0 pe-md-1 mb-2 mb-md-0">
-                        <table class="table table-bordered border-primary table-sm text-start table-conduttori mb-0 w-100 rounded shadow-sm" style="min-width: 450px;">
-                            <tbody>
-                                <tr>
-                                    <td class="fw-bold border-primary text-start" style="white-space: nowrap; width: 1%;">Terra</td>
-                                    <td class="border-primary" style="white-space: nowrap; width: 1%;"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="ct_isolati" name="ct_isolati" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="ct_isolati">Cavi</label></div></td>
-                                    <td class="border-primary" style="white-space: nowrap; width: 1%;"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="ct_rame" name="ct_rame" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="ct_rame">Corde</label></div></td>
-                                    <td class="border-primary" style="white-space: nowrap; width: 1%;"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="ct_nastri" name="ct_nastri" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="ct_nastri">Tondi</label></div></td>
-                                    <td class="border-primary" style="white-space: nowrap; width: 1%;"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="ct_strutt" name="ct_strutt" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="ct_strutt">Strutturali</label></div></td>
-                                    <td class="align-middle border-primary" style="width: 95%;"><div class="d-flex justify-content-start align-items-center ps-2"><label class="me-1 mb-0 fw-bold" style="font-size:0.75rem;">Sez.</label><input type="number" step="any" inputmode="decimal" name="sez_terra" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold border-primary text-start" style="white-space: nowrap;">PE</td>
-                                    <td class="border-primary"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="cp_isolati" name="cp_isolati" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="cp_isolati">Cavi</label></div></td>
-                                    <td class="border-primary"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="cp_nudi" name="cp_nudi" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="cp_nudi">Nudi</label></div></td>
-                                    <td class="border-primary"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="cp_anime" name="cp_anime" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="cp_anime">Anime</label></div></td>
-                                    <td class="border-primary"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="cp_involucri" name="cp_involucri" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="cp_involucri">Metallo</label></div></td>
-                                    <td class="align-middle border-primary"><div class="d-flex justify-content-start align-items-center ps-2"><label class="me-1 mb-0 fw-bold" style="font-size:0.75rem;">Sez.</label><input type="number" step="any" inputmode="decimal" name="sez_prot" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold border-primary text-start" style="white-space: nowrap;">EQ.</td>
-                                    <td class="border-primary"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="ce_isolati" name="ce_isolati" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="ce_isolati">Cavi</label></div></td>
-                                    <td class="border-primary"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="ce_nudi" name="ce_nudi" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="ce_nudi">Nudi</label></div></td>
-                                    <td class="border-primary"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="ce_richiesti" name="ce_richiesti" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="ce_richiesti">Richiesti</label></div></td>
-                                    <td class="border-primary"><div class="form-check d-inline-flex align-items-center justify-content-start w-100"><input type="checkbox" id="ce_non_richiesti" name="ce_non_richiesti" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="ce_non_richiesti">Non rich.</label></div></td>
-                                    <td class="align-middle border-primary"><div class="d-flex justify-content-start align-items-center ps-2"><label class="me-1 mb-0 fw-bold" style="font-size:0.75rem;">Sez.</label><input type="number" step="any" inputmode="decimal" name="sez_eq" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                       
+<table class="table table-bordered border-primary table-sm text-start table-conduttori mb-0 w-100 rounded shadow-sm" style="min-width: 400px;">
+    <tbody>
+        <tr class="bg-light">
+            <td class="fw-bold border-primary text-end align-middle" style="white-space: nowrap; width: 1%;">Cond.</td>
+            <td class="fw-bold border-primary text-center align-middle" style="white-space: nowrap; width: 1%;">Cavi</td>
+            <td class="fw-bold border-primary text-center align-middle" style="white-space: nowrap; width: 1%;">Corde</td>
+            <td class="fw-bold border-primary text-start align-middle" style="white-space: nowrap; width: 1%;">Tipo</td>
+            <td class="fw-bold border-primary text-start align-middle" style="white-space: nowrap; width: 1%;">Tipo</td>
+            <td class="fw-bold border-primary text-start align-middle" style="white-space: nowrap; width: 95%;">Sezione</td>
+        </tr>
+
+        <tr>
+            <td class="fw-bold border-primary text-end align-middle" style="white-space: nowrap;">Terra</td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="ct_isolati" name="ct_isolati" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="ct_rame" name="ct_rame" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="ct_nastri" name="ct_nastri" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="ct_nastri">Tondi</label></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="ct_strutt" name="ct_strutt" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="ct_strutt">Strutturali</label></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start ps-1"><input type="number" step="any" inputmode="decimal" name="sez_terra" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
+        </tr>
+
+        <tr>
+            <td class="fw-bold border-primary text-end align-middle" style="white-space: nowrap;">PE</td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="cp_isolati" name="cp_isolati" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="cp_nudi" name="cp_nudi" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="cp_anime" name="cp_anime" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="cp_anime">Anime</label></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="cp_involucri" name="cp_involucri" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="cp_involucri">Metallo</label></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start ps-1"><input type="number" step="any" inputmode="decimal" name="sez_prot" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
+        </tr>
+
+        <tr>
+            <td class="fw-bold border-primary text-end align-middle" style="white-space: nowrap;">EQ.</td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="ce_isolati" name="ce_isolati" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="ce_nudi" name="ce_nudi" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="ce_richiesti" name="ce_richiesti" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="ce_richiesti">Richiesti</label></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="ce_non_richiesti" name="ce_non_richiesti" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="ce_non_richiesti">Non Richiesti</label></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start ps-1"><input type="number" step="any" inputmode="decimal" name="sez_eq" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
+        </tr>
+    </tbody>
+</table>
+
                     </div>
                     <div class="col-md-5 d-flex overflow-auto p-0 ps-md-1">
                         <table class="table table-bordered border-primary table-sm mb-0 w-100 h-100 rounded shadow-sm" style="min-width: 250px;">
@@ -737,12 +750,12 @@
     <div class="col-12 d-flex flex-nowrap align-items-center justify-content-start gap-2 p-0" style="overflow-x: auto;">
         
         <div class="d-flex align-items-center flex-shrink-0">
-            <span class="me-1 fw-bold text-nowrap">Tempo (h):</span>
+            <span class="me-1 fw-bold text-nowrap">Tempo (ore):</span>
             <input type="number" step="any" inputmode="decimal" name="tempo_impiegato" class="form-control border-success fw-bold text-center px-1" style="width: 50px;" oninput="salvataggioIntelligente()">
         </div>
         
         <div class="d-flex align-items-center flex-shrink-0 ms-1">
-            <span class="me-1 fw-bold text-nowrap">Prossima vit:</span>
+            <span class="me-1 fw-bold text-nowrap">Prossima verifica:</span>
             <input type="date" name="prossima_verifica" id="prossima_verifica" class="form-control border-success fw-bold px-1" style="width: 100px;" onchange="salvataggioIntelligente()">
         </div>
         
@@ -755,7 +768,7 @@
 
     <div class="text-center mt-4 no-print pb-5" id="area-bottoni">
         <button type="button" class="btn btn-warning fw-bold px-4 shadow me-2" onclick="nuovoVerbale()">🔄Svuota</button>
-        <button type="button" class="btn btn-danger fw-bold px-5 shadow" onclick="avviaProcessoStampa()">🖨️ PDF</button>
+        <button type="button" class="btn btn-danger fw-bold px-5 shadow" onclick="avviaProcessoStampa()">🖨️ Stampa/Salva PDF</button>
     </div>
 
 </div>
