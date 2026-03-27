@@ -156,8 +156,8 @@
                 <button type="button" class="btn btn-sm btn-warning fw-bold text-dark btn-tool" onclick="duplicaVerbale()" title="Duplica">🗺️</button>
                 <button type="button" class="btn btn-sm btn-outline-primary fw-bold btn-tool" onclick="nuovoVerbale()" title="Nuovo">✍️</button>
                 <button type="button" class="btn btn-sm btn-info text-white fw-bold btn-tool" onclick="mostraStatistiche()" title="Statistiche">📈</button>
-                <button type="button" class="btn btn-sm btn-secondary fw-bold btn-tool-sm" onclick="esportaDB()">📤 DB</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary fw-bold btn-tool-sm" onclick="importaDB()">📥 DB</button>
+                <button type="button" class="btn btn-sm btn-secondary fw-bold btn-tool" onclick="esportaDB()">📤</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary fw-bold btn-tool" onclick="importaDB()">📥</button>
                 <button type="button" class="btn btn-sm btn-dark fw-bold btn-tool" onclick="toggleDarkMode()" id="btn-darkmode">🌙</button>
                 <button type="button" class="btn btn-sm btn-info text-white fw-bold btn-tool-sm" onclick="esportaCSV()">📊csv</button>
                 <button type="button" class="btn btn-sm btn-danger text-white fw-bold btn-tool-sm" onclick="esportaXFDF()">📑fdf</button>
@@ -416,30 +416,56 @@
             <div class="bg-light-blue box-border p-2 mb-2 rounded">
                 
                 <div class="border border-primary rounded mb-2 mx-0 py-2 shadow-sm border-opacity-50">
-                    <div class="d-flex align-items-center flex-nowrap px-3 py-1">
-                        <span class="fw-bold text-nowrap" style="min-width: 120px;">di Terra:</span>
-                        <div class="d-flex align-items-center flex-nowrap gap-3">
-                            <div class="form-check m-0 d-flex align-items-center"><input type="radio" name="id_terra" id="terra_ok" value="idonei" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="terra_ok">idonei</label></div>
-                            <div class="form-check m-0 d-flex align-items-center"><input type="radio" name="id_terra" id="terra_ko" value="non idonei" class="form-check-input border-danger me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold text-danger" for="terra_ko">non idonei</label></div>
-                        </div>
-                    </div>
-                    <div class="border-top border-primary border-opacity-10 mx-3 my-1"></div>
-                    <div class="d-flex align-items-center flex-nowrap px-3 py-1">
-                        <span class="fw-bold text-nowrap" style="min-width: 120px;">di Protezione:</span>
-                        <div class="d-flex align-items-center flex-nowrap gap-3">
-                            <div class="form-check m-0 d-flex align-items-center"><input type="radio" name="id_prot" id="prot_ok" value="idonei" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="prot_ok">idonei</label></div>
-                            <div class="form-check m-0 d-flex align-items-center"><input type="radio" name="id_prot" id="prot_ko" value="non idonei" class="form-check-input border-danger me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold text-danger" for="prot_ko">non idonei</label></div>
-                        </div>
-                    </div>
-                    <div class="border-top border-primary border-opacity-10 mx-3 my-1"></div>
-                    <div class="d-flex align-items-center flex-nowrap px-3 py-1">
-                        <span class="fw-bold text-nowrap" style="min-width: 120px;">Giunzioni:</span>
-                        <div class="d-flex align-items-center flex-nowrap gap-3">
-                            <div class="form-check m-0 d-flex align-items-center"><input type="radio" name="id_giunz" id="giunz_ok" value="idonee" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="giunz_ok">idonee</label></div>
-                            <div class="form-check m-0 d-flex align-items-center"><input type="radio" name="id_giunz" id="giunz_ko" value="non idonee" class="form-check-input border-danger me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold text-danger" for="giunz_ko">non idonee</label></div>
-                        </div>
-                    </div>
+    <div class="row m-0 align-items-center g-1">
+        
+        <div class="col-12 col-md-4 d-flex align-items-center flex-nowrap px-2 py-1">
+            <span class="fw-bold text-nowrap" style="min-width: 95px;">di Terra:</span>
+            <div class="d-flex align-items-center flex-nowrap gap-2">
+                <div class="form-check m-0 d-flex align-items-center">
+                    <input type="radio" name="id_terra" id="terra_ok" value="idonei" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()">
+                    <label class="form-check-label fw-bold" for="terra_ok">idonei</label>
                 </div>
+                <div class="form-check m-0 d-flex align-items-center">
+                    <input type="radio" name="id_terra" id="terra_ko" value="non idonei" class="form-check-input border-danger me-1" onchange="salvataggioIntelligente()">
+                    <label class="form-check-label fw-bold text-danger" for="terra_ko">non idonei</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 d-md-none border-top border-primary border-opacity-10 my-1"></div>
+
+        <div class="col-12 col-md-4 d-flex align-items-center flex-nowrap px-2 py-1 border-md-start">
+            <span class="fw-bold text-nowrap" style="min-width: 95px;">di Protezione:</span>
+            <div class="d-flex align-items-center flex-nowrap gap-2">
+                <div class="form-check m-0 d-flex align-items-center">
+                    <input type="radio" name="id_prot" id="prot_ok" value="idonei" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()">
+                    <label class="form-check-label fw-bold" for="prot_ok">idonei</label>
+                </div>
+                <div class="form-check m-0 d-flex align-items-center">
+                    <input type="radio" name="id_prot" id="prot_ko" value="non idonei" class="form-check-input border-danger me-1" onchange="salvataggioIntelligente()">
+                    <label class="form-check-label fw-bold text-danger" for="prot_ko">non idonei</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 d-md-none border-top border-primary border-opacity-10 my-1"></div>
+
+        <div class="col-12 col-md-4 d-flex align-items-center flex-nowrap px-2 py-1 border-md-start">
+            <span class="fw-bold text-nowrap" style="min-width: 95px;">Giunzioni:</span>
+            <div class="d-flex align-items-center flex-nowrap gap-2">
+                <div class="form-check m-0 d-flex align-items-center">
+                    <input type="radio" name="id_giunz" id="giunz_ok" value="idonee" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()">
+                    <label class="form-check-label fw-bold" for="giunz_ok">idonee</label>
+                </div>
+                <div class="form-check m-0 d-flex align-items-center">
+                    <input type="radio" name="id_giunz" id="giunz_ko" value="non idonee" class="form-check-input border-danger me-1" onchange="salvataggioIntelligente()">
+                    <label class="form-check-label fw-bold text-danger" for="giunz_ko">non idonee</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 
                 <div class="row g-1 mb-2 align-items-stretch mx-0">
                     <div class="col-md-7 d-flex overflow-auto p-0 pe-md-1 mb-2 mb-md-0">
@@ -677,7 +703,7 @@
                 <div class="border-top border-success border-opacity-25 my-2 mx-1"></div>
 
                 <div class="row align-items-center mx-0 mt-3">
-                    <div class="col-12 d-flex flex-nowrap align-items-center justify-content-start gap-2 p-0" style="overflow-x: auto;">
+    <div class="col-12 d-flex flex-nowrap align-items-center justify-content-start gap-2 p-0" style="overflow-x: auto;">
         
         <div class="d-flex align-items-center flex-shrink-0">
             <span class="me-1 fw-bold text-nowrap">Tempo (ore):</span>
@@ -697,7 +723,7 @@
     </div>
 
     <div class="text-center mt-4 no-print pb-5" id="area-bottoni">
-        <button type="button" class="btn btn-warning fw-bold px-4 shadow me-2" onclick="nuovoVerbale()">🔄 Svuota</button>
+        <button type="button" class="btn btn-warning fw-bold px-4 shadow me-2" onclick="nuovoVerbale()">🔄Svuota</button>
         <button type="button" class="btn btn-danger fw-bold px-5 shadow" onclick="avviaProcessoStampa()">🖨️ Stampa/Salva PDF</button>
     </div>
 
@@ -1472,6 +1498,7 @@
             catch (e) { console.error("Operazione in background fallita (Sicurezza attivata).", e); }
         }, 1500);
     };
+
 // --- ESPORTAZIONE CSV, XFDF, ZIP E CONDIVISIONE ---
 
     // Funzione helper per estrarre tutti i dati compilati nel form
