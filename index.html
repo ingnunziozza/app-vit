@@ -1472,7 +1472,149 @@
             catch (e) { console.error("Operazione in background fallita (Sicurezza attivata).", e); }
         }, 1500);
     };
+// --- ESPORTAZIONE CSV, XFDF, ZIP E CONDIVISIONE ---
 
+    // Funzione helper per estrarre tutti i dati compilati nel form
+    function estraiDatiForm() {
+        let dati = {};
+        document.getElementById('area-dati').querySelectorAll('input, select, textarea').forEach(el => {
+            let nome = el.name || el.id;
+            if (!nome) return;
+            
+            if (el.type === 'checkbox' || el.type === 'radio') {
+                if (el.checked) {
+                    if (nome.endsWith('[]')) {
+                        if (!dati[nome]) dati[nome] = [];
+                        dati[nome].push(el.value || 'Si');
+                    } else {
+                        dati[nome] = el.value;
+                    }
+                }
+            } else {
+                if (nome.endsWith('[]')) {
+                    if (!dati[nome]) dati[nome] = [];
+                    dati[nome].push(el.value);
+                } else {
+                    dati[nome] = el.value;
+                }
+            }
+        });
+        return dati;
+    }
+
+    // 1. Esporta in CSV (Excel)
+    function esportaCSV() {
+        let dati = estraiDatiForm();
+        let csvContent = "Campo;Valore\n";
+        for (let key in dati) {
+            let val = Array.isArray(dati[key]) ? dati[key].join(' | ') : dati[key];
+            if(val !== undefined && val !== null) {
+                csvContent += `"${key}";"${String(val).replace(/"/g, '""')}"\n`;
+            }
+        }
+        let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".csv";
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    }
+
+    // 2. Condividi File (Solo su dispositivi che lo supportano, es. Mobile)
+    function condividiCSV() {
+        let dati = estraiDatiForm();
+        let csvContent = "Campo;Valore\n";
+        for (let key in dati) {
+            let val = Array.isArray(dati[key]) ? dati[key].join(' | ') : dati[key];
+            if(val !== undefined && val !== null) csvContent += `"${key}";"${String(val).replace(/"/g, '""')}"\n`;
+        }
+        let nomeFile = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".csv";
+        let file = new File([csvContent], nomeFile, {type: "text/csv"});
+        
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({
+                title: 'Dati Verbale VIT',
+                text: 'Dati esportati dal modulo Verifica 462/01',
+                files: [file]
+            }).catch(err => console.error("Errore condivisione:", err));
+        } else {
+            alert("⚠️ Condivisione nativa non supportata su questo browser. Verrà avviato il download normale.");
+            esportaCSV();
+        }
+    }
+
+    // 3. Esporta in XFDF (Per importazione in moduli PDF di terze parti)
+    function esportaXFDF() {
+        let dati = estraiDatiForm();
+        let xfdf = `<?xml version="1.0" encoding="UTF-8"?>\n<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">\n<fields>\n`;
+        for (let key in dati) {
+            let val = Array.isArray(dati[key]) ? dati[key].join(', ') : dati[key];
+            if (val !== undefined && val !== null && val !== "") {
+                let safeKey = key.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                let safeVal = String(val).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                xfdf += `  <field name="${safeKey}"><value>${safeVal}</value></field>\n`;
+            }
+        }
+        xfdf += `</fields>\n</xfdf>`;
+        let blob = new Blob([xfdf], { type: 'application/vnd.adobe.xfdf' });
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".xfdf";
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    }
+
+    // 4. Scarica Foto in archivio ZIP
+    async function scaricaFotoZip(btn) {
+        if (typeof JSZip === 'undefined') {
+            alert("⚠️ La libreria JSZip non è caricata. Controlla la connessione o i file locali.");
+            return;
+        }
+        
+        let orgText = btn.innerHTML;
+        btn.innerHTML = "⏳";
+        
+        try {
+            let zip = new JSZip();
+            let imgFolder = zip.folder("Foto_Rilievi");
+            let canvases = document.querySelectorAll('canvas.foto-canvas');
+            let counter = 1;
+            let fotoTrovate = false;
+
+            for (let c of canvases) {
+                let id = c.getAttribute('data-foto-id');
+                if (id) {
+                    let data = await idbKeyval.get(id);
+                    if (data) {
+                        fotoTrovate = true;
+                        if (data instanceof Blob) {
+                            imgFolder.file(`Foto_Rilievo_${counter}.jpg`, data);
+                        } else {
+                            let base64Data = data.split(',')[1];
+                            imgFolder.file(`Foto_Rilievo_${counter}.jpg`, base64Data, {base64: true});
+                        }
+                        counter++;
+                    }
+                }
+            }
+
+            if (!fotoTrovate) {
+                alert("Nessuna foto presente in questo verbale.");
+                btn.innerHTML = orgText;
+                return;
+            }
+
+            let content = await zip.generateAsync({type: "blob"});
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(content);
+            link.download = "Foto_" + getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".zip";
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            
+        } catch (e) {
+            console.error("Errore generazione ZIP:", e);
+            alert("❌ Errore durante la creazione del file ZIP.");
+        } finally {
+            btn.innerHTML = orgText;
+        }
+    }
 </script>
 </body>
 </html>
