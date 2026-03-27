@@ -255,7 +255,7 @@
                 <div class="row g-2 align-items-center mx-0 mb-3 border-top border-success border-opacity-25 pt-2">
                     <div class="col-12 col-xl-7 p-0">
                         <div class="d-flex align-items-center flex-wrap flex-sm-nowrap gap-2">
-                            <span class="fw-bold" style="min-width: 90px;">Dati impianto:</span>
+                            <span class="fw-bold" style="min-width: 70px;">Dati impianto:</span>
                             <div class="d-flex align-items-center gap-1 pe-2 border-end border-success border-opacity-50">
                                 <div class="form-check m-0 d-flex align-items-center"><input name="sistema" id="sis_tt" type="radio" value="TT" class="form-check-input border-success" onchange="autoSelezionaArea(this)"><label class="form-check-label fw-bold ms-1" for="sis_tt">TT</label></div>
                                 <div class="form-check m-0 d-flex align-items-center mx-1"><input name="sistema" id="sis_tns" type="radio" value="TN-S" class="form-check-input border-success" onchange="autoSelezionaArea(this)"><label class="form-check-label fw-bold ms-1" for="sis_tns">TN-S</label></div>
@@ -269,21 +269,32 @@
                         </div>
                     </div>
                     <div class="col-12 col-xl-5 p-0 d-flex align-items-center flex-nowrap gap-2">
-                        <div class="d-flex align-items-center"><span class="fw-bold me-1">POD:</span><input type="text" name="pod" class="form-control px-1 fw-bold border-success" style="width: 130px;" value="IT001E" onkeydown="if((event.key === 'Backspace' || event.key === 'Delete') && this.selectionStart <= 6) event.preventDefault();" oninput="if(!this.value.toUpperCase().startsWith('IT001E')) this.value = 'IT001E'; else this.value = this.value.toUpperCase(); salvataggioIntelligente();" onclick="if(this.selectionStart < 6) this.setSelectionRange(this.value.length, this.value.length);"></div>
-                        <div class="d-flex align-items-center"><span class="fw-bold me-1">kW:</span><input type="number" name="kw" class="form-control border-success px-1 text-center" style="width: 50px;" oninput="salvataggioIntelligente()"></div>
-                        <div class="d-flex align-items-center"><span class="fw-bold me-1">Volt:</span><select name="volt" class="form-select border-success px-1" style="width: 65px; background-position: right 0.1rem center; padding-right: 15px;" onchange="salvataggioIntelligente()"><option value=""></option><option value="230">230</option><option value="400">400</option></select></div>
+                        <div class="d-flex align-items-center"><span class="fw-bold me-1">POD:</span><input type="text" name="pod" class="form-control px-1 fw-bold border-success" style="width: 160px;" value="IT001E" onkeydown="if((event.key === 'Backspace' || event.key === 'Delete') && this.selectionStart <= 6) event.preventDefault();" oninput="if(!this.value.toUpperCase().startsWith('IT001E')) this.value = 'IT001E'; else this.value = this.value.toUpperCase(); salvataggioIntelligente();" onclick="if(this.selectionStart < 6) this.setSelectionRange(this.value.length, this.value.length);"></div>
+                        <div class="d-flex align-items-center"><span class="fw-bold me-1">kW:</span><input type="number" name="kw" class="form-control border-success px-1 text-center" style="width: 40px;" oninput="salvataggioIntelligente()"></div>
+                        <div class="d-flex align-items-center"><span class="fw-bold me-1">Volt:</span><select name="volt" class="form-select border-success px-1" style="width: 55px; background-position: right 0.1rem center; padding-right: 15px;" onchange="salvataggioIntelligente()"><option value=""></option><option value="230">230</option><option value="400">400</option></select></div>
                     </div>
                 </div>
 
                 <div class="border-top border-success border-opacity-25 pt-2">
-                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                        <div class="d-flex align-items-center"><span class="me-1 fw-bold">kV:</span><input type="number" step="any" inputmode="decimal" name="tens_nominale" class="form-control px-1 text-center border-success" style="width: 50px;" oninput="salvataggioIntelligente()"></div>
-                        <div class="d-flex align-items-center"><span class="me-1 fw-bold">I<sub>f</sub>(A):</span><input type="number" step="any" inputmode="decimal" name="corr_guasto" id="corr_guasto" class="form-control px-1 text-center border-success" style="width: 65px;" oninput="calcolaUc()"></div>
-                        <div class="d-flex align-items-center"><span class="me-1 fw-bold">T<sub>f</sub>(s):</span><select name="tempo_guasto" id="tempo_guasto" class="form-select px-1 text-center border-success" style="width: 70px;" onchange="autoCompilaTensione(this)"></select></div>
-                        <div class="d-flex align-items-center"><span class="me-1 fw-bold text-danger">U<sub>TP</sub>(V):</span><input type="number" step="any" inputmode="decimal" name="tens_contatto" id="tens_contatto" class="form-control px-1 text-center border-danger fw-bold text-danger" style="width: 60px;" oninput="calcolaUc()"></div>
-                    </div>
-                </div>
-            </div>
+    <div class="d-flex align-items-center justify-content-start flex-wrap gap-3">
+        <div class="d-flex align-items-center">
+            <span class="me-1 fw-bold">kV:</span>
+            <input type="number" step="any" inputmode="decimal" name="tens_nominale" class="form-control px-1 text-left border-success" style="width: 40px;" oninput="salvataggioIntelligente()">
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="me-1 fw-bold">I<sub>f</sub>(A):</span>
+            <input type="number" step="any" inputmode="decimal" name="corr_guasto" id="corr_guasto" class="form-control px-1 text-left border-success" style="width: 50px;" oninput="calcolaUc()">
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="me-1 fw-bold">T<sub>f</sub>(s):</span>
+            <select name="tempo_guasto" id="tempo_guasto" class="form-select px-1 text-left border-success" style="width: 70px;" onchange="autoCompilaTensione(this)"></select>
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="me-1 fw-bold text-danger">U<sub>TP</sub>(V):</span>
+            <input type="number" step="any" inputmode="decimal" name="tens_contatto" id="tens_contatto" class="form-control px-1 text-left border-danger fw-bold text-danger" style="width: 50px;" oninput="calcolaUc()">
+        </div>
+    </div>
+</div>
 
             <div class="section-header bg-dark-blue mt-3">3. ESAME DOCUMENTALE</div>
             <div class="bg-light-blue box-border p-2 mb-3 rounded">
@@ -313,14 +324,14 @@
                         <div class="border border-primary rounded p-2 shadow-sm d-flex align-items-center flex-nowrap">
                             <div class="form-check m-0 d-flex align-items-center" style="min-width: 110px;"><input type="checkbox" name="chk_inail" id="chk_inail" class="form-check-input border-primary me-2" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="chk_inail">INAIL</label></div>
                             <input type="text" name="inail_matr" class="form-control border-primary px-1 text-center me-1" placeholder="Matr." style="width: 140px;" oninput="salvataggioIntelligente()">
-                            <input type="date" name="inail_data" class="form-control border-primary p-1" style="width: 90px;" onchange="salvataggioIntelligente()">
+                            <span class="me-1 fw-bold">del</span><input type="date" name="inail_data" class="form-control border-primary p-1" style="width: 90px;" onchange="salvataggioIntelligente()">
                         </div>
                     </div>
                     <div class="col-12 col-md-6 p-0 ps-md-1">
                         <div class="border border-primary rounded p-2 shadow-sm d-flex align-items-center flex-nowrap">
                             <div class="form-check m-0 d-flex align-items-center" style="min-width: 110px;"><input type="checkbox" name="chk_asl" id="chk_asl" class="form-check-input border-primary me-2" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="chk_asl">ASL</label></div>
                             <input type="text" name="asl_matr" class="form-control border-primary px-1 text-center me-1" placeholder="Matr." style="width: 140px;" oninput="salvataggioIntelligente()">
-                            <input type="date" name="asl_data" class="form-control border-primary p-1" style="width: 90px;" onchange="salvataggioIntelligente()">
+                            <span class="me-1 fw-bold">del</span><input type="date" name="asl_data" class="form-control border-primary p-1" style="width: 90px;" onchange="salvataggioIntelligente()">
                         </div>
                     </div>
                 </div>
@@ -528,7 +539,7 @@
 
                 <div class="border border-primary rounded mx-0 py-2 shadow-sm border-opacity-50 mt-2">
                     <div class="d-flex align-items-center flex-nowrap px-3 py-1">
-                        <span class="fw-bold text-nowrap" style="min-width: 110px;">Interruttori adottati:</span>
+                        <span class="fw-bold text-nowrap" style="min-width: 120px;">Interruttori adottati:</span>
                         <div class="d-flex align-items-center flex-nowrap gap-3">
                             <div class="form-check m-0 d-flex align-items-center"><input type="checkbox" name="int_diff" id="int_diff" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="int_diff">differenziali</label></div>
                             <div class="form-check m-0 d-flex align-items-center"><input type="checkbox" name="int_max_corr" id="int_max" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="int_max">max corrente</label></div>
@@ -536,7 +547,7 @@
                     </div>
                     <div class="border-top border-primary border-opacity-10 mx-3 my-1"></div>
                     <div class="d-flex align-items-center flex-nowrap px-3 py-1">
-                        <span class="fw-bold text-nowrap" style="min-width: 110px;">Condizioni:</span>
+                        <span class="fw-bold text-nowrap" style="min-width: 70px;">Condizioni:</span>
                         <div class="d-flex align-items-center flex-nowrap gap-2" style="overflow-x: auto; white-space: nowrap;">
                             <div class="form-check m-0 d-flex align-items-center"><input type="radio" name="condizioni" id="cond_b" value="buone" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="cond_b">buone</label></div>
                             <div class="form-check m-0 d-flex align-items-center"><input type="radio" name="condizioni" id="cond_d" value="discrete" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="cond_d">discrete</label></div>
@@ -636,28 +647,31 @@
             </div>
 
             <div class="section-header bg-dark-green mt-3">8. PROVA DI INTERVENTO DEI DIFFERENZIALI</div>
-            <div class="bg-light-green border-green p-2 rounded mb-2">
-                <div class="overflow-auto border border-success rounded p-1">
-                    <table class="table table-bordered text-center table-diff border-success mb-0" style="min-width: 600px;">
-                        <thead>
-                            <tr>
-                                <th rowspan="2" class="align-middle border-success" style="width: 33%;">Quadro</th>
-                                <th rowspan="2" class="align-middle border-success" style="width: 6%;">No.</th>
-                                <th colspan="4" class="align-middle border-success">Corrente di intervento (I&Delta;n)</th>
-                                <th rowspan="2" class="align-middle border-success" style="width: 33%;">Note</th>
-                            </tr>
-                            <tr>
-                                <th class="border-success">0,03</th><th class="border-success">0,3</th><th class="border-success">0,5</th><th class="border-success">1</th>
-                            </tr>
-                        </thead>
-                        <tbody id="diffTable"></tbody>
-                    </table>
-                </div>
-                <div class="text-end mt-2 no-print">
-                    <button type="button" class="btn btn-sm btn-success fw-bold px-3 shadow-sm" onclick="addDiffRow()">+ Aggiungi Riga</button>
-                </div>
-            </div>
-
+<div class="bg-light-green border-green p-2 rounded mb-2">
+    <div class="overflow-auto border border-success rounded p-1">
+        <table class="table table-bordered text-center table-diff border-success mb-0" style="min-width: 600px;">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="align-middle border-success" style="width: auto; min-width: 160px;">Quadro</th>
+                    
+                    <th rowspan="2" class="align-middle border-success" style="width: 50px; min-width: 50px;">No.</th>
+                    <th colspan="4" class="align-middle border-success" style="width: 200px;">Corrente di intervento (I&Delta;n)</th>
+                    <th rowspan="2" class="align-middle border-success" style="width: 220px; min-width: 220px;">Note</th>
+                </tr>
+                <tr>
+                    <th class="border-success" style="width: 50px; min-width: 50px;">0,03</th>
+                    <th class="border-success" style="width: 50px; min-width: 50px;">0,3</th>
+                    <th class="border-success" style="width: 50px; min-width: 50px;">0,5</th>
+                    <th class="border-success" style="width: 50px; min-width: 50px;">1</th>
+                </tr>
+            </thead>
+            <tbody id="diffTable"></tbody>
+        </table>
+    </div>
+    <div class="text-end mt-2 no-print">
+        <button type="button" class="btn btn-sm btn-success fw-bold px-3 shadow-sm" onclick="addDiffRow()">+ Aggiungi Riga</button>
+    </div>
+</div>
             <div class="section-header bg-dark-blue mt-3">
                 <span>9. RILIEVI / NON CONFORMITÀ</span>
                 <div class="no-print ms-auto">
