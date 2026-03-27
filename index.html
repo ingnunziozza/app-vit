@@ -321,17 +321,34 @@
                 </div>
                 <div class="row g-2 mb-2 mx-0">
                     <div class="col-12 col-md-6 p-0 pe-md-1 mb-2 mb-md-0">
-                        <div class="border border-primary rounded p-2 shadow-sm d-flex align-items-center flex-nowrap">
-                            <div class="form-check m-0 d-flex align-items-center" style="min-width: 110px;"><input type="checkbox" name="chk_inail" id="chk_inail" class="form-check-input border-primary me-2" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="chk_inail">INAIL</label></div>
-                            <input type="text" name="inail_matr" class="form-control border-primary px-1 text-center me-1" placeholder="Matr." style="width: 140px;" oninput="salvataggioIntelligente()">
-                            <span class="me-1 fw-bold">del</span><input type="date" name="inail_data" class="form-control border-primary p-1" style="width: 90px;" onchange="salvataggioIntelligente()">
+                        <div class="border border-primary rounded p-2 shadow-sm d-flex align-items-center flex-nowrap" style="overflow-x: auto;">
+                            <div class="form-check m-0 d-flex align-items-center flex-shrink-0" style="min-width: 80px;">
+                                <input type="checkbox" name="chk_inail" id="chk_inail" class="form-check-input border-primary me-2" onchange="salvataggioIntelligente()">
+                                <label class="form-check-label fw-bold" for="chk_inail">INAIL</label>
+                            </div>
+                            
+                            <input type="text" name="inail_matr" class="form-control border-primary bg-light px-2 text-center mx-1 flex-grow-1" placeholder="Matr." style="min-width: 120px; max-width: 200px;" oninput="salvataggioIntelligente()">
+                            
+                            <div class="d-flex align-items-center flex-shrink-0">
+                                <span class="me-1 fw-bold">del</span>
+                                <input type="date" name="inail_data" class="form-control border-primary bg-light p-1 text-center" style="width: 105px;" onchange="salvataggioIntelligente()">
+                            </div>
                         </div>
                     </div>
+                    
                     <div class="col-12 col-md-6 p-0 ps-md-1">
-                        <div class="border border-primary rounded p-2 shadow-sm d-flex align-items-center flex-nowrap">
-                            <div class="form-check m-0 d-flex align-items-center" style="min-width: 110px;"><input type="checkbox" name="chk_asl" id="chk_asl" class="form-check-input border-primary me-2" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="chk_asl">ASL</label></div>
-                            <input type="text" name="asl_matr" class="form-control border-primary px-1 text-center me-1" placeholder="Matr." style="width: 140px;" oninput="salvataggioIntelligente()">
-                            <span class="me-1 fw-bold">del</span><input type="date" name="asl_data" class="form-control border-primary p-1" style="width: 90px;" onchange="salvataggioIntelligente()">
+                        <div class="border border-primary rounded p-2 shadow-sm d-flex align-items-center flex-nowrap" style="overflow-x: auto;">
+                            <div class="form-check m-0 d-flex align-items-center flex-shrink-0" style="min-width: 80px;">
+                                <input type="checkbox" name="chk_asl" id="chk_asl" class="form-check-input border-primary me-2" onchange="salvataggioIntelligente()">
+                                <label class="form-check-label fw-bold" for="chk_asl">ASL</label>
+                            </div>
+                            
+                            <input type="text" name="asl_matr" class="form-control border-primary bg-light px-2 text-center mx-1 flex-grow-1" placeholder="Matr." style="min-width: 120px; max-width: 200px;" oninput="salvataggioIntelligente()">
+                            
+                            <div class="d-flex align-items-center flex-shrink-0">
+                                <span class="me-1 fw-bold">del</span>
+                                <input type="date" name="asl_data" class="form-control border-primary bg-light p-1 text-center" style="width: 105px;" onchange="salvataggioIntelligente()">
+                            </div>
                         </div>
                     </div>
                 </div>
