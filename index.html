@@ -737,7 +737,7 @@
     <div class="col-12 d-flex flex-nowrap align-items-center justify-content-start gap-2 p-0" style="overflow-x: auto;">
         
         <div class="d-flex align-items-center flex-shrink-0">
-            <span class="me-1 fw-bold text-nowrap">Tempo:</span>
+            <span class="me-1 fw-bold text-nowrap">Tempo (ore):</span>
             <input type="number" step="any" inputmode="decimal" name="tempo_impiegato" class="form-control border-success fw-bold text-center px-1" style="width: 50px;" oninput="salvataggioIntelligente()">
         </div>
         
@@ -754,8 +754,8 @@
     </div>
 
     <div class="text-center mt-4 no-print pb-5" id="area-bottoni">
-        <button type="button" class="btn btn-warning fw-bold px-4 shadow me-2" onclick="nuovoVerbale()">🔄</button>
-        <button type="button" class="btn btn-danger fw-bold px-5 shadow" onclick="avviaProcessoStampa()">🖨️ PDF</button>
+        <button type="button" class="btn btn-warning fw-bold px-4 shadow me-2" onclick="nuovoVerbale()">🔄Svuota</button>
+        <button type="button" class="btn btn-danger fw-bold px-5 shadow" onclick="avviaProcessoStampa()">🖨️ Stampa/Salva PDF</button>
     </div>
 
 </div>
@@ -1243,12 +1243,15 @@
     function fissaValoriHTML() {
         document.getElementById('area-dati').querySelectorAll('input, select, textarea').forEach(el => {
             if(el.type === 'checkbox' || el.type === 'radio') {
-                el.checked ? el.setAttribute('checked', '') : el.removeAttribute('checked');
+                el.checked ? el.setAttribute('checked', 'checked') : el.removeAttribute('checked');
             } else {
                 el.setAttribute('value', el.value);
-                if(el.tagName === 'TEXTAREA') el.textContent = el.value;
+                if(el.tagName === 'TEXTAREA') {
+                    // Previene l'iniezione di codice HTML spaccato nel backup
+                    el.innerHTML = el.value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                }
                 if(el.tagName === 'SELECT') {
-                    Array.from(el.options).forEach(opt => opt.value === el.value ? opt.setAttribute('selected', '') : opt.removeAttribute('selected'));
+                    Array.from(el.options).forEach(opt => opt.value === el.value ? opt.setAttribute('selected', 'selected') : opt.removeAttribute('selected'));
                 }
             }
         });
@@ -1486,15 +1489,14 @@
     }
 
     function eseguiStampaBase() {
-        const dNone = ['#barra-strumenti', '#area-bottoni', '.btn-cestino', '.btn-mic', '.btn-gps', '.btn-nc-foto', '.btn-undo'];
-        dNone.forEach(s => document.querySelectorAll(s).forEach(el => el.style.display = 'none'));
-        const org = document.title; document.title = getNomeFileEsportazione().replace(/[\/\\]/g, '-');
+        const titoloOriginale = document.title; 
+        document.title = getNomeFileEsportazione().replace(/[\/\\]/g, '-');
+        
+        // Il browser blocca l'esecuzione finché l'utente non chiude il prompt di stampa
         window.print();
-        setTimeout(() => {
-            document.title = org; 
-            document.querySelectorAll('#barra-strumenti, #area-bottoni').forEach(el => el.style.display = 'flex');
-            document.querySelectorAll('.btn-cestino, .btn-mic, .btn-gps, .btn-nc-foto').forEach(el => el.style.display = 'flex');
-        }, 1000);
+        
+        // Appena l'utente chiude la stampa, ripristina il titolo originale
+        document.title = titoloOriginale; 
     }
 
     // --- INIT APP E LOGICA DI AVVIO ---
