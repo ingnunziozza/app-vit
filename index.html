@@ -677,17 +677,20 @@
                 <div class="border-top border-success border-opacity-25 my-2 mx-1"></div>
 
                 <div class="row align-items-center mx-0 mt-3">
-                    <div class="col-12 d-flex flex-wrap align-items-center justify-content-left justify-content-md-start gap-2 p-0">
-                        <div class="d-flex align-items-left">
-                            <span class="me-2 fw-bold">Tempo (ore):</span>
-                            <input type="number" step="any" inputmode="decimal" name="tempo_impiegato" class="form-control border-success fw-bold text-center" style="width: 60px;" oninput="salvataggioIntelligente()">
-                        </div>
-                        <div class="d-flex align-items-left">
-                            <span class="me-2 fw-bold">Prossima verifica:</span>
-                            <input type="date" name="prossima_verifica" id="prossima_verifica" class="form-control border-success fw-bold" style="width: 90px;" onchange="salvataggioIntelligente()">
-                        </div>
-                    </div>
-                </div>
+                    <div class="col-12 d-flex flex-nowrap align-items-center justify-content-start gap-2 p-0" style="overflow-x: auto;">
+        
+        <div class="d-flex align-items-center flex-shrink-0">
+            <span class="me-1 fw-bold text-nowrap">Tempo (ore):</span>
+            <input type="number" step="any" inputmode="decimal" name="tempo_impiegato" class="form-control border-success fw-bold text-center px-1" style="width: 50px;" oninput="salvataggioIntelligente()">
+        </div>
+        
+        <div class="d-flex align-items-center flex-shrink-0 ms-1">
+            <span class="me-1 fw-bold text-nowrap">Prossima verifica:</span>
+            <input type="date" name="prossima_verifica" id="prossima_verifica" class="form-control border-success fw-bold px-1" style="width: 100px;" onchange="salvataggioIntelligente()">
+        </div>
+        
+    </div>
+</div>
             </div>
 
         </form>
