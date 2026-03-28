@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vit-app-offline-v8'; // Ho aggiornato la versione per forzare il refresh
+const CACHE_NAME = 'vit-app-offline-v9'; // Versione aggiornata per forzare il ricaricamento
 const urlsToCache = [
   './',
   './index.html',
@@ -6,8 +6,10 @@ const urlsToCache = [
   './icona.png',
   './bootstrap.min.css',
   './umd.js',        
-  './html2pdf.bundle.min.js', // Corretto il nome del file e aggiunta la virgola!
-  './jszip.min.js'
+  './html2pdf.bundle.min.js', 
+  './jszip.min.js',
+  './css/style.css',     // <-- MANCAVA
+  './js/app.js'          // <-- MANCAVA
 ];
 
 // Installa il Service Worker e salva i file in memoria
