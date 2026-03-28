@@ -757,28 +757,42 @@
     }
 
     async function eseguiStampaPDF() {
-    if (typeof window.html2pdf === 'undefined') { alert("Errore caricamento libreria PDF."); eseguiStampaBase(); return; }
-    const btn = document.querySelector('button[onclick="avviaProcessoStampa()"]');
-    const org = btn ? btn.innerHTML : ''; if(btn) btn.innerHTML = "⏳ Creazione in corso...";
-    try {
-        fissaValoriHTML(); await ripristinaCanvas();
-        document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
-        document.body.classList.add('fase-stampa');
+        if (typeof window.html2pdf === 'undefined') { alert("Errore caricamento libreria PDF."); eseguiStampaBase(); return; }
+        const btn = document.querySelector('button[onclick="avviaProcessoStampa()"]');
+        const org = btn ? btn.innerHTML : ''; if(btn) btn.innerHTML = "⏳ Creazione in corso...";
         
-        const opt = { 
-            margin: [10,5,15,5], 
-            filename: getNomeFileEsportazione().replace(/[\/\\]/g, '-') + '.pdf', 
-            image: { type: 'jpeg', quality: 0.98 }, // Aumentata qualità immagine
-            html2canvas: { scale: 2, useCORS: true }, // <-- SCALE 2: Raddoppia la nitidezza del testo e delle foto!
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
-        };
-        await window.html2pdf().set(opt).from(document.getElementById('area-dati')).save();
-    } catch(e) { eseguiStampaBase(); } 
-    finally {
-        document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
-        document.body.classList.remove('fase-stampa'); if(btn) btn.innerHTML = org;
+        try {
+            fissaValoriHTML(); await ripristinaCanvas();
+            document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
+            document.body.classList.add('fase-stampa');
+            
+            const areaDati = document.getElementById('area-dati'); // Selezioniamo l'area da fotografare
+
+            const opt = { 
+                margin: [10, 5, 15, 5], 
+                filename: getNomeFileEsportazione().replace(/[\/\\]/g, '-') + '.pdf', 
+                image: { type: 'jpeg', quality: 0.98 }, 
+                pagebreak: { mode: ['css', 'legacy'] }, // Aiuta la libreria a spezzare bene i blocchi nelle pagine
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    scrollY: 0, // FIX CRITICO: Dice al motore di ripartire dalla cima (CANCELLA L'EFFETTO SCROLL)
+                    windowHeight: areaDati.scrollHeight + 50 // Forza il motore a leggere l'intera altezza del form
+                }, 
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+            };
+
+            await window.html2pdf().set(opt).from(areaDati).save();
+            
+        } catch(e) { 
+            console.error("Errore html2pdf: ", e);
+            eseguiStampaBase(); 
+        } 
+        finally {
+            document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
+            document.body.classList.remove('fase-stampa'); if(btn) btn.innerHTML = org;
+        }
     }
-}
 
     function eseguiStampaBase() {
         const titoloOriginale = document.title; 
