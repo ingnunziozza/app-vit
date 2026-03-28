@@ -1311,14 +1311,18 @@
         }
     }
 
+    // --- AGGIORNAMENTO 1 ---
     function salvataggioIntelligente() {
         clearTimeout(window.saveTimer);
         window.saveTimer = setTimeout(() => {
             aggiornaEsitoGlobale();
-            fissaValoriHTML();
-            localStorage.setItem('verbaleVIT_backup', document.getElementById('area-dati').innerHTML);
-            const badge = document.getElementById('salvataggio-badge');
-            if(badge) { badge.style.opacity = '1'; setTimeout(() => badge.style.opacity = '0', 1000); }
+            // Non usiamo più fissaValoriHTML(), usiamo il JSON!
+            localStorage.setItem('verbaleVIT_backup', getModuloJSON());
+            
+            const badge1 = document.getElementById('salvataggio-badge');
+            const badge2 = document.getElementById('salvataggio-badge-2');
+            if(badge1) { badge1.style.opacity = '1'; setTimeout(() => badge1.style.opacity = '0', 1000); }
+            if(badge2) { badge2.style.opacity = '1'; setTimeout(() => badge2.style.opacity = '0', 1000); }
         }, 800);
     }
 
@@ -1339,36 +1343,43 @@
         }
     }
 
+    // --- AGGIORNAMENTO 2 ---
     async function salvaInArchivio() {
-        fissaValoriHTML();
         let denom = document.getElementById('denominazione_imp')?.value || "SenzaNome";
         let dataV = document.getElementById('data_verifica_obblig')?.value || new Date().toLocaleDateString('it-IT');
         let nome = prompt("Nome verbale da salvare:", `${denom} - ${dataV}`);
         if (!nome) return;
+        
         let archivio = await idbKeyval.get('vit_archivio_dati') || {};
-        archivio[nome] = document.getElementById('area-dati').innerHTML;
+        archivio[nome] = getModuloJSON(); // SALVIAMO IN JSON!
         await idbKeyval.set('vit_archivio_dati', archivio);
+        
+        aggiornaSelectArchivio();
         alert(`✅ Verbale "${nome}" salvato nel dispositivo!`);
     }
 
+    // --- AGGIORNAMENTO 4 ---
     async function duplicaVerbale() {
         let denom = document.getElementById('denominazione_imp')?.value || "Copia";
         let nome = prompt("Crea un duplicato come:", `${denom} - Copia`);
         if (!nome) return;
-        fissaValoriHTML();
-        let clone = document.getElementById('area-dati').cloneNode(true);
-        for(let canvas of clone.querySelectorAll('canvas.foto-canvas')) {
-            let oldId = canvas.getAttribute('data-foto-id');
-            if(oldId) {
+        
+        let jsonData = JSON.parse(getModuloJSON());
+        
+        // Duplica le foto in IndexedDB per non collegare le foto originali al duplicato
+        for (let nc of jsonData.non_conformita) {
+            if (nc.foto_id) {
                 let newId = 'foto_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-                canvas.setAttribute('data-foto-id', newId);
-                let base64 = await idbKeyval.get(oldId);
-                if(base64) await idbKeyval.set(newId, base64);
+                let base64 = await idbKeyval.get(nc.foto_id);
+                if (base64) await idbKeyval.set(newId, base64);
+                nc.foto_id = newId; // Assegna la nuova foto clonata al JSON duplicato
             }
         }
+        
         let archivio = await idbKeyval.get('vit_archivio_dati') || {};
-        archivio[nome] = clone.innerHTML;
+        archivio[nome] = JSON.stringify(jsonData);
         await idbKeyval.set('vit_archivio_dati', archivio);
+        aggiornaSelectArchivio();
         alert(`✅ Duplicato salvato in archivio con successo!`);
     }
 
@@ -1406,12 +1417,12 @@
         document.querySelectorAll('.archivio-item').forEach(i => i.style.display = i.getAttribute('data-nome').toLowerCase().includes(f) ? "flex" : "none");
     }
 
+    // --- AGGIORNAMENTO 3 ---
     async function caricaDaArchivio(nome) {
         if(!confirm(`Vuoi caricare "${nome}"?\nI dati attuali andranno persi se non salvati.`)) return;
         let archivio = await idbKeyval.get('vit_archivio_dati') || {};
         if (archivio[nome]) {
-            document.getElementById('area-dati').innerHTML = archivio[nome];
-            riattivaEventi(); await ripristinaCanvas(); salvataggioIntelligente(); 
+            await setModuloJSON(archivio[nome]); // CARICHIAMO DA JSON!
             document.getElementById('archivioModal')?.remove();
         }
     }
@@ -1569,35 +1580,28 @@
     }
 
     // --- INIT APP E LOGICA DI AVVIO ---
+    // --- AGGIORNAMENTO 5 --- (Modifica la parte finale di window.onload)
     window.onload = async function() {
         applicaDarkMode();
-
-        // 1. Carica le scelte dei menù a tendina (Importante farlo prima del backup)
         popolaSelectTF();
         popolaPercDropdowns();
         inizializzaLibreria();
 
-        // 2. Controllo e Iniezione Background del Backup Attivo
         const backup = localStorage.getItem('verbaleVIT_backup');
-        if (backup && backup.trim().length > 100) {
-            document.getElementById('area-dati').innerHTML = backup;
+        
+        // SE c'è un backup, lo passiamo al motore JSON, ALTRIMENTI creiamo le righe vuote
+        if (backup && backup.trim().length > 20) {
+            await setModuloJSON(backup);
+        } else {
+            for(let i=0; i<3; i++) addDiffRow();
+            for(let i=0; i<2; i++) addNCRow();
         }
 
-        // 3. FAILSAFE: Se le tabelle sono state inavvertitamente svuotate (anche dal backup), inietta righe base!
-        const diffTable = document.getElementById('diffTable');
-        if (diffTable && diffTable.children.length === 0) { for(let i=0; i<3; i++) addDiffRow(); }
-        
-        const ncTable = document.getElementById('ncTable');
-        if (ncTable && ncTable.children.length === 0) { for(let i=0; i<2; i++) addNCRow(); }
-
-        // 4. Riattivazione di tutti i listener e recupero delle immagini in-memory
         riattivaEventi();
-        if (backup) await ripristinaCanvas();
 
-        // 5. Procedure Silenziose
         setTimeout(async () => {
             try { await migraArchivio(); await pulisciFotoOrfane(); } 
-            catch (e) { console.error("Operazione in background fallita (Sicurezza attivata).", e); }
+            catch (e) { console.error("Background task failed", e); }
         }, 1500);
     };
 
@@ -1745,6 +1749,127 @@
             alert("❌ Errore durante la creazione del file ZIP.");
         } finally {
             btn.innerHTML = orgText;
+        }
+    }
+// --- 1. MOTORE JSON (ESTRAZIONE) ---
+    function getModuloJSON() {
+        let json = {
+            campi_semplici: {},
+            differenziali: [],
+            non_conformita: []
+        };
+        
+        // 1. Campi Semplici (tutto ciò che non è nelle tabelle dinamiche)
+        document.querySelectorAll('#verificaForm input:not([name*="[]"]), #verificaForm select:not([name*="[]"]), #verificaForm textarea:not([name*="[]"]), #data_verifica_obblig, #verbale_n1, #prossima_verifica').forEach(el => {
+            let key = el.name || el.id;
+            if (!key) return;
+            
+            if (el.type === 'checkbox') {
+                json.campi_semplici[key] = el.checked; // Salva Vero/Falso
+            } else if (el.type === 'radio') {
+                if (el.checked) json.campi_semplici[key] = el.value; // Salva solo se selezionato
+            } else {
+                json.campi_semplici[key] = el.value;
+            }
+        });
+
+        // 2. Tabella Differenziali
+        document.querySelectorAll('.diff-row').forEach(row => {
+            json.differenziali.push({
+                quadro: row.querySelector('[name="diff_quadro[]"]').value,
+                no: row.querySelector('[name="diff_no[]"]').value,
+                chk_003: row.querySelector('[name="diff_003[]"]').checked,
+                chk_03: row.querySelector('[name="diff_03[]"]').checked,
+                chk_05: row.querySelector('[name="diff_05[]"]').checked,
+                chk_1: row.querySelector('[name="diff_1[]"]').checked,
+                note: row.querySelector('[name="diff_note[]"]').value
+            });
+        });
+
+        // 3. Tabella NC e Foto
+        document.querySelectorAll('.nc-row').forEach(row => {
+            let canvas = row.querySelector('canvas.foto-canvas');
+            json.non_conformita.push({
+                descrizione: row.querySelector('[name="nc_descrizione[]"]').value,
+                note: row.querySelector('[name="nc_note[]"]').value,
+                foto_id: canvas ? canvas.getAttribute('data-foto-id') : null
+            });
+        });
+
+        return JSON.stringify(json);
+    }
+
+    // --- 2. MOTORE JSON (INIEZIONE) ---
+    async function setModuloJSON(jsonString) {
+        if (!jsonString) return;
+        
+        // COMPATIBILITÀ VECCHI VERBALI (LEGACY HTML)
+        if (jsonString.trim().startsWith('<div') || jsonString.trim().startsWith('<div class="row')) {
+            document.getElementById('area-dati').innerHTML = jsonString;
+            riattivaEventi(); 
+            await ripristinaCanvas();
+            return;
+        }
+
+        try {
+            let data = JSON.parse(jsonString);
+
+            // Svuota tutto il form prima di caricare i nuovi dati
+            document.getElementById('verificaForm').reset();
+            document.getElementById('data_verifica_obblig').value = "";
+            document.getElementById('verbale_n1').value = "";
+
+            // 1. Ripristina Campi Semplici
+            for (let key in data.campi_semplici) {
+                let els = document.querySelectorAll(`[name="${key}"], #${key}`);
+                els.forEach(el => {
+                    if (el.type === 'checkbox') {
+                        el.checked = data.campi_semplici[key];
+                    } else if (el.type === 'radio') {
+                        if (el.value === data.campi_semplici[key]) el.checked = true;
+                    } else {
+                        el.value = data.campi_semplici[key] || "";
+                    }
+                });
+            }
+
+            // 2. Ripristina Differenziali
+            const diffTable = document.getElementById('diffTable');
+            diffTable.innerHTML = ''; 
+            data.differenziali.forEach(diff => {
+                addDiffRow(); 
+                let lastRow = diffTable.lastElementChild;
+                lastRow.querySelector('[name="diff_quadro[]"]').value = diff.quadro;
+                lastRow.querySelector('[name="diff_no[]"]').value = diff.no;
+                lastRow.querySelector('[name="diff_003[]"]').checked = diff.chk_003;
+                lastRow.querySelector('[name="diff_03[]"]').checked = diff.chk_03;
+                lastRow.querySelector('[name="diff_05[]"]').checked = diff.chk_05;
+                lastRow.querySelector('[name="diff_1[]"]').checked = diff.chk_1;
+                lastRow.querySelector('[name="diff_note[]"]').value = diff.note;
+            });
+
+            // 3. Ripristina NC e Foto
+            const ncTable = document.getElementById('ncTable');
+            ncTable.innerHTML = ''; 
+            data.non_conformita.forEach(nc => {
+                addNCRow();
+                let lastRow = ncTable.lastElementChild;
+                lastRow.querySelector('[name="nc_descrizione[]"]').value = nc.descrizione;
+                lastRow.querySelector('[name="nc_note[]"]').value = nc.note;
+                if (nc.foto_id) {
+                    let canvas = lastRow.querySelector('canvas.foto-canvas');
+                    canvas.setAttribute('data-foto-id', nc.foto_id);
+                }
+            });
+
+            // Ricalcola variabili automatiche
+            calcolaUc();
+            aggiornaEsitoGlobale();
+            await ripristinaCanvas();
+
+        } catch (e) {
+            console.error("Errore parser JSON:", e);
+            alert("Errore nel caricamento del file. I dati potrebbero essere corrotti.");
         }
     }
 </script>
