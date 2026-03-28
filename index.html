@@ -780,23 +780,35 @@
     }
 
     async function pulisciFotoOrfane() {
-        try {
-            let keys = await idbKeyval.keys();
-            let archivio = await idbKeyval.get('vit_archivio_dati') || {};
-            let stringaArchivio = Object.values(archivio).join(""); 
-            let stringaBackup = localStorage.getItem('verbaleVIT_backup') || "";
-            let tuttoIlTesto = stringaArchivio + stringaBackup;
-            
-            let orfane = 0;
-            for (let key of keys) {
-                if (key.startsWith('foto_') && !tuttoIlTesto.includes(key)) {
-                    await idbKeyval.del(key);
-                    orfane++;
+    try {
+        let keys = await idbKeyval.keys();
+        let archivio = await idbKeyval.get('vit_archivio_dati') || {};
+        let stringaBackup = localStorage.getItem('verbaleVIT_backup') || "";
+        
+        let orfane = 0;
+        for (let key of keys) {
+            if (key.startsWith('foto_')) {
+                let trovata = stringaBackup.includes(key);
+                
+                // Se non è nel backup, cerchiamo nei verbali uno per uno (niente stringhe giganti!)
+                if (!trovata) {
+                    for (let nome in archivio) {
+                        if (archivio[nome].includes(key)) { 
+                            trovata = true; 
+                            break; 
+                        }
+                    }
+                }
+                
+                if (!trovata) { 
+                    await idbKeyval.del(key); 
+                    orfane++; 
                 }
             }
-            if(orfane > 0) console.log(`Pulizia: rimosse ${orfane} foto orfane.`);
-        } catch(e) { console.error("Errore pulizia:", e); }
-    }
+        }
+        if(orfane > 0) console.log(`Pulizia: rimosse ${orfane} foto orfane.`);
+    } catch(e) { console.error("Errore pulizia:", e); }
+}
 
     // --- UTILITÀ E STATISTICHE ---
     function nuovoVerbale() {
@@ -1478,28 +1490,28 @@
     }
 
     async function eseguiStampaPDF() {
-        if (typeof window.html2pdf === 'undefined') { alert("Errore caricamento libreria PDF."); eseguiStampaBase(); return; }
-        const btn = document.querySelector('button[onclick="avviaProcessoStampa()"]');
-        const org = btn ? btn.innerHTML : ''; if(btn) btn.innerHTML = "⏳ Creazione in corso...";
-        try {
-            fissaValoriHTML(); await ripristinaCanvas();
-            document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
-            document.body.classList.add('fase-stampa');
-            
-            const opt = { 
-                margin: [10,5,15,5], 
-                filename: getNomeFileEsportazione().replace(/[\/\\]/g, '-') + '.pdf', 
-                image: { type: 'jpeg', quality: 0.95 }, 
-                html2canvas: { scale: 1, useCORS: true }, 
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
-            };
-            await window.html2pdf().set(opt).from(document.getElementById('area-dati')).save();
-        } catch(e) { eseguiStampaBase(); } 
-        finally {
-            document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
-            document.body.classList.remove('fase-stampa'); if(btn) btn.innerHTML = org;
-        }
+    if (typeof window.html2pdf === 'undefined') { alert("Errore caricamento libreria PDF."); eseguiStampaBase(); return; }
+    const btn = document.querySelector('button[onclick="avviaProcessoStampa()"]');
+    const org = btn ? btn.innerHTML : ''; if(btn) btn.innerHTML = "⏳ Creazione in corso...";
+    try {
+        fissaValoriHTML(); await ripristinaCanvas();
+        document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
+        document.body.classList.add('fase-stampa');
+        
+        const opt = { 
+            margin: [10,5,15,5], 
+            filename: getNomeFileEsportazione().replace(/[\/\\]/g, '-') + '.pdf', 
+            image: { type: 'jpeg', quality: 0.98 }, // Aumentata qualità immagine
+            html2canvas: { scale: 2, useCORS: true }, // <-- SCALE 2: Raddoppia la nitidezza del testo e delle foto!
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+        };
+        await window.html2pdf().set(opt).from(document.getElementById('area-dati')).save();
+    } catch(e) { eseguiStampaBase(); } 
+    finally {
+        document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
+        document.body.classList.remove('fase-stampa'); if(btn) btn.innerHTML = org;
     }
+}
 
     function eseguiStampaBase() {
         const titoloOriginale = document.title; 
@@ -1549,31 +1561,34 @@
 
     // Funzione helper per estrarre tutti i dati compilati nel form
     function estraiDatiForm() {
-        let dati = {};
-        document.getElementById('area-dati').querySelectorAll('input, select, textarea').forEach(el => {
-            let nome = el.name || el.id;
-            if (!nome) return;
-            
-            if (el.type === 'checkbox' || el.type === 'radio') {
-                if (el.checked) {
-                    if (nome.endsWith('[]')) {
-                        if (!dati[nome]) dati[nome] = [];
-                        dati[nome].push(el.value || 'Si');
-                    } else {
-                        dati[nome] = el.value;
-                    }
+    let dati = {};
+    document.getElementById('area-dati').querySelectorAll('input, select, textarea').forEach(el => {
+        let nome = el.name || el.id;
+        if (!nome) return;
+        
+        if (el.type === 'checkbox' || el.type === 'radio') {
+            if (nome.endsWith('[]')) {
+                if (!dati[nome]) dati[nome] = [];
+                // Se è una checkbox, inseriamo "Si" se spuntata, "No" se vuota (mantiene allineato Excel)
+                if (el.type === 'checkbox') {
+                    dati[nome].push(el.checked ? (el.value !== 'on' ? el.value : 'Si') : 'No');
+                } else {
+                    if (el.checked) dati[nome].push(el.value);
                 }
             } else {
-                if (nome.endsWith('[]')) {
-                    if (!dati[nome]) dati[nome] = [];
-                    dati[nome].push(el.value);
-                } else {
-                    dati[nome] = el.value;
-                }
+                if (el.checked) dati[nome] = el.value !== 'on' ? el.value : 'Si';
             }
-        });
-        return dati;
-    }
+        } else {
+            if (nome.endsWith('[]')) {
+                if (!dati[nome]) dati[nome] = [];
+                dati[nome].push(el.value);
+            } else {
+                dati[nome] = el.value;
+            }
+        }
+    });
+    return dati;
+}
 
     // 1. Esporta in CSV (Excel)
     function esportaCSV() {
