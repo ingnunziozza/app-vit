@@ -121,18 +121,30 @@
         
         /* --- STAMPA --- */
         @media print {
-            body, body.dark-mode { background-color: white !important; color: black !important; font-size: 0.65rem; }
-            .container, body.dark-mode .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; border: none !important; background-color: white !important;}
+            /* 1. Rimuove lo spazio bianco in eccesso impostando i margini nativi della pagina */
+            @page { margin: 10mm; }
+            body, body.dark-mode, html { background-color: white !important; color: black !important; font-size: 0.65rem; margin: 0 !important; padding: 0 !important; }
+            .container, body.dark-mode .container { box-shadow: none !important; margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; border: none !important; background-color: white !important;}
+            
+            /* 2. FIX CRITICO: Impedisce che il contenuto sparisca dopo le tabelle! */
+            .overflow-auto, .table-responsive { overflow: visible !important; }
+            
+            /* 3. Nascondi gli strumenti */
             #barra-strumenti, #area-bottoni, .btn-cestino, .btn-mic, .btn-gps, .no-print, .btn-nc-foto, .btn-undo { display: none !important; }
-            .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .bg-light-blue, .bg-light-green, .bg-light-grey, .bg-pink-light { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            
+            /* 4. Forza i colori di sfondo nelle sezioni */
+            .section-header { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .bg-light-blue, .bg-light-green, .bg-light-grey, .bg-pink-light, .bg-nodo-collettore { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            /* 5. Pulisci il design degli input */
             .form-control, .form-select, .nc-textarea, .nc-input-desc { border: none !important; border-bottom: 1px dotted #999 !important; border-radius: 0; padding: 0; height: auto !important; background: transparent !important; -webkit-appearance: none; -moz-appearance: none; appearance: none; color: black !important;}
-            input[type="checkbox"], input[type="radio"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .form-check-input:checked { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .bg-nodo-collettore { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #8da6c9 !important; }
-            canvas.foto-canvas { page-break-inside: avoid; break-inside: avoid; max-width: 100% !important; height: auto !important; }
-            tr, .row, .border { page-break-inside: avoid !important; break-inside: avoid !important; }
-            .section-header { page-break-after: avoid !important; break-after: avoid !important; page-break-inside: avoid !important; }
+            input[type="checkbox"], input[type="radio"] { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .form-check-input:checked { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            /* 6. Evita che le foto o le righe vengano tagliate a metà pagina */
+            canvas.foto-canvas { page-break-inside: avoid; break-inside: avoid; max-width: 100% !important; height: auto !important; display: block !important; margin-bottom: 10px; }
+            tr, .row { page-break-inside: avoid !important; break-inside: avoid !important; }
+            .section-header { page-break-after: avoid !important; break-after: avoid !important; page-break-inside: avoid !important; margin-top: 15px !important; }
         }
         
         .campo-errore { border: 2px solid red !important; background-color: #ffe6e6 !important; }
@@ -184,7 +196,7 @@
                 <div class="d-flex justify-content-end align-items-center flex-nowrap gap-2">
                     <div class="d-flex align-items-center flex-nowrap">
                         <span class="me-1 text-nowrap">No.</span>
-                        <input type="text" name="verbale_n1" class="form-control text-center p-1" style="width: 50px; height: 28px;" oninput="salvataggioIntelligente()">
+                        <input type="number" inputmode="numeric" min="1" name="verbale_n1" class="form-control text-center p-1" style="width: 50px; height: 28px;" oninput="salvataggioIntelligente()">
                     </div>
                     <div class="d-flex align-items-center flex-nowrap ms-1 ms-md-3">
                         <span class="me-1 fw-bold text-danger text-nowrap">Data:</span>
@@ -498,42 +510,42 @@
                 <div class="row g-1 mb-2 align-items-stretch mx-0">
                     <div class="col-md-7 d-flex overflow-auto p-0 pe-md-1 mb-2 mb-md-0">
                        
-<table class="table table-bordered border-primary table-sm text-start table-conduttori mb-0 w-100 rounded shadow-sm" style="min-width: 400px;">
+<table class="table table-bordered border-primary table-sm text-start table-conduttori mb-0 w-100 rounded shadow-sm" style="min-width: 300px;">
     <tbody>
         <tr class="bg-light">
-            <td class="fw-bold border-primary text-end align-middle" style="white-space: nowrap; width: 1%;">Cond.</td>
-            <td class="fw-bold border-primary text-center align-middle" style="white-space: nowrap; width: 1%;">Cavi</td>
-            <td class="fw-bold border-primary text-center align-middle" style="white-space: nowrap; width: 1%;">Corde</td>
-            <td class="fw-bold border-primary text-start align-middle" style="white-space: nowrap; width: 1%;">Tipo</td>
-            <td class="fw-bold border-primary text-start align-middle" style="white-space: nowrap; width: 1%;">Tipo</td>
-            <td class="fw-bold border-primary text-start align-middle" style="white-space: nowrap; width: 95%;">Sezione</td>
+            <td class="fw-bold border-primary text-end align-middle" style="white-space: nowrap;">Cond.</td>
+            <td class="fw-bold border-primary text-center align-middle" style="white-space: nowrap;">Sezione</td>            
+            <td class="fw-bold border-primary text-center align-middle" style="white-space: nowrap;">Cavi</td>
+            <td class="fw-bold border-primary text-center align-middle" style="white-space: nowrap;">Corde</td>
+            <td class="fw-bold border-primary text-start align-middle" style="white-space: nowrap;">Tipo</td>
+            <td class="fw-bold border-primary text-start align-middle" style="white-space: nowrap;">Tipo</td>
         </tr>
 
         <tr>
             <td class="fw-bold border-primary text-end align-middle" style="white-space: nowrap;">Terra</td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center ps-1"><input type="number" step="any" inputmode="decimal" name="sez_terra" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
             <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="ct_isolati" name="ct_isolati" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
             <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="ct_rame" name="ct_rame" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
             <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="ct_nastri" name="ct_nastri" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="ct_nastri">Tondi</label></div></td>
             <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="ct_strutt" name="ct_strutt" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="ct_strutt">Strutturali</label></div></td>
-            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start ps-1"><input type="number" step="any" inputmode="decimal" name="sez_terra" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
         </tr>
 
         <tr>
             <td class="fw-bold border-primary text-end align-middle" style="white-space: nowrap;">PE</td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center ps-1"><input type="number" step="any" inputmode="decimal" name="sez_prot" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
             <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="cp_isolati" name="cp_isolati" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
             <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="cp_nudi" name="cp_nudi" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
             <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="cp_anime" name="cp_anime" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="cp_anime">Anime</label></div></td>
             <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="cp_involucri" name="cp_involucri" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="cp_involucri">Metallo</label></div></td>
-            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start ps-1"><input type="number" step="any" inputmode="decimal" name="sez_prot" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
         </tr>
 
         <tr>
             <td class="fw-bold border-primary text-end align-middle" style="white-space: nowrap;">EQ.</td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center ps-1"><input type="number" step="any" inputmode="decimal" name="sez_eq" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
             <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="ce_isolati" name="ce_isolati" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
             <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="ce_nudi" name="ce_nudi" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
             <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="ce_richiesti" name="ce_richiesti" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="ce_richiesti">Richiesti</label></div></td>
             <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="ce_non_richiesti" name="ce_non_richiesti" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="ce_non_richiesti">Non Richiesti</label></div></td>
-            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start ps-1"><input type="number" step="any" inputmode="decimal" name="sez_eq" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
         </tr>
     </tbody>
 </table>
@@ -1473,11 +1485,43 @@
     }
 
     function avviaProcessoStampa() {
-        const d = document.getElementById('data_verifica_obblig'); const r = document.getElementById('ragione_sociale_obblig'); const n = document.getElementById('denominazione_imp');
-        let err = false;
-        [d, r, n].forEach(el => { if(!el?.value){ el?.classList.add('campo-errore'); err = true; } else el?.classList.remove('campo-errore'); });
-        if (err) { alert("⚠️ Devi obbligatoriamente compilare Data, Ragione Sociale e Denominazione per poter stampare!"); return; }
+        const d = document.getElementById('data_verifica_obblig'); 
+        const r = document.getElementById('ragione_sociale_obblig'); 
+        const n = document.getElementById('denominazione_imp');
+        const re = document.getElementById('val_resistenza_terra'); // NUOVO: Campo RE
         
+        let err = false;
+        
+        // 1. Controllo dei campi di testo/numero
+        [d, r, n, re].forEach(el => { 
+            if(!el?.value){ 
+                el?.classList.add('campo-errore'); 
+                err = true; 
+            } else {
+                el?.classList.remove('campo-errore');
+            } 
+        });
+
+        // 2. Controllo dei Radio Button "Sistema" (Dati impianto)
+        const sistemaChecked = document.querySelector('input[name="sistema"]:checked');
+        const sistemaRadios = document.querySelectorAll('input[name="sistema"]');
+        
+        if (!sistemaChecked) {
+            // Se nessuno è selezionato, li coloro di rosso
+            sistemaRadios.forEach(radio => radio.classList.add('campo-errore'));
+            err = true;
+        } else {
+            // Rimuovo il rosso se tutto è ok
+            sistemaRadios.forEach(radio => radio.classList.remove('campo-errore'));
+        }
+
+        // 3. Blocco se ci sono errori
+        if (err) { 
+            alert("⚠️ Mancano campi obbligatori!\n\nVerifica di aver compilato:\n- Data\n- Ragione Sociale\n- Denominazione Impianto\n- Dati Impianto (TT, TN-S, o IT)\n- Misura resistenza Terra (RE)"); 
+            return; 
+        }
+        
+        // Se tutto è corretto, proseguo con il modale di stampa
         document.body.insertAdjacentHTML('beforeend', `
             <div class="modal fade show no-print" id="stampaModal" style="display:block; background:rgba(0,0,0,0.6);">
               <div class="modal-dialog modal-dialog-centered"><div class="modal-content text-dark"><div class="modal-body text-center py-4">
