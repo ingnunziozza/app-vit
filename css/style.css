@@ -110,35 +110,28 @@
         @media (min-width: 768px) { .border-md-start { border-left: 1px solid var(--border-general) !important; } }
         @media (max-width: 767px) { .border-sm-bottom { border-bottom: 1px solid var(--border-general) !important; } .border-sm-top { border-top: 1px solid var(--border-general) !important; } }
         
-        /* --- STAMPA --- */
+        /* --- STILI SPECIFICI PER HTML2PDF (STAMPA INTERNA) E STAMPA NATIVA --- */
         @media print {
-            /* 1. Rimuove lo spazio bianco in eccesso impostando i margini nativi della pagina */
             @page { margin: 10mm; }
             body, body.dark-mode, html { background-color: white !important; color: black !important; font-size: 0.65rem; margin: 0 !important; padding: 0 !important; }
             .container, body.dark-mode .container { box-shadow: none !important; margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; border: none !important; background-color: white !important;}
-            
-            /* 2. FIX CRITICO: Impedisce che il contenuto sparisca dopo le tabelle! */
-            .overflow-auto, .table-responsive { overflow: visible !important; }
-            
-            /* 3. Nascondi gli strumenti */
+            .overflow-auto, .table-responsive { overflow: visible !important; height: auto !important; }
             #barra-strumenti, #area-bottoni, .btn-cestino, .btn-mic, .btn-gps, .no-print, .btn-nc-foto, .btn-undo { display: none !important; }
-            
-            /* 4. Forza i colori di sfondo nelle sezioni */
-            .section-header { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .section-header { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; margin-top: 15px !important; page-break-after: avoid !important; break-after: avoid !important; page-break-inside: avoid !important; }
             .bg-light-blue, .bg-light-green, .bg-light-grey, .bg-pink-light, .bg-nodo-collettore { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            
-            /* 5. Pulisci il design degli input */
             .form-control, .form-select, .nc-textarea, .nc-input-desc { border: none !important; border-bottom: 1px dotted #999 !important; border-radius: 0; padding: 0; height: auto !important; background: transparent !important; -webkit-appearance: none; -moz-appearance: none; appearance: none; color: black !important;}
             input[type="checkbox"], input[type="radio"] { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             .form-check-input:checked { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            
-            /* 6. Evita che le foto o le righe vengano tagliate a metà pagina */
             canvas.foto-canvas { page-break-inside: avoid; break-inside: avoid; max-width: 100% !important; height: auto !important; display: block !important; margin-bottom: 10px; }
-            tr, .row { page-break-inside: avoid !important; break-inside: avoid !important; }
-            .section-header { page-break-after: avoid !important; break-after: avoid !important; page-break-inside: avoid !important; margin-top: 15px !important; }
+            tr, .row, .border { page-break-inside: avoid !important; break-inside: avoid !important; }
         }
         
         .campo-errore { border: 2px solid red !important; background-color: #ffe6e6 !important; }
-        body.fase-stampa { background-color: #ffffff; }
-        body.fase-stampa input, body.fase-stampa textarea, body.fase-stampa select { border: none !important; background: transparent !important; }
+        
+        /* Stili per il generatore PDF interno */
+        body.fase-stampa { background-color: #ffffff !important; color: #000000 !important; height: auto !important; }
+        body.fase-stampa input, body.fase-stampa textarea, body.fase-stampa select { border: none !important; background: transparent !important; color: #000000 !important; }
         body.fase-stampa .border-0 { border: 1px solid transparent !important; }
+        body.fase-stampa .container { max-width: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; }
+        body.fase-stampa .overflow-auto, body.fase-stampa .table-responsive { overflow: visible !important; height: auto !important; }
+        body.fase-stampa .section-header { margin-top: 15px !important; }
