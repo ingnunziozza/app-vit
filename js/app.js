@@ -1016,7 +1016,8 @@
         if (!jsonString) return;
         
         // COMPATIBILITÀ VECCHI VERBALI (LEGACY HTML)
-        if (jsonString.trim().startsWith('<div') || jsonString.trim().startsWith('<div class="row')) {
+        // Controllo infallibile: se non inizia con una parentesi graffa, è sicuramente vecchio HTML
+        if (!jsonString.trim().startsWith('{')) {
             document.getElementById('area-dati').innerHTML = jsonString;
             riattivaEventi(); 
             await ripristinaCanvas();
@@ -1027,52 +1028,66 @@
             let data = JSON.parse(jsonString);
 
             // Svuota tutto il form prima di caricare i nuovi dati
-            document.getElementById('verificaForm').reset();
-            document.getElementById('data_verifica_obblig').value = "";
-            document.getElementById('verbale_n1').value = "";
+            const form = document.getElementById('verificaForm');
+            if (form) form.reset();
+            
+            const dataVal = document.getElementById('data_verifica_obblig');
+            if (dataVal) dataVal.value = "";
+            const nVal = document.getElementById('verbale_n1');
+            if (nVal) nVal.value = "";
 
             // 1. Ripristina Campi Semplici
-            for (let key in data.campi_semplici) {
-                let els = document.querySelectorAll(`[name="${key}"], #${key}`);
-                els.forEach(el => {
-                    if (el.type === 'checkbox') {
-                        el.checked = data.campi_semplici[key];
-                    } else if (el.type === 'radio') {
-                        if (el.value === data.campi_semplici[key]) el.checked = true;
-                    } else {
-                        el.value = data.campi_semplici[key] || "";
+            if (data.campi_semplici) {
+                for (let key in data.campi_semplici) {
+                    let els = document.querySelectorAll(`[name="${key}"], #${key}`);
+                    els.forEach(el => {
+                        if (el.type === 'checkbox') {
+                            el.checked = data.campi_semplici[key];
+                        } else if (el.type === 'radio') {
+                            if (el.value === data.campi_semplici[key]) el.checked = true;
+                        } else {
+                            el.value = data.campi_semplici[key] || "";
+                        }
+                    });
+                }
+            }
+
+            // 2. Ripristina Differenziali
+            if (data.differenziali) {
+                const diffTable = document.getElementById('diffTable');
+                if (diffTable) diffTable.innerHTML = ''; 
+                data.differenziali.forEach(diff => {
+                    addDiffRow(); 
+                    let lastRow = diffTable.lastElementChild;
+                    if (lastRow) {
+                        let q = lastRow.querySelector('[name="diff_quadro[]"]'); if (q) q.value = diff.quadro || "";
+                        let n = lastRow.querySelector('[name="diff_no[]"]'); if (n) n.value = diff.no || "";
+                        let c003 = lastRow.querySelector('[name="diff_003[]"]'); if (c003) c003.checked = diff.chk_003 || false;
+                        let c03 = lastRow.querySelector('[name="diff_03[]"]'); if (c03) c03.checked = diff.chk_03 || false;
+                        let c05 = lastRow.querySelector('[name="diff_05[]"]'); if (c05) c05.checked = diff.chk_05 || false;
+                        let c1 = lastRow.querySelector('[name="diff_1[]"]'); if (c1) c1.checked = diff.chk_1 || false;
+                        let nt = lastRow.querySelector('[name="diff_note[]"]'); if (nt) nt.value = diff.note || "";
                     }
                 });
             }
 
-            // 2. Ripristina Differenziali
-            const diffTable = document.getElementById('diffTable');
-            diffTable.innerHTML = ''; 
-            data.differenziali.forEach(diff => {
-                addDiffRow(); 
-                let lastRow = diffTable.lastElementChild;
-                lastRow.querySelector('[name="diff_quadro[]"]').value = diff.quadro;
-                lastRow.querySelector('[name="diff_no[]"]').value = diff.no;
-                lastRow.querySelector('[name="diff_003[]"]').checked = diff.chk_003;
-                lastRow.querySelector('[name="diff_03[]"]').checked = diff.chk_03;
-                lastRow.querySelector('[name="diff_05[]"]').checked = diff.chk_05;
-                lastRow.querySelector('[name="diff_1[]"]').checked = diff.chk_1;
-                lastRow.querySelector('[name="diff_note[]"]').value = diff.note;
-            });
-
             // 3. Ripristina NC e Foto
-            const ncTable = document.getElementById('ncTable');
-            ncTable.innerHTML = ''; 
-            data.non_conformita.forEach(nc => {
-                addNCRow();
-                let lastRow = ncTable.lastElementChild;
-                lastRow.querySelector('[name="nc_descrizione[]"]').value = nc.descrizione;
-                lastRow.querySelector('[name="nc_note[]"]').value = nc.note;
-                if (nc.foto_id) {
-                    let canvas = lastRow.querySelector('canvas.foto-canvas');
-                    canvas.setAttribute('data-foto-id', nc.foto_id);
-                }
-            });
+            if (data.non_conformita) {
+                const ncTable = document.getElementById('ncTable');
+                if (ncTable) ncTable.innerHTML = ''; 
+                data.non_conformita.forEach(nc => {
+                    addNCRow();
+                    let lastRow = ncTable.lastElementChild;
+                    if (lastRow) {
+                        let d = lastRow.querySelector('[name="nc_descrizione[]"]'); if (d) d.value = nc.descrizione || "";
+                        let nt = lastRow.querySelector('[name="nc_note[]"]'); if (nt) nt.value = nc.note || "";
+                        if (nc.foto_id) {
+                            let canvas = lastRow.querySelector('canvas.foto-canvas');
+                            if (canvas) canvas.setAttribute('data-foto-id', nc.foto_id);
+                        }
+                    }
+                });
+            }
 
             // Ricalcola variabili automatiche
             calcolaUc();
