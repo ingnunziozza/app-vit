@@ -768,17 +768,19 @@
             
             const areaDati = document.getElementById('area-dati'); // Selezioniamo l'area da fotografare
 
-            const opt = { 
-                margin: [10,5,15,5], 
-                filename: getNomeFileEsportazione().replace(/[\/\\]/g, '-') + '.pdf', 
-                image: { type: 'jpeg', quality: 0.98 }, 
-                html2canvas: { scale: 2, useCORS: true, scrollY: 0 }, // <-- scale 2 e scrollY 0
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
-            };
-            // Forza il motore a leggere tutto il documento
-            await window.html2pdf().set(opt).from(document.getElementById('area-dati')).save();
+            const areaDati = document.getElementById('area-dati');
+        const opt = { 
+            margin: [10,5,15,5], 
+            filename: getNomeFileEsportazione().replace(/[\/\\]/g, '-') + '.pdf', 
+            image: { type: 'jpeg', quality: 0.98 }, 
+            pagebreak: { mode: ['css', 'legacy'] },
+            html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowHeight: areaDati.scrollHeight + 50 }, 
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+        };
+        await window.html2pdf().set(opt).from(areaDati).save();
             
-        } catch(e) { 
+        } 
+	catch(e) { 
             console.error("Errore html2pdf: ", e);
             eseguiStampaBase(); 
         } 
