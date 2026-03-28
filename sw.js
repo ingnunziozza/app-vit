@@ -1,12 +1,12 @@
-const CACHE_NAME = 'vit-app-offline-v7'; // <-- Aggiornato per forzare il refresh
+const CACHE_NAME = 'vit-app-offline-v8'; // Ho aggiornato la versione per forzare il refresh
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
   './icona.png',
   './bootstrap.min.css',
-  './umd.js',        // <-- NOME DEL FILE CORRETTO!
-  './html2pdf.min.js',
+  './umd.js',        
+  './html2pdf.bundle.min.js', // Corretto il nome del file e aggiunta la virgola!
   './jszip.min.js'
 ];
 
