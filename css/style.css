@@ -1,0 +1,144 @@
+/* --- VARIABILI CSS (TEMA CHIARO) --- */
+        :root {
+            --bg-body: #f0f2f5;
+            --text-main: #212529;
+            --bg-container: #ffffff;
+            --bg-input: #ffffff;
+            --border-input: #ccc;
+            --border-general: #dee2e6;
+
+            /* Colori Sezioni Blue */
+            --header-blue: #1f4e79;
+            --bg-light-blue: #d9e1f2;
+            --border-blue: #b4c6e7;
+
+            /* Colori Sezioni Green */
+            --header-green: #4a7e33;
+            --bg-light-green: #e2efda;
+            --border-green: #c6e0b4;
+
+            /* Altri Colori */
+            --bg-light-grey: #f2f2f2;
+            --bg-nodo: #8da6c9;
+            
+            /* Colori Evidenza */
+            --bs-primary: #0d6efd;
+            --bs-success: #198754;
+            --bs-danger: #dc3545;
+        }
+
+        /* --- VARIABILI CSS (TEMA SCURO) --- */
+        body.dark-mode {
+            --bg-body: #121212;
+            --text-main: #e0e0e0;
+            --bg-container: #1e1e1e;
+            --bg-input: #333333;
+            --border-input: #555555;
+            --border-general: #555555;
+
+            /* Adattamento Colori Sezioni */
+            --bg-light-blue: #2a3b5c;
+            --border-blue: #4a6b9c;
+            --bg-light-green: #2a402a;
+            --border-green: #4a704a;
+
+            /* Altri Colori */
+            --bg-light-grey: #2c2c2c;
+            --bg-nodo: #4a5c75;
+            
+            /* Adattamento Colori Evidenza */
+            --bs-primary: #90caf9;
+            --bs-success: #81c784;
+            --bs-danger: #e57373;
+        }
+
+        /* --- STILI GENERALI --- */
+        body { font-size: 0.75rem; background-color: var(--bg-body); color: var(--text-main); font-family: Arial, sans-serif; transition: background-color 0.3s, color 0.3s; }
+        .container { background-color: var(--bg-container); padding: 15px 20px; box-shadow: 0 0 15px rgba(0,0,0,0.15); margin-top: 10px; margin-bottom: 20px; max-width: 1150px; transition: background-color 0.3s; }
+        
+        /* --- STRUTTURA E COLORI --- */
+        .section-header { color: white; padding: 4px 8px; font-weight: bold; text-transform: uppercase; margin-top: 15px; margin-bottom: 5px; border-radius: 3px; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; }
+        .bg-dark-blue { background-color: var(--header-blue); }
+        .bg-dark-green { background-color: var(--header-green); }
+        .bg-light-blue { background-color: var(--bg-light-blue); }
+        .bg-light-green { background-color: var(--bg-light-green); }
+        .bg-light-grey { background-color: var(--bg-light-grey); }
+        
+        .box-border { border: 1px solid var(--border-blue); padding: 4px; }
+        .border-green { border: 1px solid var(--border-green); padding: 4px; }
+        .bg-nodo-collettore { background-color: var(--bg-nodo); }
+
+        /* --- FORM E INPUT --- */
+        .form-control, .form-select, .input-group-text { font-size: 0.75rem; padding: 0.15rem 0.4rem; border-radius: 3px; border: 1px solid var(--border-input); height: 1.9rem; background-color: var(--bg-input); color: var(--text-main); }
+        .form-control:focus, .form-select:focus { background-color: var(--bg-input); color: var(--text-main); box-shadow: none; border-color: var(--bs-primary); }
+        .form-check-label { font-size: 0.75rem; margin-left: 2px; white-space: nowrap; cursor: pointer; }
+        .row { margin-bottom: 2px; }
+        
+        .form-check-input { width: 1rem; height: 1rem; min-width: 1rem; min-height: 1rem; flex-shrink: 0; margin-top: 0.15rem; border-radius: 2px !important; border: 1px solid var(--border-general); background-color: var(--bg-input); cursor: pointer; }
+        .form-check-input:checked { background-color: var(--bs-primary) !important; border-color: var(--bs-primary) !important; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important; background-size: 85% 85%; background-position: center; }
+        
+        /* --- TABELLE E LAYOUT --- */
+        .table { color: var(--text-main); border-color: var(--border-general); }
+        .table td, .table th { border-color: var(--border-general); padding: 0.25rem; vertical-align: middle; }
+        .table-conduttori td { padding: 0.2rem; vertical-align: middle; }
+        .table-diff th { padding: 0.2rem; font-size: 0.7rem; }
+        .table-diff td { padding: 0.1rem; }
+        
+        /* --- BARRA STRUMENTI --- */
+        .btn-tool { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; padding: 0; flex-shrink: 0; }
+        .btn-tool-sm { min-width: 65px; height: 35px; white-space: nowrap; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0 8px; font-size: 0.75rem; }
+        .btn-tool-lg { min-width: 140px; height: 35px; white-space: nowrap; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .toolbar-wrap { display: flex !important; flex-wrap: wrap !important; gap: 0.5rem !important; justify-content: center !important; }
+        @media (min-width: 992px) { .toolbar-wrap { justify-content: space-between !important; } }
+
+        /* --- RILIEVI NC (Modifiche Tasti 35x35) --- */
+        .btn-nc-foto { width: 35px !important; height: 35px !important; min-width: 35px !important; display: flex !important; align-items: center; justify-content: center; padding: 0 !important; font-size: 1.1rem; flex-shrink: 0; }
+        .nc-input-desc { height: 40px !important; font-size: 0.75rem !important; } /* Altezza maggiore per l'input con datalist */
+        .nc-textarea { resize: none; height: 75px !important; font-size: 0.75rem !important; }
+        
+        /* Lavagna Foto */
+        canvas.foto-canvas { touch-action: none; cursor: crosshair; max-height: 200px; border-radius: 4px; border: 1px solid var(--border-input); margin-top: 5px; width: 100%; display: none; }
+        .canvas-container { position: relative; }
+        .btn-undo { position: absolute; top: 5px; right: 5px; z-index: 10; background: rgba(255,255,255,0.8); border: 1px solid #ccc; border-radius: 4px; cursor: pointer; }
+
+        /* Dark Mode Extra */
+        body.dark-mode .text-danger { color: var(--bs-danger) !important; }
+        body.dark-mode .text-success { color: var(--bs-success) !important; }
+        body.dark-mode .border-primary { border-color: var(--bs-primary) !important; }
+        body.dark-mode .border-success { border-color: var(--bs-success) !important; }
+
+        @media (min-width: 768px) { .border-md-start { border-left: 1px solid var(--border-general) !important; } }
+        @media (max-width: 767px) { .border-sm-bottom { border-bottom: 1px solid var(--border-general) !important; } .border-sm-top { border-top: 1px solid var(--border-general) !important; } }
+        
+        /* --- STAMPA --- */
+        @media print {
+            /* 1. Rimuove lo spazio bianco in eccesso impostando i margini nativi della pagina */
+            @page { margin: 10mm; }
+            body, body.dark-mode, html { background-color: white !important; color: black !important; font-size: 0.65rem; margin: 0 !important; padding: 0 !important; }
+            .container, body.dark-mode .container { box-shadow: none !important; margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; border: none !important; background-color: white !important;}
+            
+            /* 2. FIX CRITICO: Impedisce che il contenuto sparisca dopo le tabelle! */
+            .overflow-auto, .table-responsive { overflow: visible !important; }
+            
+            /* 3. Nascondi gli strumenti */
+            #barra-strumenti, #area-bottoni, .btn-cestino, .btn-mic, .btn-gps, .no-print, .btn-nc-foto, .btn-undo { display: none !important; }
+            
+            /* 4. Forza i colori di sfondo nelle sezioni */
+            .section-header { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .bg-light-blue, .bg-light-green, .bg-light-grey, .bg-pink-light, .bg-nodo-collettore { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            /* 5. Pulisci il design degli input */
+            .form-control, .form-select, .nc-textarea, .nc-input-desc { border: none !important; border-bottom: 1px dotted #999 !important; border-radius: 0; padding: 0; height: auto !important; background: transparent !important; -webkit-appearance: none; -moz-appearance: none; appearance: none; color: black !important;}
+            input[type="checkbox"], input[type="radio"] { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .form-check-input:checked { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            /* 6. Evita che le foto o le righe vengano tagliate a metà pagina */
+            canvas.foto-canvas { page-break-inside: avoid; break-inside: avoid; max-width: 100% !important; height: auto !important; display: block !important; margin-bottom: 10px; }
+            tr, .row { page-break-inside: avoid !important; break-inside: avoid !important; }
+            .section-header { page-break-after: avoid !important; break-after: avoid !important; page-break-inside: avoid !important; margin-top: 15px !important; }
+        }
+        
+        .campo-errore { border: 2px solid red !important; background-color: #ffe6e6 !important; }
+        body.fase-stampa { background-color: #ffffff; }
+        body.fase-stampa input, body.fase-stampa textarea, body.fase-stampa select { border: none !important; background: transparent !important; }
+        body.fase-stampa .border-0 { border: 1px solid transparent !important; }
