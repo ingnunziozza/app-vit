@@ -988,84 +988,166 @@ function getModuloJSON() {
     return JSON.stringify(json);
 }
 
-// --- 2. MOTORE JSON (INIEZIONE) ---
-async function setModuloJSON(jsonString) {
-    if (!jsonString) return;
-    
-    if (!jsonString.trim().startsWith('{')) {
-        document.getElementById('area-dati').innerHTML = jsonString;
-        riattivaEventi(); 
-        await ripristinaCanvas();
-        return;
-    }
-
-    try {
-        let data = JSON.parse(jsonString);
-
-        const form = document.getElementById('verificaForm');
-        if (form) form.reset();
+// --- 2. MOTORE JSON E MIGRAZIONE (INIEZIONE) ---
+    async function setModuloJSON(jsonString) {
+        if (!jsonString) return;
         
-        const dataVal = document.getElementById('data_verifica_obblig');
-        if (dataVal) dataVal.value = "";
-        const nVal = document.getElementById('verbale_n1');
-        if (nVal) nVal.value = "";
+        // ------------------------------------------------------------------
+        // 1. COMPATIBILITÀ VECCHI VERBALI (LEGACY HTML) -> ESTRAZIONE SICURA
+        // ------------------------------------------------------------------
+        if (!jsonString.trim().startsWith('{')) {
+            try {
+                // Legge il vecchio HTML in una pagina "virtuale" (senza sporcare quella visibile)
+                const parser = new DOMParser();
+                const oldDoc = parser.parseFromString(jsonString, 'text/html');
+                
+                // Svuotiamo il form visibile
+                const form = document.getElementById('verificaForm');
+                if (form) form.reset();
+                
+                const dataVal = document.getElementById('data_verifica_obblig');
+                if (dataVal) dataVal.value = "";
+                const nVal = document.getElementById('verbale_n1');
+                if (nVal) nVal.value = "";
 
-        if (data.campi_semplici) {
-            for (let key in data.campi_semplici) {
-                let els = document.querySelectorAll(`[name="${key}"], #${key}`);
-                els.forEach(el => {
-                    if (el.type === 'checkbox') {
-                        el.checked = data.campi_semplici[key];
-                    } else if (el.type === 'radio') {
-                        if (el.value === data.campi_semplici[key]) el.checked = true;
-                    } else {
-                        el.value = data.campi_semplici[key] || "";
+                // Ricreiamo le righe dinamiche basandoci sulla quantità presente nel vecchio HTML
+                const diffRowsCount = oldDoc.querySelectorAll('.diff-row').length;
+                const diffTable = document.getElementById('diffTable');
+                if (diffTable) {
+                    diffTable.innerHTML = '';
+                    for(let i=0; i<diffRowsCount; i++) addDiffRow();
+                }
+
+                const ncRowsCount = oldDoc.querySelectorAll('.nc-row').length;
+                const ncTable = document.getElementById('ncTable');
+                if (ncTable) {
+                    ncTable.innerHTML = '';
+                    for(let i=0; i<ncRowsCount; i++) addNCRow();
+                }
+
+                // Travaso dei valori dal vecchio HTML al nuovo modulo visibile
+                let oldInputs = oldDoc.querySelectorAll('input, select, textarea');
+                oldInputs.forEach(oldEl => {
+                    let name = oldEl.name || oldEl.id;
+                    if (!name) return;
+
+                    let isArray = name.endsWith('[]');
+                    let newEls = isArray ? document.querySelectorAll(`[name="${name}"]`) : document.querySelectorAll(`[name="${name}"], #${name}`);
+                    
+                    let oldElsList = isArray ? Array.from(oldDoc.querySelectorAll(`[name="${name}"]`)) : [oldEl];
+                    let index = isArray ? oldElsList.indexOf(oldEl) : 0;
+                    
+                    let newEl = newEls[index];
+                    if (newEl) {
+                        if (oldEl.type === 'checkbox' || oldEl.type === 'radio') {
+                            newEl.checked = oldEl.hasAttribute('checked');
+                        } else if (oldEl.tagName === 'SELECT') {
+                            let selectedOpt = oldEl.querySelector('option[selected]');
+                            if (selectedOpt) newEl.value = selectedOpt.value;
+                        } else if (oldEl.tagName === 'TEXTAREA') {
+                            newEl.value = oldEl.textContent || oldEl.innerHTML || "";
+                        } else {
+                            newEl.value = oldEl.getAttribute('value') || "";
+                        }
                     }
                 });
+
+                // Recupero ID delle vecchie foto
+                let oldCanvases = oldDoc.querySelectorAll('canvas.foto-canvas');
+                let newCanvases = document.querySelectorAll('canvas.foto-canvas');
+                oldCanvases.forEach((oldCanvas, index) => {
+                    let fotoId = oldCanvas.getAttribute('data-foto-id');
+                    if (fotoId && newCanvases[index]) {
+                        newCanvases[index].setAttribute('data-foto-id', fotoId);
+                    }
+                });
+
+                // Ricalcoliamo e ripristiniamo le grafiche
+                calcolaUc();
+                aggiornaEsitoGlobale();
+                await ripristinaCanvas();
+                
+                // Convertiamo silenziosamente il salvataggio nel nuovo e sicuro formato JSON
+                salvataggioIntelligente();
+
+                return;
+            } catch (e) {
+                console.error("Errore migrazione vecchi verbali:", e);
+                alert("Errore nell'adattamento del vecchio verbale.");
+                return;
             }
         }
 
-        if (data.differenziali) {
-            const diffTable = document.getElementById('diffTable');
-            if (diffTable) diffTable.innerHTML = ''; 
-            data.differenziali.forEach(diff => {
-                addDiffRow(); 
-                let lastRow = diffTable.lastElementChild;
-                if (lastRow) {
-                    let q = lastRow.querySelector('[name="diff_quadro[]"]'); if (q) q.value = diff.quadro || "";
-                    let n = lastRow.querySelector('[name="diff_no[]"]'); if (n) n.value = diff.no || "";
-                    let c003 = lastRow.querySelector('[name="diff_003[]"]'); if (c003) c003.checked = diff.chk_003 || false;
-                    let c03 = lastRow.querySelector('[name="diff_03[]"]'); if (c03) c03.checked = diff.chk_03 || false;
-                    let c05 = lastRow.querySelector('[name="diff_05[]"]'); if (c05) c05.checked = diff.chk_05 || false;
-                    let c1 = lastRow.querySelector('[name="diff_1[]"]'); if (c1) c1.checked = diff.chk_1 || false;
-                    let nt = lastRow.querySelector('[name="diff_note[]"]'); if (nt) nt.value = diff.note || "";
-                }
-            });
-        }
+        // ------------------------------------------------------------------
+        // 2. NUOVI VERBALI (CARICAMENTO JSON NATIVO)
+        // ------------------------------------------------------------------
+        try {
+            let data = JSON.parse(jsonString);
 
-        if (data.non_conformita) {
-            const ncTable = document.getElementById('ncTable');
-            if (ncTable) ncTable.innerHTML = ''; 
-            data.non_conformita.forEach(nc => {
-                addNCRow();
-                let lastRow = ncTable.lastElementChild;
-                if (lastRow) {
-                    let d = lastRow.querySelector('[name="nc_descrizione[]"]'); if (d) d.value = nc.descrizione || "";
-                    let nt = lastRow.querySelector('[name="nc_note[]"]'); if (nt) nt.value = nc.note || "";
-                    if (nc.foto_id) {
-                        let canvas = lastRow.querySelector('canvas.foto-canvas');
-                        if (canvas) canvas.setAttribute('data-foto-id', nc.foto_id);
+            const form = document.getElementById('verificaForm');
+            if (form) form.reset();
+            
+            const dataVal = document.getElementById('data_verifica_obblig');
+            if (dataVal) dataVal.value = "";
+            const nVal = document.getElementById('verbale_n1');
+            if (nVal) nVal.value = "";
+
+            if (data.campi_semplici) {
+                for (let key in data.campi_semplici) {
+                    let els = document.querySelectorAll(`[name="${key}"], #${key}`);
+                    els.forEach(el => {
+                        if (el.type === 'checkbox') {
+                            el.checked = data.campi_semplici[key];
+                        } else if (el.type === 'radio') {
+                            if (el.value === data.campi_semplici[key]) el.checked = true;
+                        } else {
+                            el.value = data.campi_semplici[key] || "";
+                        }
+                    });
+                }
+            }
+
+            if (data.differenziali) {
+                const diffTable = document.getElementById('diffTable');
+                if (diffTable) diffTable.innerHTML = ''; 
+                data.differenziali.forEach(diff => {
+                    addDiffRow(); 
+                    let lastRow = diffTable.lastElementChild;
+                    if (lastRow) {
+                        let q = lastRow.querySelector('[name="diff_quadro[]"]'); if (q) q.value = diff.quadro || "";
+                        let n = lastRow.querySelector('[name="diff_no[]"]'); if (n) n.value = diff.no || "";
+                        let c003 = lastRow.querySelector('[name="diff_003[]"]'); if (c003) c003.checked = diff.chk_003 || false;
+                        let c03 = lastRow.querySelector('[name="diff_03[]"]'); if (c03) c03.checked = diff.chk_03 || false;
+                        let c05 = lastRow.querySelector('[name="diff_05[]"]'); if (c05) c05.checked = diff.chk_05 || false;
+                        let c1 = lastRow.querySelector('[name="diff_1[]"]'); if (c1) c1.checked = diff.chk_1 || false;
+                        let nt = lastRow.querySelector('[name="diff_note[]"]'); if (nt) nt.value = diff.note || "";
                     }
-                }
-            });
+                });
+            }
+
+            if (data.non_conformita) {
+                const ncTable = document.getElementById('ncTable');
+                if (ncTable) ncTable.innerHTML = ''; 
+                data.non_conformita.forEach(nc => {
+                    addNCRow();
+                    let lastRow = ncTable.lastElementChild;
+                    if (lastRow) {
+                        let d = lastRow.querySelector('[name="nc_descrizione[]"]'); if (d) d.value = nc.descrizione || "";
+                        let nt = lastRow.querySelector('[name="nc_note[]"]'); if (nt) nt.value = nc.note || "";
+                        if (nc.foto_id) {
+                            let canvas = lastRow.querySelector('canvas.foto-canvas');
+                            if (canvas) canvas.setAttribute('data-foto-id', nc.foto_id);
+                        }
+                    }
+                });
+            }
+
+            calcolaUc();
+            aggiornaEsitoGlobale();
+            await ripristinaCanvas();
+
+        } catch (e) {
+            console.error("Errore parser JSON:", e);
+            alert("Errore nel caricamento del file. I dati potrebbero essere corrotti.");
         }
-
-        calcolaUc();
-        aggiornaEsitoGlobale();
-        await ripristinaCanvas();
-
-    } catch (e) {
-        console.error("Errore parser JSON:", e);
-        alert("Errore nel caricamento del file. I dati potrebbero essere corrotti.");
     }
-}
