@@ -14,7 +14,6 @@ async function pulisciFotoOrfane() {
             if (key.startsWith('foto_')) {
                 let trovata = stringaBackup.includes(key);
                 
-                // Se non è nel backup, cerchiamo nei verbali uno per uno
                 if (!trovata) {
                     for (let nome in archivio) {
                         if (archivio[nome].includes(key)) { 
@@ -152,7 +151,7 @@ function calcolaUc() {
     if (iGuasto > 0 && rTerra > 0 && calcField) {
         let uc = iGuasto * rTerra;
         calcField.value = uc.toFixed(1);
-        
+
         if (tensContatto > 0) {
             if (uc <= tensContatto) {
                 calcField.classList.remove('bg-danger', 'text-dark', 'bg-light');
@@ -175,7 +174,7 @@ function autoSelezionaArea(radioSistema) {
     const checkAreaIII = document.getElementById('area_iii');
     if (!checkAreaII || !checkAreaIII) return;
     if (radioSistema.value === 'TT') checkAreaII.checked = true;
-    else if (radioSistema.value === 'TN-S') checkAreaIII.checked = true; 
+    else if (radioSistema.value === 'TN-S') checkAreaIII.checked = true;
     salvataggioIntelligente();
 }
 
@@ -183,7 +182,7 @@ function calcolaProssimaVerifica() {
     const dataInizioStr = document.getElementById('data_verifica_obblig').value;
     const tipoVerificaElems = document.getElementsByName('tipo_verifica');
     const campoProssima = document.getElementById('prossima_verifica');
-    
+
     let tipoSelezionato = null;
     for (let radio of tipoVerificaElems) {
         if (radio.checked) { tipoSelezionato = radio.value; break; }
@@ -191,9 +190,9 @@ function calcolaProssimaVerifica() {
 
     if (dataInizioStr && tipoSelezionato) {
         let data = new Date(dataInizioStr);
-        if (tipoSelezionato === 'biennale') data.setFullYear(data.getFullYear() + 2); 
-        else if (tipoSelezionato === 'quinquennale') data.setFullYear(data.getFullYear() + 5); 
-        
+        if (tipoSelezionato === 'biennale') data.setFullYear(data.getFullYear() + 2);
+        else if (tipoSelezionato === 'quinquennale') data.setFullYear(data.getFullYear() + 5);
+
         let anno = data.getFullYear();
         let mese = ("0" + (data.getMonth() + 1)).slice(-2);
         let giorno = ("0" + data.getDate()).slice(-2);
@@ -265,7 +264,7 @@ function addNCRow() {
 let libreriaNC_Dinamica = [];
 function inizializzaLibreria() {
     let salvata = localStorage.getItem('libreriaNC_custom');
-    if (salvata) { libreriaNC_Dinamica = JSON.parse(salvata); } 
+    if (salvata) { libreriaNC_Dinamica = JSON.parse(salvata); }
     else {
         libreriaNC_Dinamica = [
             { desc: "Non è stata esibita la documentazione tecnica dell’impianto", pres: "Mettere a disposizione DiCo, schemi e verbali." },
@@ -369,24 +368,24 @@ async function gestisciFoto(input) {
     const file = input.files[0];
     if (!file) return;
     let geoloc = "";
-    
+
     const scatta = () => {
          const reader = new FileReader();
          reader.onload = function(e) {
              const img = new Image();
              img.onload = async function() {
-                 const canvas = input.closest('td').querySelector('.foto-canvas'); 
-                 const MAX = 800; 
+                 const canvas = input.closest('td').querySelector('.foto-canvas');
+                 const MAX = 800;
                  let w = img.width; let h = img.height;
                  if (w > MAX) { h *= MAX / w; w = MAX; }
                  canvas.width = w; canvas.height = h;
                  const ctx = canvas.getContext('2d');
                  ctx.drawImage(img, 0, 0, w, h);
-                 
+
                  ctx.font = "bold 16px Arial"; ctx.fillStyle = "yellow"; ctx.shadowColor = "black"; ctx.shadowBlur = 4;
                  ctx.fillText(new Date().toLocaleString('it-IT'), 10, h - 15);
                  if(geoloc) { ctx.font = "12px Arial"; ctx.fillText(geoloc, 10, h - 35); }
-                 
+
                  canvas.style.display = 'block';
                  let fotoId = canvas.getAttribute('data-foto-id') || ('foto_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5));
                  canvas.setAttribute('data-foto-id', fotoId);
@@ -396,9 +395,9 @@ async function gestisciFoto(input) {
 
                  const blob = await canvasToBlobAsync(canvas);
                  await idbKeyval.set(fotoId, blob);
-                 
+
                  abilitareDisegno(canvas);
-                 salvataggioIntelligente(); 
+                 salvataggioIntelligente();
              }
              img.src = e.target.result;
          }
@@ -447,12 +446,12 @@ function abilitareDisegno(canvas) {
 async function undoCanvas(btn) {
     const canvas = btn.parentElement.querySelector('canvas');
     if(canvas && canvas.undoHistory && canvas.undoHistory.length > 1) {
-        canvas.undoHistory.pop(); 
-        const prev = canvas.undoHistory[canvas.undoHistory.length - 1]; 
+        canvas.undoHistory.pop();
+        const prev = canvas.undoHistory[canvas.undoHistory.length - 1];
         const img = new Image();
         img.onload = async function() {
             canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-            canvas.getContext('2d').drawImage(img, 0, 0); 
+            canvas.getContext('2d').drawImage(img, 0, 0);
             if(canvas.undoHistory.length <= 1) btn.style.display = 'none';
             let id = canvas.getAttribute('data-foto-id');
             if (id) { const blob = await canvasToBlobAsync(canvas); await idbKeyval.set(id, blob); salvataggioIntelligente(); }
@@ -543,7 +542,38 @@ function riattivaEventi() {
     }
 }
 
-// --- GESTIONE ARCHIVIO INTERNO ---
+// --- GESTIONE ARCHIVIO INTERNO E NUOVI TASTI ---
+async function aggiornaSelectArchivio() {
+    const select = document.getElementById('archivio_select');
+    if (!select) return;
+    select.innerHTML = '<option value="">-- Verbali --</option>';
+    let archivio = await idbKeyval.get('vit_archivio_dati') || {};
+    Object.keys(archivio).sort((a,b)=>b.localeCompare(a)).forEach(nome => {
+        let opt = document.createElement('option');
+        opt.value = nome;
+        opt.textContent = nome;
+        select.appendChild(opt);
+    });
+}
+
+async function caricaDaArchivioSelezionato() {
+    const select = document.getElementById('archivio_select');
+    if (!select || !select.value) {
+        alert("⚠️ Seleziona un verbale dalla tendina prima di caricare!");
+        return;
+    }
+    caricaDaArchivio(select.value);
+}
+
+async function eliminaDaArchivioRapido() {
+    const select = document.getElementById('archivio_select');
+    if (!select || !select.value) {
+        alert("⚠️ Seleziona un verbale dalla tendina prima di eliminare!");
+        return;
+    }
+    eliminaDaArchivio(select.value);
+}
+
 async function migraArchivio() {
     let vecchio = localStorage.getItem('verbaleVIT_archivio');
     if (vecchio) {
@@ -553,15 +583,17 @@ async function migraArchivio() {
 }
 
 async function salvaInArchivio() {
+    fissaValoriHTML();
     let denom = document.getElementById('denominazione_imp')?.value || "SenzaNome";
     let dataV = document.getElementById('data_verifica_obblig')?.value || new Date().toLocaleDateString('it-IT');
     let nome = prompt("Nome verbale da salvare:", `${denom} - ${dataV}`);
     if (!nome) return;
-    
+
     let archivio = await idbKeyval.get('vit_archivio_dati') || {};
-    archivio[nome] = getModuloJSON(); 
+    archivio[nome] = getModuloJSON();
     await idbKeyval.set('vit_archivio_dati', archivio);
-    
+
+    aggiornaSelectArchivio();
     alert(`✅ Verbale "${nome}" salvato nel dispositivo!`);
 }
 
@@ -569,21 +601,22 @@ async function duplicaVerbale() {
     let denom = document.getElementById('denominazione_imp')?.value || "Copia";
     let nome = prompt("Crea un duplicato come:", `${denom} - Copia`);
     if (!nome) return;
-    
+
     let jsonData = JSON.parse(getModuloJSON());
-    
+
     for (let nc of jsonData.non_conformita) {
         if (nc.foto_id) {
             let newId = 'foto_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
             let base64 = await idbKeyval.get(nc.foto_id);
             if (base64) await idbKeyval.set(newId, base64);
-            nc.foto_id = newId; 
+            nc.foto_id = newId;
         }
     }
-    
+
     let archivio = await idbKeyval.get('vit_archivio_dati') || {};
     archivio[nome] = JSON.stringify(jsonData);
     await idbKeyval.set('vit_archivio_dati', archivio);
+    aggiornaSelectArchivio();
     alert(`✅ Duplicato salvato in archivio con successo!`);
 }
 
@@ -598,7 +631,7 @@ async function apriModaleArchivio() {
             </div>
         </div>`).join('');
     if(!lista) lista = `<p class="text-muted text-center mt-3">L'archivio locale è vuoto.</p>`;
-    
+
     document.body.insertAdjacentHTML('beforeend', `
         <div class="modal fade show no-print" id="archivioModal" style="display:block; background:rgba(0,0,0,0.6);" aria-modal="true">
           <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -644,6 +677,7 @@ async function eliminaDaArchivio(nome, btn) {
         for (const id of fotoIds) await idbKeyval.del(id);
         delete archivio[nome]; await idbKeyval.set('vit_archivio_dati', archivio);
         if (btn) btn.closest('.archivio-item').remove(); else alert("Eliminato dall'archivio.");
+        aggiornaSelectArchivio();
     }
 }
 
@@ -652,7 +686,7 @@ async function esportaDB() {
     let archivio = await idbKeyval.get('vit_archivio_dati') || {};
     if (Object.keys(archivio).length === 0) { alert("L'archivio è vuoto. Niente da esportare."); return; }
     let backupData = { archivio: archivio, immagini: {} };
-    
+
     for (let nome in archivio) {
         let tempDiv = document.createElement('div'); tempDiv.innerHTML = archivio[nome];
         for(let canvas of tempDiv.querySelectorAll('canvas.foto-canvas')) {
@@ -686,9 +720,10 @@ function eseguiImportazione(event) {
             Object.assign(archAttuale, archImport);
             await idbKeyval.set('vit_archivio_dati', archAttuale);
             alert("✅ Database ripristinato con successo!");
+            aggiornaSelectArchivio();
         } catch(err) { alert("❌ Errore durante il ripristino del file."); }
     };
-    reader.readAsText(file); event.target.value = ''; 
+    reader.readAsText(file); event.target.value = '';
 }
 
 // --- CREAZIONE PDF O STAMPA NATIVA ---
@@ -699,25 +734,25 @@ function getNomeFileEsportazione() {
 }
 
 function avviaProcessoStampa() {
-    const d = document.getElementById('data_verifica_obblig'); 
-    const r = document.getElementById('ragione_sociale_obblig'); 
+    const d = document.getElementById('data_verifica_obblig');
+    const r = document.getElementById('ragione_sociale_obblig');
     const n = document.getElementById('denominazione_imp');
-    const re = document.getElementById('val_resistenza_terra'); 
-    
+    const re = document.getElementById('val_resistenza_terra');
+
     let err = false;
-    
-    [d, r, n, re].forEach(el => { 
-        if(!el?.value){ 
-            el?.classList.add('campo-errore'); 
-            err = true; 
+
+    [d, r, n, re].forEach(el => {
+        if(!el?.value){
+            el?.classList.add('campo-errore');
+            err = true;
         } else {
             el?.classList.remove('campo-errore');
-        } 
+        }
     });
 
     const sistemaChecked = document.querySelector('input[name="sistema"]:checked');
     const sistemaRadios = document.querySelectorAll('input[name="sistema"]');
-    
+
     if (!sistemaChecked) {
         sistemaRadios.forEach(radio => radio.classList.add('campo-errore'));
         err = true;
@@ -725,11 +760,11 @@ function avviaProcessoStampa() {
         sistemaRadios.forEach(radio => radio.classList.remove('campo-errore'));
     }
 
-    if (err) { 
-        alert("⚠️ Mancano campi obbligatori!\n\nVerifica di aver compilato:\n- Data\n- Ragione Sociale\n- Denominazione Impianto\n- Dati Impianto (TT, TN-S, o IT)\n- Misura resistenza Terra (RE)"); 
-        return; 
+    if (err) {
+        alert("⚠️ Mancano campi obbligatori!\n\nVerifica di aver compilato:\n- Data\n- Ragione Sociale\n- Denominazione Impianto\n- Dati Impianto (TT, TN-S, o IT)\n- Misura resistenza Terra (RE)");
+        return;
     }
-    
+
     document.body.insertAdjacentHTML('beforeend', `
         <div class="modal fade show no-print" id="stampaModal" style="display:block; background:rgba(0,0,0,0.6);">
           <div class="modal-dialog modal-dialog-centered"><div class="modal-content text-dark"><div class="modal-body text-center py-4">
@@ -745,26 +780,26 @@ async function eseguiStampaPDF() {
     if (typeof window.html2pdf === 'undefined') { alert("Errore caricamento libreria PDF."); eseguiStampaBase(); return; }
     const btn = document.querySelector('button[onclick="avviaProcessoStampa()"]');
     const org = btn ? btn.innerHTML : ''; if(btn) btn.innerHTML = "⏳ Creazione in corso...";
-    
+
     try {
         fissaValoriHTML(); await ripristinaCanvas();
         document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
         document.body.classList.add('fase-stampa');
-        
+
         const areaDati = document.getElementById('area-dati');
-        const opt = { 
-            margin: [10,5,15,5], 
-            filename: getNomeFileEsportazione().replace(/[\/\\]/g, '-') + '.pdf', 
-            image: { type: 'jpeg', quality: 0.98 }, 
+        const opt = {
+            margin: [10,5,15,5],
+            filename: getNomeFileEsportazione().replace(/[\/\\]/g, '-') + '.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
             pagebreak: { mode: ['css', 'legacy'] },
-            html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowHeight: areaDati.scrollHeight + 50 }, 
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+            html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowHeight: areaDati.scrollHeight + 50 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         await window.html2pdf().set(opt).from(areaDati).save();
-        
-    } catch(e) { 
+
+    } catch(e) {
         console.error("Errore html2pdf: ", e);
-        eseguiStampaBase(); 
+        eseguiStampaBase();
     } finally {
         document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
         document.body.classList.remove('fase-stampa'); if(btn) btn.innerHTML = org;
@@ -772,10 +807,12 @@ async function eseguiStampaPDF() {
 }
 
 function eseguiStampaBase() {
-    const titoloOriginale = document.title; 
+    const titoloOriginale = document.title;
     document.title = getNomeFileEsportazione().replace(/[\/\\]/g, '-');
+
     window.print();
-    document.title = titoloOriginale; 
+
+    document.title = titoloOriginale;
 }
 
 // --- INIT APP E LOGICA DI AVVIO ---
@@ -784,9 +821,13 @@ window.onload = async function() {
     popolaSelectTF();
     popolaPercDropdowns();
     inizializzaLibreria();
+    
+    if(typeof aggiornaSelectArchivio === "function") {
+        await aggiornaSelectArchivio();
+    }
 
     const backup = localStorage.getItem('verbaleVIT_backup');
-    
+
     if (backup && backup.trim().length > 20) {
         await setModuloJSON(backup);
     } else {
@@ -797,40 +838,43 @@ window.onload = async function() {
     riattivaEventi();
 
     setTimeout(async () => {
-        try { await migraArchivio(); await pulisciFotoOrfane(); } 
+        try { await migraArchivio(); await pulisciFotoOrfane(); }
         catch (e) { console.error("Background task failed", e); }
     }, 1500);
 };
 
-// --- ESPORTAZIONE CSV, XFDF, ZIP E CONDIVISIONE ---
-
+// --- ESTRAZIONE DATI FORM E XFDF ---
 function estraiDatiForm() {
-let dati = {};
-document.getElementById('area-dati').querySelectorAll('input, select, textarea').forEach(el => {
-    let nome = el.name || el.id;
-    if (!nome) return;
-    
-    if (el.type === 'checkbox' || el.type === 'radio') {
-        if (nome.endsWith('[]')) {
-            if (!dati[nome]) dati[nome] = [];
-            if (el.type === 'checkbox') {
-                dati[nome].push(el.checked ? (el.value !== 'on' ? el.value : 'Si') : 'No');
+    let dati = {};
+    document.getElementById('area-dati').querySelectorAll('input, select, textarea').forEach(el => {
+        let nome = el.name || el.id;
+        if (!nome) return;
+
+        if (el.type === 'checkbox' || el.type === 'radio') {
+            if (nome.endsWith('[]')) {
+                if (!dati[nome]) dati[nome] = [];
+                if (el.checked) {
+                    dati[nome].push((el.value && el.value !== 'on') ? el.value : 'Si');
+                } else if (el.type === 'checkbox') {
+                    dati[nome].push('No');
+                }
             } else {
-                if (el.checked) dati[nome].push(el.value);
+                if (el.checked) {
+                    dati[nome] = (el.value && el.value !== 'on') ? el.value : 'Si';
+                } else {
+                    if (dati[nome] === undefined) dati[nome] = 'No';
+                }
             }
         } else {
-            if (el.checked) dati[nome] = el.value !== 'on' ? el.value : 'Si';
+            if (nome.endsWith('[]')) {
+                if (!dati[nome]) dati[nome] = [];
+                dati[nome].push(el.value);
+            } else {
+                dati[nome] = el.value;
+            }
         }
-    } else {
-        if (nome.endsWith('[]')) {
-            if (!dati[nome]) dati[nome] = [];
-            dati[nome].push(el.value);
-        } else {
-            dati[nome] = el.value;
-        }
-    }
-});
-return dati;
+    });
+    return dati;
 }
 
 function esportaCSV() {
@@ -858,7 +902,7 @@ function condividiCSV() {
     }
     let nomeFile = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".csv";
     let file = new File([csvContent], nomeFile, {type: "text/csv"});
-    
+
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
         navigator.share({
             title: 'Dati Verbale VIT',
@@ -871,90 +915,332 @@ function condividiCSV() {
     }
 }
 
+// --- DIZIONARIO COLLEGAMENTO PDF ---
+const mappaCampiPDF = {
+    // --- INTESTAZIONE ---
+    "verbale_n1": "verbale_n1",
+    "data_verifica": "data_verifica",
+
+    // --- 1. DATI DEL COMMITTENTE ---
+    "ragione_sociale": "Ragione sociale",
+    "citta_comm": "città.0.0.0",
+    "indirizzo_comm": "indirizzo.0",
+    "tipo_verifica": "tipo_verifica",
+
+    // --- 2. IMPIANTO SOGGETTO A VERIFICA ---
+    "denominazione_imp": "denominazione_imp",
+    "citta_imp": "città.1",
+    "indirizzo_imp": "indirizzo.1.0",
+    "locale_uso": "Locale ad uso",
+    "sistema": "sistema",
+    "area": "area",
+    "pod": "POD",
+    "kw": "Kw",
+    "volt": "TENSIONE",
+    "tens_nominale": "kV",
+    "corr_guasto": "Corrente di guasto monofase a terra",
+    "tempo_guasto": "SEC. GUASTO",
+    "tens_contatto": "contatto ammissibile",
+
+    // --- 3. ESAME DOCUMENTALE ---
+    "chk_doc_conf": "DI.CO.0",
+    "doc_conf_il": "DICO DATA.0",
+    "doc_conf_da": "DICO Rilasciata.0",
+    "chk_doc_risp": "DI.RI",
+    "doc_risp_il": "DIRI DATA.1",
+    "doc_risp_da": "DIRI Rilasciata.1",
+    "chk_doc_prog": "Progetto",
+    "doc_prog_il": "PROJ DATA.2.0",
+    "doc_prog_da": "PROJ Rilasciata.2",
+    "chk_inail": "INAIL",
+    "inail_matr": "Matricola Inail",
+    "inail_data": "INAIL DATA.2.1",
+    "chk_asl": "ASL_chk",
+    "asl_matr": "Matricola ASL",
+    "asl_data": "ASL DATA.2.2.0",
+    "doc_schemi": "SCHEMI",
+    "doc_planimetria": "PLAN.0",
+    "doc_verbale_prec": "VIT PREC",
+    "tns_comunicazione": "GESTORE DATA",
+
+    // --- 4. ESAME A VISTA ---
+    "inf_tubo": "Sistema disperdente.2.1",
+    "inf_profilo": "Sistema disperdente.2.2.0.1",
+    "inf_mass": "Sistema disperdente.2.2.0.0",
+    "mat_inf_zinc": "Sistema disperdente.2.2.1.0.0.0",
+    "mat_inf_rame": "Sistema disperdente.2.2.1.1.0.0",
+    "picchetti_num": "picchetti_num",
+    "posa_nastro": "Sistema disperdente.0.2",
+    "posa_tondino": "Sistema disperdente.1.",
+    "posa_cordato": "Sistema disperdente.1.1",
+    "mat_posa_zinc": "Sistema disperdente.2.2.1.0.1.0",
+    "mat_posa_rame": "Sistema disperdente.2.2.1.1.1.0",
+    "nodo_collettore": "nodo_collettore",
+    "stato_conn": "stato_conn",
+    "realiz_bulloni": "Connessioni.1.0",
+    "realiz_morsetti": "Connessioni.1.1",
+    "realiz_capicorda": "Connessioni.1.2",
+
+    // --- 5. ESAME CONDUTTORI ---
+    "id_terra": "id_terra",
+    "id_prot": "id_prot",
+    "id_giunz": "id_giunz",
+    "sez_terra": "SEZIONE.0",
+    "ct_isolati": "CAVI.0.0",
+    "ct_rame": "CAVI.0.1",
+    "ct_nastri": "CAVI.0.2",
+    "ct_strutt": "CAVI.0.3",
+    "sez_prot": "SEZIONE.1",
+    "cp_isolati": "CAVI.1.0",
+    "cp_nudi": "CAVI.1.1",
+    "cp_anime": "CAVI.1.2",
+    "cp_involucri": "CAVI.1.3",
+    "sez_eq": "SEZIONE.2",
+    "ce_isolati": "CAVI.2.0.0",
+    "ce_nudi": "CAVI.2.1.0",
+    "ce_richiesti": "CAVI.2.2.0",
+    "ce_non_richiesti": "CAVI.2.3.0",
+    "cont_cond": "cont_cond",
+    "cont_eq": "cont_eq",
+    "int_diff": "Interruttori D.0.0",
+    "int_max_corr": "Interruttori MAX.0.0",
+    "condizioni": "condizioni",
+
+    // --- 6. CAMPIONAMENTO E CONTINUITÀ ---
+    "tipo_ambiente": "tipo_ambiente",
+    "perc_disp": "%.0",
+    "perc_coll": "%.1",
+    "perc_pe": "%.2",
+    "perc_masse_coll": "%.3",
+    "perc_masse_est": "%masse",
+    "presente_verifica": "committente delegato",
+
+    // --- 7. ESAME STRUMENTALE ---
+    "misura_resistenza_terra": "RE",
+    "metodo_misura": "metodo_misura",
+    "tt_soddisf": "tt_soddisf",
+    "val_ul_scelta": "UL",
+    "tn_soddisf_2": "tn_soddisf_2",
+    "tn_val_uc": "tn_val_uc",
+
+    // --- 8. DIFFERENZIALI (TABELLA DINAMICA) ---
+    "diff_quadro[]": "Quadro",
+    "diff_no[]": "No_Diff",
+    "diff_note[]": "Note",
+
+    // --- 9. NON CONFORMITÀ (TABELLA DINAMICA) ---
+    "nc_descrizione[]": "nc_descrizione",
+    "nc_note[]": "nc_note",
+
+    // --- 10. ESITO VERIFICA ---
+    "esito_globale": "esito_globale",
+    "tempo_impiegato": "ORA/UOMO",
+    "prossima_verifica": "prossima_verifica"
+};
+
+// --- DIZIONARIO SPECIALE: Da HTML a Checkbox Multiple (PDF) ---
+const mappaRadioCheckbox = {
+    "tipo_verifica": {
+        "biennale": "Check Box1.1",        
+        "quinquennale": "Check Box1.0"
+    },
+    "sistema": {
+        "tt": "TT",        
+        "tn-s": "TNS",     
+        "it": "IT"
+    },
+    "area": {
+        "ii": "Area II.0",
+        "iii": "MT.0"
+    },
+    "sist_disp_ispez": {
+        "Ispezionabile": "Ispezionabile.0.0",
+        "Non Ispezionabile": "NON Ispezionabile.3"
+    },
+    "sist_disp_regol": {
+        "Regolamentare": "REG.0",
+        "Non Regolamentare": "NO REG"
+    },
+    "picchetti_num": {
+        "1": "PDF_check_Picchetti1",
+        "2": "PDF_check_Picchetti2",
+        "3": "PDF_check_Picchetti3",
+        "4": "PDF_check_PicchettiVari",
+        "vari": "PDF_check_PicchettiVari"
+    },
+    "nodo_collettore": {
+        "Acciaio Zincato": "CAVI.2.0.1",
+        "Morsetto": "CAVI.2.1.1",
+        "Rame": "CAVI.2.2.1",
+        "Non Identificato": "CAVI.2.3.1"
+    },
+    "id_terra": {
+        "idonei": "TERRA.1.0",
+        "nonidonei": "TERRA.2.0"
+    },
+    "id_prot": {
+        "idonei": "TERRA.1.1.0",
+        "nonidonei": "TERRA.2.1.0"
+    },
+    "id_giunz": {
+        "idonee": "TERRA.1.1.1",
+        "nonidonee": "TERRA.2.1.1"
+    },
+    "cont_cond": {
+        "Si": "Si_cont",
+        "No": "No_cont",
+        "N/A": "NA_cont"
+    },
+    "cont_eq": {
+        "Si": "Si_eq",
+        "No": "No_eq",
+        "N/A": "NA_eq"
+    },
+    "tipo_ambiente": {
+        "ordinario": "ordinario",
+        "speciale": "speciale"
+    },
+    "metodo_misura": {
+        "ttok": "TT OK.0",
+        "ttko": "TT KO.0"
+    },
+    "tt_soddisf": {
+        "Risulta": "TT OK.0",
+        "Non Risulta": "TT KO.0"
+    },
+    "tn_soddisf_2": {
+        "tn_soddisf_ok": "TN OK.1.0",
+        "tn_soddisf_ko": "TN KO.1.0"
+    },
+    "esito_globale": {
+        "esito.ok": "positivo.0.0",
+        "esito.ko": "negativo"
+    },
+    "stato_conn": {
+        "idonee": "Connessioni.0.0",      
+        "nonidonee": "Connessioni.0.1"       
+    },
+    "condizioni": {
+        "buone": "Buone", 
+        "discrete": "Discrete",
+        "mediocri": "Mediocri", 
+        "scarse": "Scarse" 
+    }
+};
+
+// --- FUNZIONE DEFINITIVA PER ESPORTAZIONE XFDF ---
 function esportaXFDF() {
     let dati = estraiDatiForm();
     let xfdf = `<?xml version="1.0" encoding="UTF-8"?>\n<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">\n<fields>\n`;
+
+    // ---> GESTIONE 4 CHECKBOX VERSO TENDINA A RANGE <---
+    let nomeGruppoPdf = "Corrente_Idn"; 
+    if (dati["diff_003[]"]) {
+        let numRighe = dati["diff_003[]"].length;
+        for (let i = 0; i < numRighe; i++) {
+            let selezioni = [];
+            if (dati["diff_003[]"][i] === "Si" || dati["diff_003[]"][i] === "on" || dati["diff_003[]"][i] === "Sì") selezioni.push("0,03");
+            if (dati["diff_03[]"][i] === "Si" || dati["diff_03[]"][i] === "on" || dati["diff_03[]"][i] === "Sì") selezioni.push("0,3");
+            if (dati["diff_05[]"][i] === "Si" || dati["diff_05[]"][i] === "on" || dati["diff_05[]"][i] === "Sì") selezioni.push("0,5");
+            if (dati["diff_1[]"][i] === "Si" || dati["diff_1[]"][i] === "on" || dati["diff_1[]"][i] === "Sì") selezioni.push("1");
+            
+            let valoreScelto = "Off";
+            if (selezioni.length === 1) {
+                valoreScelto = selezioni[0];
+            } else if (selezioni.length > 1) {
+                valoreScelto = selezioni[0] + "÷" + selezioni[selezioni.length - 1];
+            }
+            
+            if (valoreScelto !== "Off") {
+                let nomeIndicizzato = `${nomeGruppoPdf}_${i + 1}`; 
+                let safeKey = nomeIndicizzato.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                let safeVal = String(valoreScelto).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                xfdf += `  <field name="${safeKey}"><value>${safeVal}</value></field>\n`;
+            }
+        }
+        delete dati["diff_003[]"]; delete dati["diff_03[]"]; delete dati["diff_05[]"]; delete dati["diff_1[]"];
+    }
+
+    // "TRITATUTTO": Rimuove tutti gli spazi e mette in minuscolo per rendere i nomi indistruttibili
+    const pulisciTesto = (str) => String(str || "").toLowerCase().replace(/\s+/g, '');
+
     for (let key in dati) {
-        let val = Array.isArray(dati[key]) ? dati[key].join(', ') : dati[key];
-        if (val !== undefined && val !== null && val !== "") {
-            let safeKey = key.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        let valori = dati[key];
+
+        // 1. GESTIONE SPECIALE: Da Radio Button a Checkbox Multiple
+        if (typeof mappaRadioCheckbox !== 'undefined' && mappaRadioCheckbox[key]) {
+            let valoreSelezionato = pulisciTesto(valori);
+            for (let opzione in mappaRadioCheckbox[key]) {
+                let nomeCheckboxPDF = mappaRadioCheckbox[key][opzione];
+                let opzionePulita = pulisciTesto(opzione); 
+                
+                // Acrobat si aspetta "Sì" (con l'accento) per le caselle di controllo, come da tua conferma
+                let isChecked = (valoreSelezionato === opzionePulita) ? "Sì" : "Off";
+                let safeKey = nomeCheckboxPDF.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                xfdf += `  <field name="${safeKey}"><value>${isChecked}</value></field>\n`;
+            }
+            continue; 
+        }
+
+        // 2. GESTIONE STANDARD E TABELLE
+        let nomeBasePDF = mappaCampiPDF[key] || key.replace('[]', '');
+
+        // Mini-funzione per processare e formattare i valori
+        let processaValore = (val, i) => {
+            if (val === undefined || val === null || val === "") return;
+
+            // Forza standardizzazione del Sì per Acrobat
+            if (val === "Si" || val === "on" || val === "Yes") val = "Sì";
+            if (val === "No") val = "Off";
+            if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+                let p = val.split('-'); val = `${p[2]}/${p[1]}/${p[0]}`;
+            }
+            
+            // CONVERSIONE PERCENTUALI PER XFDF (Rimessa la virgola al posto del punto per Acrobat ITA)
+            if (typeof val === 'string' && val.endsWith('%')) {
+                let numero = parseFloat(val.replace('%', ''));
+                if (!isNaN(numero)) {
+                    val = (numero / 100).toString().replace('.', ','); 
+                }
+            }
+
+            let suff = i !== undefined ? `_${i + 1}` : '';
+            let nomeIndicizzato = `${nomeBasePDF}${suff}`;
+            let safeKey = nomeIndicizzato.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
             let safeVal = String(val).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
             xfdf += `  <field name="${safeKey}"><value>${safeVal}</value></field>\n`;
+        };
+
+        if (Array.isArray(valori)) {
+            for (let i = 0; i < valori.length; i++) processaValore(valori[i], i);
+        } else {
+            processaValore(valori, undefined);
         }
     }
+
     xfdf += `</fields>\n</xfdf>`;
+
     let blob = new Blob([xfdf], { type: 'application/vnd.adobe.xfdf' });
     let link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".xfdf";
-    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
-async function scaricaFotoZip(btn) {
-    if (typeof JSZip === 'undefined') {
-        alert("⚠️ La libreria JSZip non è caricata. Controlla la connessione o i file locali.");
-        return;
-    }
-    
-    let orgText = btn.innerHTML;
-    btn.innerHTML = "⏳";
-    
-    try {
-        let zip = new JSZip();
-        let imgFolder = zip.folder("Foto_Rilievi");
-        let canvases = document.querySelectorAll('canvas.foto-canvas');
-        let counter = 1;
-        let fotoTrovate = false;
-
-        for (let c of canvases) {
-            let id = c.getAttribute('data-foto-id');
-            if (id) {
-                let data = await idbKeyval.get(id);
-                if (data) {
-                    fotoTrovate = true;
-                    if (data instanceof Blob) {
-                        imgFolder.file(`Foto_Rilievo_${counter}.jpg`, data);
-                    } else {
-                        let base64Data = data.split(',')[1];
-                        imgFolder.file(`Foto_Rilievo_${counter}.jpg`, base64Data, {base64: true});
-                    }
-                    counter++;
-                }
-            }
-        }
-
-        if (!fotoTrovate) {
-            alert("Nessuna foto presente in questo verbale.");
-            btn.innerHTML = orgText;
-            return;
-        }
-
-        let content = await zip.generateAsync({type: "blob"});
-        let link = document.createElement("a");
-        link.href = URL.createObjectURL(content);
-        link.download = "Foto_" + getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".zip";
-        document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        
-    } catch (e) {
-        console.error("Errore generazione ZIP:", e);
-        alert("❌ Errore durante la creazione del file ZIP.");
-    } finally {
-        btn.innerHTML = orgText;
-    }
-}
-
-// --- 1. MOTORE JSON (ESTRAZIONE) ---
+// --- MOTORE JSON (ESTRAZIONE) ---
 function getModuloJSON() {
     let json = {
         campi_semplici: {},
         differenziali: [],
         non_conformita: []
     };
-    
+
     document.querySelectorAll('#verificaForm input:not([name*="[]"]), #verificaForm select:not([name*="[]"]), #verificaForm textarea:not([name*="[]"]), #data_verifica_obblig, #verbale_n1, #prossima_verifica').forEach(el => {
         let key = el.name || el.id;
         if (!key) return;
-        
+
         if (el.type === 'checkbox') {
             json.campi_semplici[key] = el.checked;
         } else if (el.type === 'radio') {
@@ -966,21 +1252,21 @@ function getModuloJSON() {
 
     document.querySelectorAll('.diff-row').forEach(row => {
         json.differenziali.push({
-            quadro: row.querySelector('[name="diff_quadro[]"]').value,
-            no: row.querySelector('[name="diff_no[]"]').value,
-            chk_003: row.querySelector('[name="diff_003[]"]').checked,
-            chk_03: row.querySelector('[name="diff_03[]"]').checked,
-            chk_05: row.querySelector('[name="diff_05[]"]').checked,
-            chk_1: row.querySelector('[name="diff_1[]"]').checked,
-            note: row.querySelector('[name="diff_note[]"]').value
+            quadro: row.querySelector('[name="diff_quadro[]"]')?.value || "",
+            no: row.querySelector('[name="diff_no[]"]')?.value || "",
+            chk_003: row.querySelector('[name="diff_003[]"]')?.checked || false,
+            chk_03: row.querySelector('[name="diff_03[]"]')?.checked || false,
+            chk_05: row.querySelector('[name="diff_05[]"]')?.checked || false,
+            chk_1: row.querySelector('[name="diff_1[]"]')?.checked || false,
+            note: row.querySelector('[name="diff_note[]"]')?.value || ""
         });
     });
 
     document.querySelectorAll('.nc-row').forEach(row => {
         let canvas = row.querySelector('canvas.foto-canvas');
         json.non_conformita.push({
-            descrizione: row.querySelector('[name="nc_descrizione[]"]').value,
-            note: row.querySelector('[name="nc_note[]"]').value,
+            descrizione: row.querySelector('[name="nc_descrizione[]"]')?.value || "",
+            note: row.querySelector('[name="nc_note[]"]')?.value || "",
             foto_id: canvas ? canvas.getAttribute('data-foto-id') : null
         });
     });
@@ -988,166 +1274,153 @@ function getModuloJSON() {
     return JSON.stringify(json);
 }
 
-// --- 2. MOTORE JSON E MIGRAZIONE (INIEZIONE) ---
-    async function setModuloJSON(jsonString) {
-        if (!jsonString) return;
-        
-        // ------------------------------------------------------------------
-        // 1. COMPATIBILITÀ VECCHI VERBALI (LEGACY HTML) -> ESTRAZIONE SICURA
-        // ------------------------------------------------------------------
-        if (!jsonString.trim().startsWith('{')) {
-            try {
-                // Legge il vecchio HTML in una pagina "virtuale" (senza sporcare quella visibile)
-                const parser = new DOMParser();
-                const oldDoc = parser.parseFromString(jsonString, 'text/html');
-                
-                // Svuotiamo il form visibile
-                const form = document.getElementById('verificaForm');
-                if (form) form.reset();
-                
-                const dataVal = document.getElementById('data_verifica_obblig');
-                if (dataVal) dataVal.value = "";
-                const nVal = document.getElementById('verbale_n1');
-                if (nVal) nVal.value = "";
+// --- MOTORE JSON E MIGRAZIONE (INIEZIONE) ---
+async function setModuloJSON(jsonString) {
+    if (!jsonString) return;
 
-                // Ricreiamo le righe dinamiche basandoci sulla quantità presente nel vecchio HTML
-                const diffRowsCount = oldDoc.querySelectorAll('.diff-row').length;
-                const diffTable = document.getElementById('diffTable');
-                if (diffTable) {
-                    diffTable.innerHTML = '';
-                    for(let i=0; i<diffRowsCount; i++) addDiffRow();
-                }
-
-                const ncRowsCount = oldDoc.querySelectorAll('.nc-row').length;
-                const ncTable = document.getElementById('ncTable');
-                if (ncTable) {
-                    ncTable.innerHTML = '';
-                    for(let i=0; i<ncRowsCount; i++) addNCRow();
-                }
-
-                // Travaso dei valori dal vecchio HTML al nuovo modulo visibile
-                let oldInputs = oldDoc.querySelectorAll('input, select, textarea');
-                oldInputs.forEach(oldEl => {
-                    let name = oldEl.name || oldEl.id;
-                    if (!name) return;
-
-                    let isArray = name.endsWith('[]');
-                    let newEls = isArray ? document.querySelectorAll(`[name="${name}"]`) : document.querySelectorAll(`[name="${name}"], #${name}`);
-                    
-                    let oldElsList = isArray ? Array.from(oldDoc.querySelectorAll(`[name="${name}"]`)) : [oldEl];
-                    let index = isArray ? oldElsList.indexOf(oldEl) : 0;
-                    
-                    let newEl = newEls[index];
-                    if (newEl) {
-                        if (oldEl.type === 'checkbox' || oldEl.type === 'radio') {
-                            newEl.checked = oldEl.hasAttribute('checked');
-                        } else if (oldEl.tagName === 'SELECT') {
-                            let selectedOpt = oldEl.querySelector('option[selected]');
-                            if (selectedOpt) newEl.value = selectedOpt.value;
-                        } else if (oldEl.tagName === 'TEXTAREA') {
-                            newEl.value = oldEl.textContent || oldEl.innerHTML || "";
-                        } else {
-                            newEl.value = oldEl.getAttribute('value') || "";
-                        }
-                    }
-                });
-
-                // Recupero ID delle vecchie foto
-                let oldCanvases = oldDoc.querySelectorAll('canvas.foto-canvas');
-                let newCanvases = document.querySelectorAll('canvas.foto-canvas');
-                oldCanvases.forEach((oldCanvas, index) => {
-                    let fotoId = oldCanvas.getAttribute('data-foto-id');
-                    if (fotoId && newCanvases[index]) {
-                        newCanvases[index].setAttribute('data-foto-id', fotoId);
-                    }
-                });
-
-                // Ricalcoliamo e ripristiniamo le grafiche
-                calcolaUc();
-                aggiornaEsitoGlobale();
-                await ripristinaCanvas();
-                
-                // Convertiamo silenziosamente il salvataggio nel nuovo e sicuro formato JSON
-                salvataggioIntelligente();
-
-                return;
-            } catch (e) {
-                console.error("Errore migrazione vecchi verbali:", e);
-                alert("Errore nell'adattamento del vecchio verbale.");
-                return;
-            }
-        }
-
-        // ------------------------------------------------------------------
-        // 2. NUOVI VERBALI (CARICAMENTO JSON NATIVO)
-        // ------------------------------------------------------------------
+    if (!jsonString.trim().startsWith('{')) {
         try {
-            let data = JSON.parse(jsonString);
+            const parser = new DOMParser();
+            const oldDoc = parser.parseFromString(jsonString, 'text/html');
 
             const form = document.getElementById('verificaForm');
             if (form) form.reset();
-            
+
             const dataVal = document.getElementById('data_verifica_obblig');
             if (dataVal) dataVal.value = "";
             const nVal = document.getElementById('verbale_n1');
             if (nVal) nVal.value = "";
 
-            if (data.campi_semplici) {
-                for (let key in data.campi_semplici) {
-                    let els = document.querySelectorAll(`[name="${key}"], #${key}`);
-                    els.forEach(el => {
-                        if (el.type === 'checkbox') {
-                            el.checked = data.campi_semplici[key];
-                        } else if (el.type === 'radio') {
-                            if (el.value === data.campi_semplici[key]) el.checked = true;
-                        } else {
-                            el.value = data.campi_semplici[key] || "";
-                        }
-                    });
+            const diffRowsCount = oldDoc.querySelectorAll('.diff-row').length;
+            const diffTable = document.getElementById('diffTable');
+            if (diffTable) {
+                diffTable.innerHTML = '';
+                for(let i=0; i<diffRowsCount; i++) addDiffRow();
+            }
+
+            const ncRowsCount = oldDoc.querySelectorAll('.nc-row').length;
+            const ncTable = document.getElementById('ncTable');
+            if (ncTable) {
+                ncTable.innerHTML = '';
+                for(let i=0; i<ncRowsCount; i++) addNCRow();
+            }
+
+            let oldInputs = oldDoc.querySelectorAll('input, select, textarea');
+            oldInputs.forEach(oldEl => {
+                let name = oldEl.name || oldEl.id;
+                if (!name) return;
+
+                let isArray = name.endsWith('[]');
+                let newEls = isArray ? document.querySelectorAll(`[name="${name}"]`) : document.querySelectorAll(`[name="${name}"], #${name}`);
+
+                let oldElsList = isArray ? Array.from(oldDoc.querySelectorAll(`[name="${name}"]`)) : [oldEl];
+                let index = isArray ? oldElsList.indexOf(oldEl) : 0;
+
+                let newEl = newEls[index];
+                if (newEl) {
+                    if (oldEl.type === 'checkbox' || oldEl.type === 'radio') {
+                        newEl.checked = oldEl.hasAttribute('checked');
+                    } else if (oldEl.tagName === 'SELECT') {
+                        let selectedOpt = oldEl.querySelector('option[selected]');
+                        if (selectedOpt) newEl.value = selectedOpt.value;
+                    } else if (oldEl.tagName === 'TEXTAREA') {
+                        newEl.value = oldEl.textContent || oldEl.innerHTML || "";
+                    } else {
+                        newEl.value = oldEl.getAttribute('value') || "";
+                    }
                 }
-            }
+            });
 
-            if (data.differenziali) {
-                const diffTable = document.getElementById('diffTable');
-                if (diffTable) diffTable.innerHTML = ''; 
-                data.differenziali.forEach(diff => {
-                    addDiffRow(); 
-                    let lastRow = diffTable.lastElementChild;
-                    if (lastRow) {
-                        let q = lastRow.querySelector('[name="diff_quadro[]"]'); if (q) q.value = diff.quadro || "";
-                        let n = lastRow.querySelector('[name="diff_no[]"]'); if (n) n.value = diff.no || "";
-                        let c003 = lastRow.querySelector('[name="diff_003[]"]'); if (c003) c003.checked = diff.chk_003 || false;
-                        let c03 = lastRow.querySelector('[name="diff_03[]"]'); if (c03) c03.checked = diff.chk_03 || false;
-                        let c05 = lastRow.querySelector('[name="diff_05[]"]'); if (c05) c05.checked = diff.chk_05 || false;
-                        let c1 = lastRow.querySelector('[name="diff_1[]"]'); if (c1) c1.checked = diff.chk_1 || false;
-                        let nt = lastRow.querySelector('[name="diff_note[]"]'); if (nt) nt.value = diff.note || "";
-                    }
-                });
-            }
-
-            if (data.non_conformita) {
-                const ncTable = document.getElementById('ncTable');
-                if (ncTable) ncTable.innerHTML = ''; 
-                data.non_conformita.forEach(nc => {
-                    addNCRow();
-                    let lastRow = ncTable.lastElementChild;
-                    if (lastRow) {
-                        let d = lastRow.querySelector('[name="nc_descrizione[]"]'); if (d) d.value = nc.descrizione || "";
-                        let nt = lastRow.querySelector('[name="nc_note[]"]'); if (nt) nt.value = nc.note || "";
-                        if (nc.foto_id) {
-                            let canvas = lastRow.querySelector('canvas.foto-canvas');
-                            if (canvas) canvas.setAttribute('data-foto-id', nc.foto_id);
-                        }
-                    }
-                });
-            }
+            let oldCanvases = oldDoc.querySelectorAll('canvas.foto-canvas');
+            let newCanvases = document.querySelectorAll('canvas.foto-canvas');
+            oldCanvases.forEach((oldCanvas, index) => {
+                let fotoId = oldCanvas.getAttribute('data-foto-id');
+                if (fotoId && newCanvases[index]) {
+                    newCanvases[index].setAttribute('data-foto-id', fotoId);
+                }
+            });
 
             calcolaUc();
             aggiornaEsitoGlobale();
             await ripristinaCanvas();
 
+            salvataggioIntelligente();
+
+            return;
         } catch (e) {
-            console.error("Errore parser JSON:", e);
-            alert("Errore nel caricamento del file. I dati potrebbero essere corrotti.");
+            console.error("Errore migrazione vecchi verbali:", e);
+            alert("Errore nell'adattamento del vecchio verbale.");
+            return;
         }
     }
+
+    try {
+        let data = JSON.parse(jsonString);
+
+        const form = document.getElementById('verificaForm');
+        if (form) form.reset();
+
+        const dataVal = document.getElementById('data_verifica_obblig');
+        if (dataVal) dataVal.value = "";
+        const nVal = document.getElementById('verbale_n1');
+        if (nVal) nVal.value = "";
+
+        if (data.campi_semplici) {
+            for (let key in data.campi_semplici) {
+                let els = document.querySelectorAll(`[name="${key}"], #${key}`);
+                els.forEach(el => {
+                    if (el.type === 'checkbox') {
+                        el.checked = data.campi_semplici[key];
+                    } else if (el.type === 'radio') {
+                        if (el.value === data.campi_semplici[key]) el.checked = true;
+                    } else {
+                        el.value = data.campi_semplici[key] || "";
+                    }
+                });
+            }
+        }
+
+        if (data.differenziali) {
+            const diffTable = document.getElementById('diffTable');
+            if (diffTable) diffTable.innerHTML = '';
+            data.differenziali.forEach(diff => {
+                addDiffRow();
+                let lastRow = diffTable.lastElementChild;
+                if (lastRow) {
+                    let q = lastRow.querySelector('[name="diff_quadro[]"]'); if (q) q.value = diff.quadro || "";
+                    let n = lastRow.querySelector('[name="diff_no[]"]'); if (n) n.value = diff.no || "";
+                    let c003 = lastRow.querySelector('[name="diff_003[]"]'); if (c003) c003.checked = diff.chk_003 || false;
+                    let c03 = lastRow.querySelector('[name="diff_03[]"]'); if (c03) c03.checked = diff.chk_03 || false;
+                    let c05 = lastRow.querySelector('[name="diff_05[]"]'); if (c05) c05.checked = diff.chk_05 || false;
+                    let c1 = lastRow.querySelector('[name="diff_1[]"]'); if (c1) c1.checked = diff.chk_1 || false;
+                    let nt = lastRow.querySelector('[name="diff_note[]"]'); if (nt) nt.value = diff.note || "";
+                }
+            });
+        }
+
+        if (data.non_conformita) {
+            const ncTable = document.getElementById('ncTable');
+            if (ncTable) ncTable.innerHTML = '';
+            data.non_conformita.forEach(nc => {
+                addNCRow();
+                let lastRow = ncTable.lastElementChild;
+                if (lastRow) {
+                    let d = lastRow.querySelector('[name="nc_descrizione[]"]'); if (d) d.value = nc.descrizione || "";
+                    let nt = lastRow.querySelector('[name="nc_note[]"]'); if (nt) nt.value = nc.note || "";
+                    if (nc.foto_id) {
+                        let canvas = lastRow.querySelector('canvas.foto-canvas');
+                        if (canvas) canvas.setAttribute('data-foto-id', nc.foto_id);
+                    }
+                }
+            });
+        }
+
+        calcolaUc();
+        aggiornaEsitoGlobale();
+        await ripristinaCanvas();
+
+    } catch (e) {
+        console.error("Errore parser JSON:", e);
+        alert("Errore nel caricamento del file. I dati potrebbero essere corrotti.");
+    }
+}
