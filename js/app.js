@@ -107,6 +107,12 @@ async function mostraStatistiche() {
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
+// --- TABELLA RILIEVI ---
+function ridimensionaTextarea(el) {
+    el.style.height = 'auto'; // Resetta l'altezza
+    el.style.height = (el.scrollHeight + 2) + 'px'; // La imposta all'altezza esatta del testo
+}
+
 // --- LOGICHE FORM E SELEZIONI ---
 const tabellaCEI99_3 = {
         "0,01": "790", "0,02": "770", "0,03": "750", "0,04": "732", "0,05": "716", "0,06": "703", "0,07": "690", "0,08": "677", "0,09": "666",
@@ -260,7 +266,7 @@ function addNCRow() {
         </td>
         <td class="border-primary p-1">
             <div class="d-flex align-items-start gap-1 h-100">
-                <textarea name="nc_note[]" class="form-control border-0 bg-transparent nc-textarea flex-grow-1 shadow-sm" placeholder="Note o prescrizioni..." oninput="salvataggioIntelligente()"></textarea>
+                <textarea name="nc_note[]" class="form-control border-0 bg-transparent nc-textarea flex-grow-1 shadow-sm auto-expand" placeholder="Note o prescrizioni..." oninput="ridimensionaTextarea(this); salvataggioIntelligente()"></textarea>
                 <div class="d-flex flex-column gap-1 no-print flex-shrink-0">
                     <button type="button" class="btn btn-outline-secondary btn-nc-foto border-0 btn-mic" onclick="avviaDettatura(this)" title="Dettatura vocale">🎙️</button>
                     <button type="button" class="btn btn-outline-danger btn-nc-foto border-0 btn-cestino" onclick="this.closest('tr').remove(); salvataggioIntelligente();">🗑️</button>
@@ -286,7 +292,7 @@ function inizializzaLibreria() {
             { desc: "A5. Componenti elettrici installati in un corridoio/via di esodo, con possibile interferenza con i requisiti di sicurezza dell’esodo.", pres: "Verificare la conformità dell’installazione e valutare la ricollocazione in vano tecnico dedicato." },
             { desc: "A5. Il sito risulta attualmente in fase di ristrutturazione; la verifica è stata eseguita limitatamente alle parti dell’impianto accessibili al momento del sopralluogo.", pres: "Ripetere la verifica sulle parti attualmente non accessibili a ultimazione dei lavori." },
             { desc: "V1. Presenza di moduli liberi privi di tappo di protezione/otturatore all’interno di qualche quadro. Tale condizione determina la presenza di aperture non protette con possibile accesso a parti attive e conseguente rischio di contatto diretto, nonché potenziale alterazione del grado di protezione IP dichiarato dal costruttore.", pres: "Si prescrive la sostituzione dei pannelli danneggiati con elementi originali o equivalenti conformi alle caratteristiche costruttive del quadro, al fine di ripristinare il grado di protezione e le condizioni di sicurezza." },
-            { desc: "V2. Danneggiamento dei pannelli di chiusura di qualche quadro" (fratture/distacchi/mancanza di parti), con possibile riduzione del grado di protezione IP dichiarato dal costruttore e potenziale accessibilità a parti attive", pres: "Sostituire i pannelli danneggiati con elementi originali." },
+            { desc: "V2. Danneggiamento dei pannelli di chiusura di qualche quadro (fratture/distacchi/mancanza di parti), con possibile riduzione del grado di protezione IP dichiarato dal costruttore e potenziale accessibilità a parti attive", pres: "Sostituire i pannelli danneggiati con elementi originali." },            
             { desc: "V3. Nodo equipotenziale non ispezionabile", pres: "Rendere accessibile il nodo equipotenziale." },
             { desc: "V4. Rilevata la presenza di locali con condizioni di umidità significativa, tali da richiedere componenti idonei all’ambiente di installazione.", pres: "rilevata la presenza di locali con condizioni di umidità significativa, tali da richiedere componenti idonei all’ambiente di installazione." },
             { desc: "V5. Nodo equipotenziale non ispezionabile", pres: "Rendere accessibile il nodo equipotenziale." },
@@ -315,7 +321,10 @@ function autoCompilaNC(input) {
     const match = libreriaNC_Dinamica.find(item => item.desc === input.value);
     if (match) {
         const textarea = input.closest('tr').querySelector('textarea[name="nc_note[]"]');
-        if(textarea && !textarea.value.trim()) { textarea.value = match.pres; }
+        if(textarea && !textarea.value.trim()) { 
+            textarea.value = match.pres; 
+            ridimensionaTextarea(textarea); // <--- Aggiunta qui!
+        }
     }
 }
 
