@@ -135,3 +135,10 @@ body.fase-stampa .border-0 { border: 1px solid transparent !important; }
 body.fase-stampa .container { max-width: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; }
 body.fase-stampa .overflow-auto, body.fase-stampa .table-responsive { overflow: visible !important; height: auto !important; }
 body.fase-stampa .section-header { margin-top: 15px !important; }
+
+/* autoespansione riga tabella */
+.auto-expand {
+    overflow: hidden; 
+    resize: none;     
+    min-height: 40px; 
+}
