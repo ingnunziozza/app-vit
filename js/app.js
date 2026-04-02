@@ -253,10 +253,14 @@ function addNCRow() {
         <td class="align-middle border-primary fw-bold text-center">${rowCount}</td>
         <td class="border-primary p-1 text-start">
             <div class="d-flex align-items-start gap-1">
-                <input type="text" name="nc_descrizione[]" class="form-control border-0 bg-transparent nc-input-desc flex-grow-1 shadow-sm" list="lista-nc" placeholder="Scrivi o seleziona difetto..." oninput="autoCompilaNC(this); salvataggioIntelligente();">
+                <textarea name="nc_descrizione[]" class="form-control border-0 bg-transparent nc-textarea flex-grow-1 shadow-sm auto-expand" placeholder="Scrivi la descrizione..." oninput="ridimensionaTextarea(this); salvataggioIntelligente();"></textarea>
+                
                 <div class="d-flex flex-column gap-1 no-print flex-shrink-0">
-                    <label class="btn btn-primary btn-nc-foto m-0 shadow-sm" title="Scatta Fotocamera">📸<input type="file" class="d-none" accept="image/*" capture="environment" onchange="gestisciFoto(this)"></label>
-                    <label class="btn btn-outline-primary btn-nc-foto m-0 shadow-sm" title="Scegli dalla galleria">🖼️<input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)"></label>
+                    <select class="form-select border-primary shadow-sm text-primary p-0 text-center" style="width: 38px; height: 38px; cursor: pointer; appearance: none; font-size: 1.2rem;" title="Libreria NC" onchange="inserisciDaLibreria(this)">
+                        <option value="">📚</option>
+                    </select>
+                    <label class="btn btn-primary btn-nc-foto m-0 shadow-sm p-1" style="width: 38px; height: 38px;" title="Scatta Fotocamera">📸<input type="file" class="d-none" accept="image/*" capture="environment" onchange="gestisciFoto(this)"></label>
+                    <label class="btn btn-outline-primary btn-nc-foto m-0 shadow-sm p-1" style="width: 38px; height: 38px;" title="Scegli dalla galleria">🖼️<input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)"></label>
                 </div>
             </div>
             <div class="canvas-container no-print w-100 text-center">
@@ -268,13 +272,16 @@ function addNCRow() {
             <div class="d-flex align-items-start gap-1 h-100">
                 <textarea name="nc_note[]" class="form-control border-0 bg-transparent nc-textarea flex-grow-1 shadow-sm auto-expand" placeholder="Note o prescrizioni..." oninput="ridimensionaTextarea(this); salvataggioIntelligente()"></textarea>
                 <div class="d-flex flex-column gap-1 no-print flex-shrink-0">
-                    <button type="button" class="btn btn-outline-secondary btn-nc-foto border-0 btn-mic" onclick="avviaDettatura(this)" title="Dettatura vocale">🎙️</button>
-                    <button type="button" class="btn btn-outline-danger btn-nc-foto border-0 btn-cestino" onclick="this.closest('tr').remove(); salvataggioIntelligente();">🗑️</button>
+                    <button type="button" class="btn btn-outline-secondary btn-nc-foto border-0 btn-mic p-1" style="width: 38px; height: 38px;" onclick="avviaDettatura(this)" title="Dettatura vocale">🎙️</button>
+                    <button type="button" class="btn btn-outline-danger btn-nc-foto border-0 btn-cestino p-1" style="width: 38px; height: 38px;" onclick="this.closest('tr').remove(); salvataggioIntelligente();">🗑️</button>
                 </div>
             </div>
         </td>
     `;
     tbody.appendChild(tr);
+    
+    // Popola subito la tendina della nuova riga appena creata
+    popolaSingolaTendina(tr.querySelector('select[title="Libreria NC"]'));
     salvataggioIntelligente();
 }
 
@@ -307,25 +314,50 @@ function inizializzaLibreria() {
     popolaDatalistNC();
 }
 
+// Popola una singola tendina con le voci della libreria
+function popolaSingolaTendina(select) {
+    if(!select) return;
+    let optionsHtml = '<option value="">📚</option>';
+    libreriaNC_Dinamica.forEach((item, index) => {
+        // Taglia il testo a 35 caratteri per non far esplodere la tendina
+        optionsHtml += `<option value="${index}">📋 ${item.desc.substring(0, 35)}...</option>`;
+    });
+    select.innerHTML = optionsHtml;
+}
+
+// Aggiorna tutte le tendine contemporaneamente (utile se importi un nuovo CSV)
 function popolaDatalistNC() {
-    const datalist = document.getElementById('lista-nc');
-    if(!datalist) return;
-    datalist.innerHTML = '';
-    libreriaNC_Dinamica.forEach(item => {
-        const option = document.createElement('option');
-        option.value = item.desc; datalist.appendChild(option);
+    document.querySelectorAll('select[title="Libreria NC"]').forEach(select => {
+        popolaSingolaTendina(select);
     });
 }
 
-function autoCompilaNC(input) {
-    const match = libreriaNC_Dinamica.find(item => item.desc === input.value);
-    if (match) {
-        const textarea = input.closest('tr').querySelector('textarea[name="nc_note[]"]');
-        if(textarea && !textarea.value.trim()) { 
-            textarea.value = match.pres; 
-            ridimensionaTextarea(textarea); // <--- Aggiunta qui!
-        }
+// Scatta quando scegli una voce dal pulsantino a forma di libro 📚
+function inserisciDaLibreria(select) {
+    if (select.value === "") return; // Se selezioni il libro vuoto, non fa nulla
+    
+    const index = select.value;
+    const item = libreriaNC_Dinamica[index];
+    const tr = select.closest('tr');
+    
+    const textDesc = tr.querySelector('textarea[name="nc_descrizione[]"]');
+    const textNote = tr.querySelector('textarea[name="nc_note[]"]');
+    
+    // Incolla la descrizione e allarga la casella
+    if (textDesc) {
+        textDesc.value = item.desc;
+        ridimensionaTextarea(textDesc);
     }
+    
+    // Incolla le note (solo se vuote) e allarga la casella
+    if (textNote && !textNote.value.trim()) {
+        textNote.value = item.pres;
+        ridimensionaTextarea(textNote);
+    }
+    
+    // Riporta la tendina all'icona del libro
+    select.value = ""; 
+    salvataggioIntelligente();
 }
 
 function gestisciImportazioneNC(event) {
