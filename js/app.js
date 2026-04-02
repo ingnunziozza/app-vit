@@ -279,17 +279,23 @@ function inizializzaLibreria() {
     if (salvata) { libreriaNC_Dinamica = JSON.parse(salvata); }
     else {
         libreriaNC_Dinamica = [
-            { desc: "Non è stata esibita la documentazione tecnica dell’impianto", pres: "Mettere a disposizione DiCo, schemi e verbali." },
-            { desc: "Documentazione tecnica incompleta o non aggiornata", pres: "Aggiornare la documentazione tecnica." },
-            { desc: "Quadro elettrico con pannelli rotti", pres: "Sostituire i pannelli danneggiati con elementi originali." },
-            { desc: "Moduli liberi privi di coprifori", pres: "Installare idonei elementi di chiusura modulari." },
-            { desc: "Quadro elettrico accesso a parti attive", pres: "Provvedere all’immediata messa in sicurezza." },
-            { desc: "Quadri non accessibili", pres: "Rendere accessibili i quadri." },
-            { desc: "Scarsa pulizia / polvere nel quadro", pres: "Eseguire accurata pulizia e verifica." },
-            { desc: "Differenziali non funzionanti", pres: "Sostituire immediatamente i dispositivi non conformi." },
-            { desc: "Dispersori non accessibili / privi di pozzetti", pres: "Realizzare idonei punti di ispezione." },
-            { desc: "Nodo equipotenziale non ispezionabile", pres: "Rendere accessibile il nodo equipotenziale." },
-            { desc: "Valore di resistenza di terra non compatibile", pres: "Adeguare l’impianto di terra e ripetere le misure." }
+            { desc: "A1. All’atto della verifica non è stata esibita la documentazione tecnica dell’impianto (dichiarazione di conformità/rispondenza, progetto ove previsto, schemi elettrici, precedenti verbali di verifica). In assenza della suddetta documentazione non è stato possibile effettuare la verifica documentale prevista dalla normativa vigente.", pres: "Si richiama l’obbligo del datore di lavoro di conservare ed esibire la documentazione relativa agli impianti elettrici ai sensi del D.P.R. 462/2001 e del D.Lgs. 81/2008." },
+            { desc: "A2. La documentazione tecnica dell’impianto è risultata incompleta e/o non aggiornata rispetto allo stato dei luoghi.", pres: "Si richiama l’obbligo del datore di lavoro di aggiornare la documentazione tecnica relativa agli impianti elettrici ai sensi del D.P.R. 462/2001 e del D.Lgs. 81/2008." },
+            { desc: "A3. I dispersori di terra non risultano ispezionabili in quanto non accessibili e privi di pozzetti di verifica.", pres: "Realizzare idonei punti di ispezione o documentare tecnicamente la configurazione del dispersore." },
+            { desc: "A4. Considerata la non accessibilità dei dispersori, in quanto inglobati sotto il manto stradale e privi di idonei punti di ispezione, non è stato possibile effettuare la verifica visiva diretta degli stessi. La verifica dell’impianto di terra è stata condotta esclusivamente mediante prove strumentali e controlli indiretti, nei limiti delle condizioni riscontrate. Pertanto, il presente verbale non costituisce attestazione dello stato di conservazione dei dispersori non accessibili né della loro corretta posa in opera.", pres: "Realizzare idonei punti di ispezione o documentare tecnicamente la configurazione del dispersore." },
+            { desc: "A5. Componenti elettrici installati in un corridoio/via di esodo, con possibile interferenza con i requisiti di sicurezza dell’esodo.", pres: "Verificare la conformità dell’installazione e valutare la ricollocazione in vano tecnico dedicato." },
+            { desc: "A5. Il sito risulta attualmente in fase di ristrutturazione; la verifica è stata eseguita limitatamente alle parti dell’impianto accessibili al momento del sopralluogo.", pres: "Ripetere la verifica sulle parti attualmente non accessibili a ultimazione dei lavori." },
+            { desc: "V1. Presenza di moduli liberi privi di tappo di protezione/otturatore all’interno di qualche quadro. Tale condizione determina la presenza di aperture non protette con possibile accesso a parti attive e conseguente rischio di contatto diretto, nonché potenziale alterazione del grado di protezione IP dichiarato dal costruttore.", pres: "Si prescrive la sostituzione dei pannelli danneggiati con elementi originali o equivalenti conformi alle caratteristiche costruttive del quadro, al fine di ripristinare il grado di protezione e le condizioni di sicurezza." },
+            { desc: "V2. Danneggiamento dei pannelli di chiusura di qualche quadro" (fratture/distacchi/mancanza di parti), con possibile riduzione del grado di protezione IP dichiarato dal costruttore e potenziale accessibilità a parti attive", pres: "Sostituire i pannelli danneggiati con elementi originali." },
+            { desc: "V3. Nodo equipotenziale non ispezionabile", pres: "Rendere accessibile il nodo equipotenziale." },
+            { desc: "V4. Rilevata la presenza di locali con condizioni di umidità significativa, tali da richiedere componenti idonei all’ambiente di installazione.", pres: "rilevata la presenza di locali con condizioni di umidità significativa, tali da richiedere componenti idonei all’ambiente di installazione." },
+            { desc: "V5. Nodo equipotenziale non ispezionabile", pres: "Rendere accessibile il nodo equipotenziale." },
+            { desc: "V6. Quadri non accessibili", pres: "Rendere accessibili i quadri." },
+            { desc: "V7. Scarsa pulizia / polvere nel quadro", pres: "Eseguire accurata pulizia e verifica." },
+            { desc: "S1. Alcuni interruttori differenziali sono risultati non funzionanti; si evidenzia tuttavia una protezione differenziale a monte dell’impianto.", pres: "Sostituire i dispositivi non conformi al fine di ripristinare la protezione differenziale." },
+            { desc: "S2. Alcuni interruttori differenziali presentano tempi di intervento superiori ai limiti previsti.", pres: "Sostituire i dispositivi, verificando il coordinamento del sistema di protezione.." },
+            { desc: "S3. È stata rilevata l’assenza della protezione differenziale a valle del gruppo di misura dell’energia elettrica.", pres: "Installare idonea protezione differenziale conforme alle caratteristiche dell’impianto." },
+            { desc: "S4. È stata rilevata l’assenza della protezione differenziale su circuiti/utenze per i quali la stessa risulta necessaria.", pres: "Installare idonea protezione differenziale conforme alle caratteristiche dell’impianto." },
         ];
     }
     popolaDatalistNC();
