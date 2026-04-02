@@ -256,7 +256,7 @@ function addNCRow() {
                 <textarea name="nc_descrizione[]" class="form-control border-0 bg-transparent nc-textarea flex-grow-1 shadow-sm auto-expand" placeholder="Scrivi la descrizione..." oninput="ridimensionaTextarea(this); salvataggioIntelligente();"></textarea>
                 
                 <div class="d-flex flex-column gap-1 no-print flex-shrink-0">
-                    <select class="form-select border-primary shadow-sm text-primary p-0 text-center" style="width: 38px; height: 38px; cursor: pointer; appearance: none; font-size: 1.2rem;" title="Libreria NC" onchange="inserisciDaLibreria(this)">
+                    <select class="form-select border-primary shadow-sm text-primary p-0 text-center" style="width: 38px; height: 38px; cursor: pointer; appearance: none; font-size: 0.8rem;" title="Libreria NC" onchange="inserisciDaLibreria(this)">
                         <option value="">📚</option>
                     </select>
                     <label class="btn btn-primary btn-nc-foto m-0 shadow-sm p-1" style="width: 38px; height: 38px;" title="Scatta Fotocamera">📸<input type="file" class="d-none" accept="image/*" capture="environment" onchange="gestisciFoto(this)"></label>
@@ -317,11 +317,15 @@ function inizializzaLibreria() {
 // Popola una singola tendina con le voci della libreria
 function popolaSingolaTendina(select) {
     if(!select) return;
-    let optionsHtml = '<option value="">📚</option>';
+    
+    // Il libro lo forziamo al centro
+    let optionsHtml = '<option value="" style="font-size: 1.2rem; text-align: center;">📚</option>';
+    
     libreriaNC_Dinamica.forEach((item, index) => {
-        // Taglia il testo a 35 caratteri per non far esplodere la tendina
-        optionsHtml += `<option value="${index}">📋 ${item.desc.substring(0, 35)}...</option>`;
+        // Le voci di testo le forziamo a sinistra con text-align: left;
+        optionsHtml += `<option value="${index}" style="font-size: 0.80rem; text-align: left;">📋 ${item.desc.substring(0, 95)}...</option>`;
     });
+    
     select.innerHTML = optionsHtml;
 }
 
