@@ -1275,41 +1275,62 @@ function esportaXFDF(azione = 'download') { // <-- MODIFICA 1: Aggiunto parametr
     let nomeFile = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".xfdf";
 
     if (azione === 'share') {
-        try {
-            // Travestiamo il file in XML. Il telefono lo accetta e Acrobat lo legge!
-            let nomeCondivisione = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".xml";
-            let file = new File([xfdf], nomeCondivisione, {type: "text/xml"});
+        if (navigator.share) {
+            try {
+                // Travestiamo in XML per bypassare i blocchi dei telefoni
+                let nomeCondivisione = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".xml";
+                let file = new File([xfdf], nomeCondivisione, {type: "text/xml"});
 
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                // Esegue la condivisione istantaneamente senza interruzioni
+                // Prova a condividere direttamente
                 navigator.share({
                     title: 'Esportazione Dati VIT',
                     files: [file]
                 }).catch(err => {
-                    // Se l'utente annulla la condivisione, non fare nulla (o scarica)
-                    console.log("Condivisione annullata.");
+                    // Se l'utente annulla o se c'è un blocco nativo, FORZA IL DOWNLOAD
+                    forzaDownload(xfdf, nomeFile);
                 });
-            } else {
+            } catch (e) {
+                // Se non riesce a creare il file (es. browser non compatibile), FORZA IL DOWNLOAD
                 forzaDownload(xfdf, nomeFile);
             }
-        } catch (e) {
+        } else {
+            // Se non esiste proprio la funzione share (es. PC o browser non sicuro), FORZA IL DOWNLOAD
             forzaDownload(xfdf, nomeFile);
         }
     } else {
+        // Se si è premuto il tasto scarica normalmente
         forzaDownload(xfdf, nomeFile);
     }
-} // <--- Fine funzione esportaXFDF
+} // <--- Fine della funzione esportaXFDF
 
-// Mini-funzione di supporto per scaricare il file senza ripetere codice
+// ===============================================
+// FUNZIONI DI SUPPORTO E CONDIVISIONE
+// ===============================================
+
+// Mini-funzione corazzata per scaricare il file in ogni caso
 function forzaDownload(contenuto, nome) {
-    let blob = new Blob([contenuto], { type: 'application/vnd.adobe.xfdf' });
-    let link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = nome;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+        let blob = new Blob([contenuto], { type: 'application/vnd.adobe.xfdf' });
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = nome;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } catch (e) {
+        alert("Errore tecnico durante il salvataggio del file: " + e.message);
+    }
 }
+
+// Il ponte collegato al tuo pulsante HTML
+function condividiCSV() {
+    try {
+        esportaXFDF('share');
+    } catch (e) {
+        alert("Errore sul pulsante Condividi: " + e.message);
+    }
+}
+
 
 
 // --- MOTORE JSON (ESTRAZIONE) ---
