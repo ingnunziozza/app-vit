@@ -1,4 +1,649 @@
-<!DOCTYPE html>
+<!DOC<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verifica 462/01 - VIT</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icona.png" type="image/png">
+
+    <link href="./bootstrap.min.css" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet"> <script src="./umd.js"></script>
+    <script src="./html2pdf.bundle.min.js"></script>
+    <script src="./jszip.min.js"></script>
+</head>
+<body>
+
+<div class="container" id="modulo-principale">
+
+    <div id="barra-strumenti" class="mb-3 p-2 border border-secondary rounded shadow-sm no-print" style="background-color: var(--bg-container);">
+        <div class="toolbar-wrap align-items-center">
+            <div class="d-flex flex-wrap gap-1 justify-content-center">
+                <button type="button" class="btn btn-sm btn-primary fw-bold btn-tool" onclick="salvaInArchivio()" title="Salva">💾</button>
+                <button type="button" class="btn btn-sm btn-outline-dark fw-bold btn-tool-lg" style="background-color: var(--bg-input);" onclick="apriModaleArchivio()" title="Archivio">🗂️ Archivio Verbali</button>
+                <button type="button" class="btn btn-sm btn-warning fw-bold text-dark btn-tool" onclick="duplicaVerbale()" title="Duplica">🗺️</button>
+                <button type="button" class="btn btn-sm btn-outline-primary fw-bold btn-tool" onclick="nuovoVerbale()" title="Nuovo">✍️</button>
+                <button type="button" class="btn btn-sm btn-info text-white fw-bold btn-tool" onclick="mostraStatistiche()" title="Statistiche">📈</button>
+                <button type="button" class="btn btn-sm btn-secondary fw-bold btn-tool" onclick="esportaDB()">📤</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary fw-bold btn-tool" onclick="importaDB()">📥</button>
+                <button type="button" class="btn btn-sm btn-dark fw-bold btn-tool" onclick="toggleDarkMode()" id="btn-darkmode">🌙</button>
+                <button type="button" class="btn btn-sm btn-info text-white fw-bold btn-tool-sm" onclick="esportaCSV()">📊csv</button>
+                <button type="button" class="btn btn-sm btn-outline-warning fw-bold btn-tool-sm" onclick="esportaFoto()">🖼️zip</button>
+                <button type="button" class="btn btn-sm btn-success text-white fw-bold btn-tool" onclick="condividiCSV()" title="Condividi">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/></svg>
+                </button>
+                <input type="file" id="importaFile" style="display:none" accept=".json" onchange="eseguiImportazione(event)">
+            </div>
+        </div>
+    </div>
+
+    <div id="area-dati">
+        
+        <div class="row align-items-center mb-2 mx-0 g-1">
+            <div class="col-2 text-center">
+                <div id="logo_text"><img src="icona.png" alt="Logo" style="max-height: 55px; max-width: 100%;"></div>
+            </div>
+            <div class="col-3 d-flex align-items-center flex-nowrap gap-2">
+                <h5 class="fw-bold mb-0">VIT</h5>
+                <span id="salvataggio-badge" class="badge bg-success" style="opacity: 0; transition: opacity 0.5s; font-size:0.6rem;">✅Salvato</span>
+            </div>
+            <div class="col-7">
+                <div class="d-flex justify-content-end align-items-center flex-nowrap gap-2">
+                    <div class="d-flex align-items-center flex-nowrap">
+                        <span class="me-1 text-nowrap">No.</span>
+                        <input type="number" inputmode="numeric" min="1" name="verbale_n1" class="form-control text-center p-1" style="width: 50px; height: 28px;" oninput="salvataggioIntelligente()">
+                    </div>
+                    <div class="d-flex align-items-center flex-nowrap ms-1 ms-md-3">
+                        <span class="me-1 fw-bold text-danger text-nowrap">Data:</span>
+                        <input type="date" name="data_verifica" id="data_verifica_obblig" class="form-control p-1" style="width: 125px; height: 28px;" onchange="calcolaProssimaVerifica()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form id="verificaForm">
+            
+            <div class="section-header bg-dark-blue">1. DATI DEL COMMITTENTE</div>
+            <div class="bg-light-blue box-border p-2 mb-2 rounded">
+                <div class="row align-items-center mx-0">
+                    <div class="col-12 col-md-9 p-0 pe-md-2">
+                        <div class="d-flex align-items-center flex-nowrap mb-2">
+                            <span class="me-2 fw-bold text-danger" style="min-width: 110px;">Ragione sociale</span>
+                            <input type="text" name="ragione_sociale" id="ragione_sociale_obblig" class="form-control flex-grow-1 border-primary" oninput="salvataggioIntelligente()">
+                        </div>
+                        <div class="d-flex align-items-center flex-nowrap mb-2">
+                            <span class="me-2 fw-bold" style="min-width: 110px;">Città</span>
+                            <input type="text" name="citta_comm" class="form-control flex-grow-1 border-primary" oninput="salvataggioIntelligente()">
+                        </div>
+                        <div class="d-flex align-items-center flex-nowrap mb-2">
+                            <span class="me-2 fw-bold" style="min-width: 110px;">Indirizzo</span>
+                            <input type="text" name="indirizzo_comm" class="form-control flex-grow-1 border-primary" oninput="salvataggioIntelligente()">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3 border border-primary rounded p-2 mt-2 mt-md-0 d-flex align-items-center shadow-sm">
+                        <div class="d-flex flex-wrap justify-content-around w-100 gap-2">
+                            <div class="form-check d-flex align-items-center m-0">
+                                <input class="form-check-input border-primary" type="radio" name="tipo_verifica" value="biennale" id="ver_bienn" onchange="calcolaProssimaVerifica()">
+                                <label class="form-check-label ms-1 fw-bold" for="ver_bienn">Verifica Biennale</label>
+                            </div>
+                            <div class="form-check d-flex align-items-center m-0">
+                                <input class="form-check-input border-primary" type="radio" name="tipo_verifica" value="quinquennale" id="ver_quinq" onchange="calcolaProssimaVerifica()">
+                                <label class="form-check-label ms-1 fw-bold" for="ver_quinq">Verifica Quinquennale</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header bg-dark-green mt-3">2. IMPIANTO SOGGETTO A VERIFICA</div>
+            <div class="bg-light-green border-green p-2 mb-2 rounded">
+                <div class="row align-items-center mx-0 mb-2">
+                    <div class="col-12 d-flex align-items-center p-0">
+                        <span class="me-2 fw-bold text-danger" style="min-width: 110px;">Denominazione</span>
+                        <input type="text" name="denominazione_imp" id="denominazione_imp" class="form-control flex-grow-1 border-success border-opacity-50" oninput="salvataggioIntelligente()">
+                    </div>
+                </div>
+                <div class="row g-2 align-items-center mx-0 mb-3">
+                    <div class="col-12 col-md-4 d-flex align-items-center p-0">
+                        <span class="me-2 fw-bold" style="min-width: 110px;">Città</span>
+                        <input type="text" name="citta_imp" id="citta_imp" class="form-control border-success border-opacity-25" oninput="salvataggioIntelligente()">
+                    </div>
+                    <div class="col-12 col-md-5 d-flex align-items-center p-0">
+                        <span class="me-2 fw-bold" style="min-width: 80px;">Indirizzo</span>
+                        <input type="text" name="indirizzo_imp" id="indirizzo_imp" class="form-control flex-grow-1 border-success border-opacity-25" oninput="salvataggioIntelligente()">
+                        <button type="button" class="btn btn-sm btn-outline-success ms-1 px-2 no-print btn-gps" onclick="trovaPosizione()">📍</button>
+                    </div>
+                    <div class="col-12 col-md-3 d-flex align-items-center p-0">
+                        <span class="me-2 fw-bold ms-md-2" style="min-width: 40px;">Uso:</span>
+                        <input type="text" name="locale_uso" class="form-control border-success border-opacity-25" oninput="salvataggioIntelligente()">
+                    </div>
+                </div>
+
+                <div class="row g-2 align-items-center mx-0 mb-3 border-top border-success border-opacity-25 pt-2">
+                    <div class="col-12 col-xl-7 p-0">
+                        <div class="d-flex align-items-center flex-wrap flex-sm-nowrap gap-2">
+                            <span class="fw-bold" style="min-width: 70px;">Dati impianto:</span>
+                            <div class="d-flex align-items-center gap-1 pe-2 border-end border-success border-opacity-50">
+                                <div class="form-check m-0 d-flex align-items-center"><input name="sistema" id="sis_tt" type="radio" value="TT" class="form-check-input border-success" onchange="autoSelezionaArea(this)"><label class="form-check-label fw-bold ms-1" for="sis_tt">TT</label></div>
+                                <div class="form-check m-0 d-flex align-items-center mx-1"><input name="sistema" id="sis_tns" type="radio" value="TN-S" class="form-check-input border-success" onchange="autoSelezionaArea(this)"><label class="form-check-label fw-bold ms-1" for="sis_tns">TN-S</label></div>
+                                <div class="form-check m-0 d-flex align-items-center"><input name="sistema" id="sis_it" type="radio" value="IT" class="form-check-input border-success" onchange="autoSelezionaArea(this)"><label class="form-check-label fw-bold ms-1" for="sis_it">IT</label></div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 ps-1">
+                                <span class="fw-bold d-none d-sm-inline">Area:</span>
+                                <div class="form-check m-0 d-flex align-items-center"><input name="area" id="area_ii" type="radio" value="II" class="form-check-input border-success" onchange="salvataggioIntelligente()"><label class="form-check-label ms-1" for="area_ii">Area II</label></div>
+                                <div class="form-check m-0 d-flex align-items-center mx-1"><input name="area" id="area_iii" type="radio" value="III" class="form-check-input border-success" onchange="salvataggioIntelligente()"><label class="form-check-label ms-1" for="area_iii">Area III</label></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-5 p-0 d-flex align-items-center flex-nowrap gap-2">
+                        <div class="d-flex align-items-center"><span class="fw-bold me-1">POD:</span><input type="text" name="pod" class="form-control px-1 fw-bold border-success" style="width: 160px;" value="IT001E" onkeydown="if((event.key === 'Backspace' || event.key === 'Delete') && this.selectionStart <= 6) event.preventDefault();" oninput="if(!this.value.toUpperCase().startsWith('IT001E')) this.value = 'IT001E'; else this.value = this.value.toUpperCase(); salvataggioIntelligente();" onclick="if(this.selectionStart < 6) this.setSelectionRange(this.value.length, this.value.length);"></div>
+                        <div class="d-flex align-items-center"><span class="fw-bold me-1">kW:</span><input type="number" name="kw" class="form-control border-success px-1 text-center" style="width: 40px;" oninput="salvataggioIntelligente()"></div>
+                        <div class="d-flex align-items-center"><span class="fw-bold me-1">Volt:</span><select name="volt" class="form-select border-success px-1" style="width: 55px; background-position: right 0.1rem center; padding-right: 15px;" onchange="salvataggioIntelligente()"><option value=""></option><option value="230">230</option><option value="400">400</option></select></div>
+                    </div>
+                </div>
+
+                <div class="border-top border-success border-opacity-25 pt-2">
+    <div class="d-flex align-items-center justify-content-start flex-wrap gap-3">
+        <div class="d-flex align-items-center">
+            <span class="me-1 fw-bold">kV:</span>
+            <input type="number" step="any" inputmode="decimal" name="tens_nominale" class="form-control px-1 text-left border-success" style="width: 40px;" oninput="salvataggioIntelligente()">
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="me-1 fw-bold">I<sub>f</sub>(A):</span>
+            <input type="number" step="any" inputmode="decimal" name="corr_guasto" id="corr_guasto" class="form-control px-1 text-left border-success" style="width: 50px;" oninput="calcolaUc()">
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="me-1 fw-bold">T<sub>f</sub>(s):</span>
+            <select name="tempo_guasto" id="tempo_guasto" class="form-select px-1 text-left border-success" style="width: 70px;" onchange="autoCompilaTensione(this)"></select>
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="me-1 fw-bold text-danger">U<sub>TP</sub>(V):</span>
+            <input type="number" step="any" inputmode="decimal" name="tens_contatto" id="tens_contatto" class="form-control px-1 text-left border-danger fw-bold text-danger" style="width: 50px;" oninput="calcolaUc()">
+        </div>
+    </div>
+</div>
+
+            <div class="section-header bg-dark-blue mt-3">3. ESAME DOCUMENTALE</div>
+            <div class="bg-light-blue box-border p-2 mb-3 rounded">
+                <div class="border border-primary rounded p-2 mb-2 shadow-sm">
+                    <div class="d-flex align-items-center flex-nowrap w-100 gap-1 gap-md-2" style="overflow-x: auto;">
+                        <div class="form-check m-0 d-flex align-items-center" style="min-width: 85px;"><input type="checkbox" name="chk_doc_conf" id="chk_dico" class="form-check-input border-primary me-2" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="chk_dico">Di.Co.</label></div>
+                        <div class="d-flex align-items-center flex-shrink-0"><span class="me-1 fw-bold">del</span><input type="date" name="doc_conf_il" class="form-control border-primary p-1 text-center" style="width: 90px;" onchange="salvataggioIntelligente()"></div>
+                        <div class="d-flex align-items-center flex-grow-1 ms-1"><span class="me-1 fw-bold">di</span><input type="text" name="doc_conf_da" class="form-control border-primary px-2" placeholder="Azienda..." oninput="salvataggioIntelligente()"></div>
+                    </div>
+                </div>
+                <div class="border border-primary rounded p-2 mb-2 shadow-sm">
+                    <div class="d-flex align-items-center flex-nowrap w-100 gap-1 gap-md-2" style="overflow-x: auto;">
+                        <div class="form-check m-0 d-flex align-items-center" style="min-width: 85px;"><input type="checkbox" name="chk_doc_risp" id="chk_diri" class="form-check-input border-primary me-2" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="chk_diri">Di.Ri.</label></div>
+                        <div class="d-flex align-items-center flex-shrink-0"><span class="me-1 fw-bold">del</span><input type="date" name="doc_risp_il" class="form-control border-primary p-1 text-center" style="width: 90px;" onchange="salvataggioIntelligente()"></div>
+                        <div class="d-flex align-items-center flex-grow-1 ms-1"><span class="me-1 fw-bold">di</span><input type="text" name="doc_risp_da" class="form-control border-primary px-2" placeholder="Professionista..." oninput="salvataggioIntelligente()"></div>
+                    </div>
+                </div>
+                <div class="border border-primary rounded p-2 mb-2 shadow-sm">
+                    <div class="d-flex align-items-center flex-nowrap w-100 gap-1 gap-md-2" style="overflow-x: auto;">
+                        <div class="form-check m-0 d-flex align-items-center" style="min-width: 85px;"><input type="checkbox" name="chk_doc_prog" id="chk_prog" class="form-check-input border-primary me-2" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="chk_prog">Progetto</label></div>
+                        <div class="d-flex align-items-center flex-shrink-0"><span class="me-1 fw-bold">del</span><input type="date" name="doc_prog_il" class="form-control border-primary p-1 text-center" style="width: 90px;" onchange="salvataggioIntelligente()"></div>
+                        <div class="d-flex align-items-center flex-grow-1 ms-1"><span class="me-1 fw-bold">di</span><input type="text" name="doc_prog_da" class="form-control border-primary px-2" placeholder="Progettista..." oninput="salvataggioIntelligente()"></div>
+                    </div>
+                </div>
+                <div class="row g-2 mb-2 mx-0">
+                    <div class="col-12 col-md-6 p-0 pe-md-1 mb-2 mb-md-0">
+                        <div class="border border-primary rounded p-2 shadow-sm d-flex align-items-center flex-nowrap" style="overflow-x: auto;">
+                            <div class="form-check m-0 d-flex align-items-center flex-shrink-0" style="min-width: 80px;">
+                                <input type="checkbox" name="chk_inail" id="chk_inail" class="form-check-input border-primary me-2" onchange="salvataggioIntelligente()">
+                                <label class="form-check-label fw-bold" for="chk_inail">INAIL</label>
+                            </div>
+                            
+                            <input type="text" name="inail_matr" class="form-control border-primary bg-light px-2 text-center mx-1 flex-grow-1" placeholder="Matr." style="min-width: 120px; max-width: 200px;" oninput="salvataggioIntelligente()">
+                            
+                            <div class="d-flex align-items-center flex-shrink-0">
+                                <span class="me-1 fw-bold">del</span>
+                                <input type="date" name="inail_data" class="form-control border-primary bg-light p-1 text-center" style="width: 105px;" onchange="salvataggioIntelligente()">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 col-md-6 p-0 ps-md-1">
+                        <div class="border border-primary rounded p-2 shadow-sm d-flex align-items-center flex-nowrap" style="overflow-x: auto;">
+                            <div class="form-check m-0 d-flex align-items-center flex-shrink-0" style="min-width: 80px;">
+                                <input type="checkbox" name="chk_asl" id="chk_asl" class="form-check-input border-primary me-2" onchange="salvataggioIntelligente()">
+                                <label class="form-check-label fw-bold" for="chk_asl">ASL</label>
+                            </div>
+                            
+                            <input type="text" name="asl_matr" class="form-control border-primary bg-light px-2 text-center mx-1 flex-grow-1" placeholder="Matr." style="min-width: 120px; max-width: 200px;" oninput="salvataggioIntelligente()">
+                            
+                            <div class="d-flex align-items-center flex-shrink-0">
+                                <span class="me-1 fw-bold">del</span>
+                                <input type="date" name="asl_data" class="form-control border-primary bg-light p-1 text-center" style="width: 105px;" onchange="salvataggioIntelligente()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-2 pt-2 border-top border-primary border-opacity-25">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div class="form-check m-0 d-flex align-items-center"><input type="checkbox" name="doc_schemi" id="chk_schemi" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="chk_schemi">Schemi</label></div>
+                        <div class="form-check m-0 d-flex align-items-center"><input type="checkbox" name="doc_planimetria" id="chk_plani" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="chk_plani">Planimetria</label></div>
+                        <div class="form-check m-0 d-flex align-items-center"><input type="checkbox" name="doc_verbale_prec" id="chk_verb" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="chk_verb">Verbale precedente</label></div>
+                    </div>
+                </div>
+                <div class="px-2 pt-2 mt-2 border-top border-primary border-opacity-25">
+                    <div class="d-flex align-items-center flex-nowrap w-100">
+                        <span class="me-2 fw-bold">Per TN-S: Comunicazione gestore del</span>
+                        <input type="date" name="tns_comunicazione" class="form-control border-primary p-1" style="width: 90px;" onchange="salvataggioIntelligente()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header bg-dark-green mt-3">4. ESAME A VISTA</div>
+            <div class="bg-light-green border-green p-2 mb-2 rounded">
+                <div class="border border-success rounded mb-2 p-2 shadow-sm">
+                    <div class="fw-bold mb-1">Sistema disperdente</div>
+                    <div class="d-flex align-items-center flex-nowrap gap-2 w-100" style="overflow-x: auto; white-space: nowrap;">
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="sist_disp_ispez" id="sd_isp" value="Ispezionabile" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="sd_isp">Ispezionabile</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="sist_disp_ispez" id="sd_nisp" value="Non Ispezionabile" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="sd_nisp">Non Ispez.</label></div>
+                        <div class="border-start border-success opacity-50 mx-1" style="height: 15px;"></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="sist_disp_regol" id="sd_reg" value="Regolamentare" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="sd_reg">Regolamentare</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="sist_disp_regol" id="sd_nreg" value="Non Regolamentare" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="sd_nreg">Non Regolam.</label></div>
+                    </div>
+                </div>
+
+                <div class="border border-success rounded mb-2 p-2 shadow-sm">
+                    <div class="fw-bold mb-1">Picchetto</div>
+                    <div class="d-flex align-items-center flex-nowrap gap-2 w-100" style="overflow-x: auto; white-space: nowrap;">
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_tubo" id="pi_tubo" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="pi_tubo">Tubo</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_profilo" id="pi_prof" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="pi_prof">Profilato</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="inf_mass" id="pi_mass" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="pi_mass">Massiccio</label></div>
+                        <div class="border-start border-success opacity-50 mx-1" style="height: 15px;"></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_inf_zinc" id="pi_zinc" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="pi_zinc">Fe/Zn</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_inf_rame" id="pi_rame" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="pi_rame">Rame</label></div>
+                    </div>
+                </div>
+
+                <div class="border border-success rounded mb-2 p-2 shadow-sm">
+                    <div class="d-flex align-items-center flex-nowrap w-100" style="overflow-x: auto; white-space: nowrap;">
+                        <span class="fw-bold me-3">Picchetti N°:</span>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="radio" name="picchetti_num" id="pn_1" value="1" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="pn_1">1</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="radio" name="picchetti_num" id="pn_2" value="2" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="pn_2">2</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="radio" name="picchetti_num" id="pn_3" value="3" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="pn_3">3</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="radio" name="picchetti_num" id="pn_4" value="4" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="pn_4">4</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="picchetti_num" id="pn_v" value="vari" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="pn_v">vari</label></div>
+                    </div>
+                </div>
+
+                <div class="border border-success rounded mb-2 p-2 shadow-sm">
+                    <div class="fw-bold mb-1">Per Posa</div>
+                    <div class="d-flex align-items-center flex-nowrap gap-2 w-100" style="overflow-x: auto; white-space: nowrap;">
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_nastro" id="pp_na" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="pp_na">Nastro</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_tondino" id="pp_to" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="pp_to">Tondino</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="posa_cordato" id="pp_co" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="pp_co">Cordato</label></div>
+                        <div class="border-start border-success opacity-50 mx-1" style="height: 15px;"></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_posa_zinc" id="pp_zi" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="pp_zi">Fe/Zn</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="mat_posa_rame" id="pp_ra" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="pp_ra">Rame</label></div>
+                    </div>
+                </div>
+
+                <div class="border border-success rounded mb-2 p-2 shadow-sm">
+                    <div class="fw-bold mb-1">Nodo/Collettore di terra</div>
+                    <div class="d-flex align-items-center flex-nowrap gap-3 w-100" style="overflow-x: auto; white-space: nowrap;">
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="nodo_collettore" id="nc_zi" value="Acciaio Zincato" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="nc_zi">Fe/Zn</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="nodo_collettore" id="nc_mo" value="Morsetto" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="nc_mo">Morsetto</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="nodo_collettore" id="nc_ra" value="Rame" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="nc_ra">Rame</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="nodo_collettore" id="nc_id" value="Non Identificato" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="nc_id">Non Identificato</label></div>
+                    </div>
+                </div>
+
+                <div class="border border-success rounded p-2 shadow-sm">
+                    <div class="d-flex align-items-center flex-nowrap w-100 mb-2">
+                        <span class="fw-bold me-3 text-nowrap">Stato delle connessioni</span>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="radio" name="stato_conn" id="sc_ok" value="idonee" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="sc_ok">idonee</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="stato_conn" id="sc_ko" value="non idonee" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold text-danger" for="sc_ko">non idonee</label></div>
+                    </div>
+                    <div class="d-flex align-items-center flex-nowrap w-100 pt-1 border-top border-success border-opacity-25">
+                        <span class="fw-bold me-3 text-nowrap">Realizzate con</span>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="checkbox" name="realiz_bulloni" id="rc_bu" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="rc_bu">Bulloni</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0 me-3"><input type="checkbox" name="realiz_morsetti" id="rc_mo" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="rc_mo">Morsetti</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="checkbox" name="realiz_capicorda" id="rc_ca" class="form-check-input border-success me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="rc_ca">Capicorda</label></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header bg-dark-blue mt-3">5. ESAME CONDUTTORI</div>
+            <div class="bg-light-blue box-border p-2 mb-2 rounded">
+                
+                <div class="border border-primary rounded mb-2 mx-0 py-2 shadow-sm border-opacity-50">
+    <div class="row m-0 align-items-center g-1">
+        
+        <div class="col-12 col-md-4 d-flex align-items-center flex-nowrap px-2 py-1">
+            <span class="fw-bold text-nowrap" style="min-width: 95px;">di Terra:</span>
+            <div class="d-flex align-items-center flex-nowrap gap-2">
+                <div class="form-check m-0 d-flex align-items-center">
+                    <input type="radio" name="id_terra" id="terra_ok" value="idonei" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()">
+                    <label class="form-check-label fw-bold" for="terra_ok">idonei</label>
+                </div>
+                <div class="form-check m-0 d-flex align-items-center">
+                    <input type="radio" name="id_terra" id="terra_ko" value="non idonei" class="form-check-input border-danger me-1" onchange="salvataggioIntelligente()">
+                    <label class="form-check-label fw-bold text-danger" for="terra_ko">non idonei</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 d-md-none border-top border-primary border-opacity-10 my-1"></div>
+
+        <div class="col-12 col-md-4 d-flex align-items-center flex-nowrap px-2 py-1 border-md-start">
+            <span class="fw-bold text-nowrap" style="min-width: 95px;">di Protezione:</span>
+            <div class="d-flex align-items-center flex-nowrap gap-2">
+                <div class="form-check m-0 d-flex align-items-center">
+                    <input type="radio" name="id_prot" id="prot_ok" value="idonei" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()">
+                    <label class="form-check-label fw-bold" for="prot_ok">idonei</label>
+                </div>
+                <div class="form-check m-0 d-flex align-items-center">
+                    <input type="radio" name="id_prot" id="prot_ko" value="non idonei" class="form-check-input border-danger me-1" onchange="salvataggioIntelligente()">
+                    <label class="form-check-label fw-bold text-danger" for="prot_ko">non idonei</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 d-md-none border-top border-primary border-opacity-10 my-1"></div>
+
+        <div class="col-12 col-md-4 d-flex align-items-center flex-nowrap px-2 py-1 border-md-start">
+            <span class="fw-bold text-nowrap" style="min-width: 95px;">Giunzioni:</span>
+            <div class="d-flex align-items-center flex-nowrap gap-2">
+                <div class="form-check m-0 d-flex align-items-center">
+                    <input type="radio" name="id_giunz" id="giunz_ok" value="idonee" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()">
+                    <label class="form-check-label fw-bold" for="giunz_ok">idonee</label>
+                </div>
+                <div class="form-check m-0 d-flex align-items-center">
+                    <input type="radio" name="id_giunz" id="giunz_ko" value="non idonee" class="form-check-input border-danger me-1" onchange="salvataggioIntelligente()">
+                    <label class="form-check-label fw-bold text-danger" for="giunz_ko">non idonee</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+                <div class="row g-1 mb-2 align-items-stretch mx-0">
+                    <div class="col-md-7 d-flex overflow-auto p-0 pe-md-1 mb-2 mb-md-0">
+                       
+<table class="table table-bordered border-primary table-sm text-start table-conduttori mb-0 w-100 rounded shadow-sm" style="min-width: 300px;">
+    <tbody>
+        <tr class="bg-light">
+            <td class="fw-bold border-primary text-end align-middle" style="white-space: nowrap;">Cond.</td>
+            <td class="fw-bold border-primary text-center align-middle" style="white-space: nowrap;">Sezione</td>            
+            <td class="fw-bold border-primary text-center align-middle" style="white-space: nowrap;">Cavi</td>
+            <td class="fw-bold border-primary text-center align-middle" style="white-space: nowrap;">Corde</td>
+            <td class="fw-bold border-primary text-start align-middle" style="white-space: nowrap;">Tipo</td>
+            <td class="fw-bold border-primary text-start align-middle" style="white-space: nowrap;">Tipo</td>
+        </tr>
+
+        <tr>
+            <td class="fw-bold border-primary text-end align-middle" style="white-space: nowrap;">Terra</td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center ps-1"><input type="number" step="any" inputmode="decimal" name="sez_terra" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="ct_isolati" name="ct_isolati" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="ct_rame" name="ct_rame" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="ct_nastri" name="ct_nastri" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="ct_nastri">Tondi</label></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="ct_strutt" name="ct_strutt" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="ct_strutt">Strutturali</label></div></td>
+        </tr>
+
+        <tr>
+            <td class="fw-bold border-primary text-end align-middle" style="white-space: nowrap;">PE</td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center ps-1"><input type="number" step="any" inputmode="decimal" name="sez_prot" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="cp_isolati" name="cp_isolati" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="cp_nudi" name="cp_nudi" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="cp_anime" name="cp_anime" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="cp_anime">Anime</label></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="cp_involucri" name="cp_involucri" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="cp_involucri">Metallo</label></div></td>
+        </tr>
+
+        <tr>
+            <td class="fw-bold border-primary text-end align-middle" style="white-space: nowrap;">EQ.</td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center ps-1"><input type="number" step="any" inputmode="decimal" name="sez_eq" class="form-control p-0 text-center border-primary" style="width: 50px; height: 1.6rem;" oninput="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="ce_isolati" name="ce_isolati" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-center w-100"><input type="checkbox" id="ce_nudi" name="ce_nudi" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="ce_richiesti" name="ce_richiesti" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="ce_richiesti">Richiesti</label></div></td>
+            <td class="border-primary align-middle"><div class="d-flex align-items-center justify-content-start w-100 ps-1"><input type="checkbox" id="ce_non_richiesti" name="ce_non_richiesti" class="form-check-input border-primary m-0" onchange="salvataggioIntelligente()"><label class="form-check-label me-1" for="ce_non_richiesti">Non Richiesti</label></div></td>
+        </tr>
+    </tbody>
+</table>
+
+                    </div>
+                    <div class="col-md-5 d-flex overflow-auto p-0 ps-md-1">
+                        <table class="table table-bordered border-primary table-sm mb-0 w-100 h-100 rounded shadow-sm" style="min-width: 250px;">
+                            <thead>
+                                <tr class="border-primary">
+                                    <th class="fw-bold text-start align-middle border-primary fs-6 border-end-0">Continuità</th>
+                                    <th class="text-center align-middle border-primary border-start-0 border-end-0 fw-normal">Si</th>
+                                    <th class="text-center align-middle border-primary border-start-0 border-end-0 fw-normal">No</th>
+                                    <th class="text-center align-middle border-primary border-start-0 fw-normal">N/A</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-end align-middle border-primary">conduttori e collettori</td>
+                                    <td class="text-center align-middle border-primary"><input type="radio" name="cont_cond" value="Si" class="form-check-input border-primary m-0 mx-auto d-block" onchange="salvataggioIntelligente()"></td>
+                                    <td class="text-center align-middle border-primary"><input type="radio" name="cont_cond" value="No" class="form-check-input border-primary m-0 mx-auto d-block" onchange="salvataggioIntelligente()"></td>
+                                    <td class="text-center align-middle border-primary"><input type="radio" name="cont_cond" value="N/A" class="form-check-input border-primary m-0 mx-auto d-block" onchange="salvataggioIntelligente()"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-end align-middle border-primary">equipotenziali supplem.</td>
+                                    <td class="text-center align-middle border-primary"><input type="radio" name="cont_eq" value="Si" class="form-check-input border-primary m-0 mx-auto d-block" onchange="salvataggioIntelligente()"></td>
+                                    <td class="text-center align-middle border-primary"><input type="radio" name="cont_eq" value="No" class="form-check-input border-primary m-0 mx-auto d-block" onchange="salvataggioIntelligente()"></td>
+                                    <td class="text-center align-middle border-primary"><input type="radio" name="cont_eq" value="N/A" class="form-check-input border-primary m-0 mx-auto d-block" onchange="salvataggioIntelligente()"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="border border-primary rounded mx-0 py-2 shadow-sm border-opacity-50 mt-2">
+                    <div class="d-flex align-items-center flex-nowrap px-3 py-1">
+                        <span class="fw-bold text-nowrap" style="min-width: 120px;">Interruttori adottati:</span>
+                        <div class="d-flex align-items-center flex-nowrap gap-3">
+                            <div class="form-check m-0 d-flex align-items-center"><input type="checkbox" name="int_diff" id="int_diff" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="int_diff">differenziali</label></div>
+                            <div class="form-check m-0 d-flex align-items-center"><input type="checkbox" name="int_max_corr" id="int_max" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="int_max">max corrente</label></div>
+                        </div>
+                    </div>
+                    <div class="border-top border-primary border-opacity-10 mx-3 my-1"></div>
+                    <div class="d-flex align-items-center flex-nowrap px-3 py-1">
+                        <span class="fw-bold text-nowrap" style="min-width: 70px;">Condizioni:</span>
+                        <div class="d-flex align-items-center flex-nowrap gap-2" style="overflow-x: auto; white-space: nowrap;">
+                            <div class="form-check m-0 d-flex align-items-center"><input type="radio" name="condizioni" id="cond_b" value="buone" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="cond_b">buone</label></div>
+                            <div class="form-check m-0 d-flex align-items-center"><input type="radio" name="condizioni" id="cond_d" value="discrete" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="cond_d">discrete</label></div>
+                            <div class="form-check m-0 d-flex align-items-center"><input type="radio" name="condizioni" id="cond_m" value="mediocri" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="cond_m">mediocri</label></div>
+                            <div class="form-check m-0 d-flex align-items-center"><input type="radio" name="condizioni" id="cond_s" value="scarse" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label" for="cond_s">scarse</label></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header bg-dark-green mt-3">6. 🔍 % DI CAMPIONAMENTO E PROVA DI CONTINUITÀ</div>
+            <div class="bg-light-green border-green p-2 mb-2 rounded">
+                <div class="row g-1 align-items-center py-2 border border-success rounded mb-2 mx-0 text-center flex-wrap shadow-sm">
+                    <div class="col-12 d-flex flex-wrap justify-content-center gap-4">
+                        <div class="form-check d-flex align-items-center m-0"><input type="radio" name="tipo_ambiente" value="Ordinario" id="amb_ord" class="form-check-input border-success me-2 mt-0" style="width: 1.2rem; height: 1.2rem;" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="amb_ord" style="font-size: 0.85rem;">Ambiente Ordinario</label></div>
+                        <div class="form-check d-flex align-items-center m-0"><input type="radio" name="tipo_ambiente" value="Speciale" id="amb_spe" class="form-check-input border-success me-2 mt-0" style="width: 1.2rem; height: 1.2rem;" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="amb_spe" style="font-size: 0.85rem;">Ambiente Speciale</label></div>
+                    </div>
+                </div>
+                <div class="row g-2 align-items-center py-3 border border-success rounded mx-0 mb-2 flex-wrap">
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between mb-2 mb-md-0 px-md-3">
+                        <span class="me-2 text-start flex-grow-1 fw-bold">Tra dispersore accessibile e collettore:</span>
+                        <div class="d-flex align-items-center"><select name="perc_disp" class="form-select text-center perc-dropdown border-success fw-bold" style="width: 80px;" onchange="salvataggioIntelligente()"></select><span class="ms-1 fw-bold fs-6">%</span></div>
+                    </div>
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between px-md-3 border-md-start border-success border-sm-top pt-2 pt-md-0">
+                        <span class="me-2 text-start flex-grow-1 fw-bold">Tra collettori di terra:</span>
+                        <div class="d-flex align-items-center"><select name="perc_coll" class="form-select text-center perc-dropdown border-success fw-bold" style="width: 80px;" onchange="salvataggioIntelligente()"></select><span class="ms-1 fw-bold fs-6">%</span></div>
+                    </div>
+                    <div class="col-12 border-top border-success my-2 d-none d-md-block"></div>
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between mb-2 mb-md-0 px-md-3 border-sm-top border-success pt-2 pt-md-0">
+                        <span class="me-2 text-start flex-grow-1 fw-bold">Tra PE ed EQ:</span>
+                        <div class="d-flex align-items-center"><select name="perc_pe" class="form-select text-center perc-dropdown border-success fw-bold" style="width: 80px;" onchange="salvataggioIntelligente()"></select><span class="ms-1 fw-bold fs-6">%</span></div>
+                    </div>
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between px-md-3 border-md-start border-success border-sm-top pt-2 pt-md-0">
+                        <span class="me-2 text-start flex-grow-1 fw-bold">Tra masse e collettori:</span>
+                        <div class="d-flex align-items-center"><select name="perc_masse_coll" class="form-select text-center perc-dropdown border-success fw-bold" style="width: 80px;" onchange="salvataggioIntelligente()"></select><span class="ms-1 fw-bold fs-6">%</span></div>
+                    </div>
+                    <div class="col-12 border-top border-success my-2 d-none d-md-block"></div>
+                    <div class="col-12 col-md-6 d-flex flex-wrap align-items-center justify-content-between px-md-3 border-sm-top border-success pt-2 pt-md-0">
+                        <span class="me-2 text-start flex-grow-1 fw-bold">Tra masse estranee e verso le masse:</span>
+                        <div class="d-flex align-items-center"><select name="perc_masse_est" class="form-select text-center perc-dropdown border-success fw-bold" style="width: 80px;" onchange="salvataggioIntelligente()"></select><span class="ms-1 fw-bold fs-6">%</span></div>
+                    </div>
+                </div>
+                <div class="row g-1 align-items-center py-2 border border-success rounded mx-0 flex-wrap">
+                    <div class="col-12 d-flex flex-wrap align-items-center gap-2 px-md-2">
+                        <span class="fw-bold me-2">Durante la verifica era presente il Sig.:</span>
+                        <input type="text" name="presente_verifica" class="form-control flex-grow-1 border-success fw-bold" style="min-width: 150px;" oninput="salvataggioIntelligente()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header bg-dark-blue mt-3">7. ESAME STRUMENTALE</div>
+            <div class="bg-light-blue box-border p-2 mb-2 rounded">
+                <div class="row g-1 align-items-center mx-0 mb-2 border border-primary rounded p-2 shadow-sm">
+                    <div class="col-12 p-0 d-flex align-items-center flex-nowrap w-100" style="overflow-x: auto; white-space: nowrap;">
+                        <div class="d-flex align-items-center me-2">
+                            <span class="fw-bold me-1" title="Misura resistenza Terra">R<sub>E</sub>:</span>
+                            <input type="number" step="any" inputmode="decimal" name="misura_resistenza_terra" id="val_resistenza_terra" class="form-control border-primary px-1 text-center fw-bold" style="width: 50px;" placeholder="&Omega;" oninput="calcolaUc(); salvataggioIntelligente();">
+                        </div>
+                        <div class="d-flex align-items-center border-start border-primary ps-2">
+                            <span class="fw-bold me-2">Metodo:</span>
+                            <div class="form-check form-check-inline m-0 d-flex align-items-center me-2"><input type="radio" name="metodo_misura" id="met_anello" value="Anello Guasto" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="met_anello">Anello Guasto</label></div>
+                            <div class="form-check form-check-inline m-0 d-flex align-items-center"><input type="radio" name="metodo_misura" id="met_volt" value="Voltamperometrico" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="met_volt">Voltamperometrico</label></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row g-1 align-items-center mx-0 mb-2 border border-primary rounded p-2 shadow-sm">
+                    <div class="col-12 p-0 d-flex align-items-center flex-nowrap w-100" style="overflow-x: auto; white-space: nowrap;">
+                        <span class="fw-bold me-2">Sistemi TT:</span> 
+                        <div class="form-check form-check-inline d-flex align-items-center m-0 me-2"><input type="radio" name="tt_soddisf" id="tt_ris" value="Risulta" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="tt_ris">Risulta</label></div>
+                        <div class="form-check form-check-inline d-flex align-items-center m-0 me-2"><input type="radio" name="tt_soddisf" id="tt_non_ris" value="Non Risulta" class="form-check-input border-danger me-1" onchange="salvataggioIntelligente()"><label class="form-check-label text-danger fw-bold" for="tt_non_ris">Non Risulta</label></div>
+                        <div class="d-flex align-items-center border-start border-primary ps-2">
+                            <span class="me-1 fw-bold">U<sub>L</sub> &le;</span>
+                            <select id="calc_ul" name="val_ul_scelta" class="form-select border-primary text-center fw-bold" style="width: 70px; padding-right: 25px;" onchange="salvataggioIntelligente()">
+                                <option value="50Volt" selected>50Volt</option>
+                                <option value="25Volt">25Volt</option>
+                            </select>
+                            <span class="ms-1 fw-bold">(50V/25V)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row g-1 align-items-center mx-0 mb-2 border border-primary rounded p-2 shadow-sm">
+                    <div class="col-12 p-0">
+                        <div class="d-flex align-items-center flex-nowrap mb-2 w-100" style="overflow-x: auto; white-space: nowrap;">
+                            <span class="fw-bold me-2">Sistemi TN:</span> 
+                            <div class="form-check form-check-inline d-flex align-items-center m-0 me-2"><input type="radio" name="tn_soddisf_2" id="tn2_ris" value="Risulta" class="form-check-input border-primary me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold" for="tn2_ris">Risulta</label></div>
+                            <div class="form-check form-check-inline d-flex align-items-center m-0"><input type="radio" name="tn_soddisf_2" id="tn2_non_ris" value="Non Risulta" class="form-check-input border-danger me-1" onchange="salvataggioIntelligente()"><label class="form-check-label fw-bold text-danger me-1" for="tn2_non_ris">Non Risulta</label><span class="ms-2 fw-bold text-main">U<sub>0</sub> &le; U<sub>tp</sub> e U<sub>0</sub> / Z<sub>s</sub> &le; I<sub>a</sub></span></div>
+                        </div>
+                        <div class="d-flex align-items-center flex-nowrap pt-1 border-top border-primary border-opacity-25">
+                            <span class="fw-bold">[U<sub>c</sub> = R<sub>E</sub> x I<sub>E</sub> = </span>
+                            <input type="text" id="tn_val_uc" name="tn_val_uc" class="form-control text-center border-primary fw-bold ms-1" style="width: 70px; height: 30px;" readonly>
+                            <strong class="ms-1">V]</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header bg-dark-green mt-3">8. PROVA DI INTERVENTO DEI DIFFERENZIALI</div>
+<div class="bg-light-green border-green p-2 rounded mb-2">
+    <div class="overflow-auto border border-success rounded p-1">
+        <table class="table table-bordered text-center table-diff border-success mb-0" style="min-width: 600px;">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="align-middle border-success" style="width: auto; min-width: 160px;">Quadro</th>
+                    
+                    <th rowspan="2" class="align-middle border-success" style="width: 50px; min-width: 50px;">No.</th>
+                    <th colspan="4" class="align-middle border-success" style="width: 200px;">Corrente di intervento (I&Delta;n)</th>
+                    <th rowspan="2" class="align-middle border-success" style="width: 220px; min-width: 220px;">Note</th>
+                </tr>
+                <tr>
+                    <th class="border-success" style="width: 50px; min-width: 50px;">0,03</th>
+                    <th class="border-success" style="width: 50px; min-width: 50px;">0,3</th>
+                    <th class="border-success" style="width: 50px; min-width: 50px;">0,5</th>
+                    <th class="border-success" style="width: 50px; min-width: 50px;">1</th>
+                </tr>
+            </thead>
+            <tbody id="diffTable"></tbody>
+        </table>
+    </div>
+    <div class="text-end mt-2 no-print">
+        <button type="button" class="btn btn-sm btn-success fw-bold px-3 shadow-sm" onclick="addDiffRow()">+ Aggiungi Riga</button>
+    </div>
+</div>
+            <div class="section-header bg-dark-blue mt-3">
+                <span>9. RILIEVI / NON CONFORMITÀ</span>
+                <div class="no-print ms-auto">
+                    <button type="button" class="btn btn-sm btn-outline-light py-0 px-2 fw-bold" onclick="document.getElementById('importaNC').click()" title="Aggiorna libreria da CSV">📥 Libreria NC</button>
+                    <input type="file" id="importaNC" style="display:none" accept=".csv" onchange="gestisciImportazioneNC(event)">
+                </div>
+            </div>
+            <div class="bg-light-blue box-border p-2 rounded mb-2">
+                <div class="overflow-auto border border-primary rounded p-1">
+                    <table class="table table-bordered text-center table-diff border-primary mb-0" style="min-width: 650px;">
+                        <thead>
+                            <tr>
+                                <th class="align-middle border-primary" style="width: 5%;">N°</th>
+                                <th class="align-middle border-primary" style="width: 45%;">Descrizione Rilievo / Non Conformità</th>
+                                <th class="align-middle border-primary" style="width: 50%;">Note / Adeguamento / Prescrizioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ncTable"></tbody>
+                    </table>
+                </div>
+                <div class="text-end mt-2 no-print">
+                    <button type="button" class="btn btn-sm btn-primary fw-bold px-3 shadow-sm" onclick="addNCRow()">+ Aggiungi Rilievo</button>
+                </div>
+            </div>
+            <datalist id="lista-nc"></datalist>
+
+            <div class="section-header bg-dark-green mt-3">10. ESITO VERIFICA</div>
+            <div class="bg-light-green border-green p-3 rounded mb-2 shadow-sm">
+                
+                <div class="row align-items-center mb-3 mx-0">
+                    <div class="col-12 d-flex flex-wrap align-items-center justify-content-center justify-content-md-start gap-3 p-0">
+                        <div class="form-check form-check-inline px-3 rounded d-flex align-items-center py-2 m-0 border border-success shadow-sm" style="background-color: var(--bg-input);">
+                            <input type="radio" name="esito_globale" id="esito_pos" value="POSITIVO" class="form-check-input mt-0" onchange="salvataggioIntelligente()">
+                            <label class="form-check-label fw-bold text-success fs-6 ms-2" for="esito_pos">POSITIVO</label>
+                        </div>
+                        <div class="form-check form-check-inline px-3 rounded d-flex align-items-center py-2 m-0 border border-danger shadow-sm" style="background-color: var(--bg-input);">
+                            <input type="radio" name="esito_globale" id="esito_neg" value="NEGATIVO" class="form-check-input border-danger mt-0" onchange="salvataggioIntelligente()">
+                            <label class="form-check-label fw-bold text-danger fs-6 ms-2" for="esito_neg">NEGATIVO</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-top border-success border-opacity-25 my-2 mx-1"></div>
+
+                <div class="row align-items-center mx-0 mt-3">
+    <div class="col-12 d-flex flex-nowrap align-items-center justify-content-start gap-2 p-0" style="overflow-x: auto;">
+        
+        <div class="d-flex align-items-center flex-shrink-0">
+            <span class="me-1 fw-bold text-nowrap">Tempo (h):</span>
+            <input type="number" step="any" inputmode="decimal" name="tempo_impiegato" class="form-control border-success fw-bold text-center px-1" style="width: 50px;" oninput="salvataggioIntelligente()">
+        </div>
+        
+        <div class="d-flex align-items-center flex-shrink-0 ms-1">
+            <span class="me-1 fw-bold text-nowrap">Prossima vit:</span>
+            <input type="date" name="prossima_verifica" id="prossima_verifica" class="form-control border-success fw-bold px-1" style="width: 100px;" onchange="salvataggioIntelligente()">
+        </div>
+        
+    </div>
+</div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="text-center mt-4 no-print pb-5" id="area-bottoni">
+        <button type="button" class="btn btn-warning fw-bold px-4 shadow me-2" onclick="nuovoVerbale()">🔄Svuota</button>
+        <button type="button" class="btn btn-danger fw-bold px-5 shadow" onclick="avviaProcessoStampa()">🖨️PDF</button>
+    </div>
+
+</div>
+<script src="./js/app.js"></script>
+</body>
+</html>
+TYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
