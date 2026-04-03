@@ -292,23 +292,24 @@ function inizializzaLibreria() {
     if (salvata) { libreriaNC_Dinamica = JSON.parse(salvata); }
     else {
         libreriaNC_Dinamica = [
-            { desc: "A1. All’atto della verifica non è stata esibita la documentazione tecnica dell’impianto (dichiarazione di conformità/rispondenza, progetto ove previsto, schemi elettrici, precedenti verbali di verifica). In assenza della suddetta documentazione non è stato possibile effettuare la verifica documentale prevista dalla normativa vigente.", pres: "Si richiama l’obbligo del datore di lavoro di conservare ed esibire la documentazione relativa agli impianti elettrici ai sensi del D.P.R. 462/2001 e del D.Lgs. 81/2008." },
-            { desc: "A2. La documentazione tecnica dell’impianto è risultata incompleta e/o non aggiornata rispetto allo stato dei luoghi.", pres: "Si richiama l’obbligo del datore di lavoro di aggiornare la documentazione tecnica relativa agli impianti elettrici ai sensi del D.P.R. 462/2001 e del D.Lgs. 81/2008." },
-            { desc: "A3. I dispersori di terra non risultano ispezionabili in quanto non accessibili e privi di pozzetti di verifica.", pres: "Realizzare idonei punti di ispezione o documentare tecnicamente la configurazione del dispersore." },
+            { desc: "A1. Non è stata esibita la Documentazione Tecnica dell’impianto (Di.Co./Di.Ri., progetto ove previsto, schemi elettrici, verbali di verifica precedenti). In assenza della suddetta documentazione non è stato possibile effettuare la verifica documentale prevista dalla normativa vigente.", pres: "Si richiama l’obbligo del datore di lavoro di conservare ed esibire la documentazione relativa agli impianti elettrici ai sensi del D.P.R. 462/2001 e del D.Lgs. 81/2008." },
+            { desc: "A2. Documentazione Tecnica dell’impianto risulta incompleta e/o non aggiornata allo stato dei luoghi.", pres: "Si richiama l’obbligo del datore di lavoro di aggiornare la documentazione tecnica relativa agli impianti elettrici ai sensi del D.P.R. 462/2001 e del D.Lgs. 81/2008." },
+            { desc: "A3. I Dispersori di terra non risultano ispezionabili in quanto non accessibili e/o privi di pozzetti di verifica. La verifica dell’impianto di terra è stata condotta esclusivamente mediante prove strumentali e controlli indiretti, nei limiti delle condizioni riscontrate. Pertanto, il presente verbale non costituisce attestazione dello stato di conservazione dei dispersori non accessibili né della loro corretta posa in opera.", pres: "Realizzare idonei punti di ispezione o documentare tecnicamente la configurazione del dispersore." },
             { desc: "A4. Considerata la non accessibilità dei dispersori, in quanto inglobati sotto il manto stradale e privi di idonei punti di ispezione, non è stato possibile effettuare la verifica visiva diretta degli stessi. La verifica dell’impianto di terra è stata condotta esclusivamente mediante prove strumentali e controlli indiretti, nei limiti delle condizioni riscontrate. Pertanto, il presente verbale non costituisce attestazione dello stato di conservazione dei dispersori non accessibili né della loro corretta posa in opera.", pres: "Realizzare idonei punti di ispezione o documentare tecnicamente la configurazione del dispersore." },
-            { desc: "A5. Componenti elettrici installati in un corridoio/via di esodo, con possibile interferenza con i requisiti di sicurezza dell’esodo.", pres: "Verificare la conformità dell’installazione e valutare la ricollocazione in vano tecnico dedicato." },
-            { desc: "A5. Il sito risulta attualmente in fase di ristrutturazione; la verifica è stata eseguita limitatamente alle parti dell’impianto accessibili al momento del sopralluogo.", pres: "Ripetere la verifica sulle parti attualmente non accessibili a ultimazione dei lavori." },
-            { desc: "V1. Presenza di moduli liberi privi di tappo di protezione/otturatore all’interno di qualche quadro. Tale condizione determina la presenza di aperture non protette con possibile accesso a parti attive e conseguente rischio di contatto diretto, nonché potenziale alterazione del grado di protezione IP dichiarato dal costruttore.", pres: "Si prescrive la sostituzione dei pannelli danneggiati con elementi originali o equivalenti conformi alle caratteristiche costruttive del quadro, al fine di ripristinare il grado di protezione e le condizioni di sicurezza." },
-            { desc: "V2. Danneggiamento dei pannelli di chiusura di qualche quadro (fratture/distacchi/mancanza di parti), con possibile riduzione del grado di protezione IP dichiarato dal costruttore e potenziale accessibilità a parti attive", pres: "Sostituire i pannelli danneggiati con elementi originali." },            
+            { desc: "A5. Componenti elettrici installati in una via di esodo, possibile interferenza con i requisiti di sicurezza dell’esodo.", pres: "Verificare la conformità dell’installazione e valutare la ricollocazione in vano tecnico dedicato." },
+            { desc: "A6. Sito oggetto di lavori/ristrutturazione; la verifica è stata eseguita limitatamente alle parti dell’impianto accessibili al momento del sopralluogo.", pres: "Ripetere la verifica sulle parti attualmente non accessibili a ultimazione dei lavori." },
+            { desc: "V1. Moduli liberi privi di tappo di protezione/otturatore all’interno di qualche quadro. Tale condizione determina la presenza di aperture non protette con possibile accesso a parti attive e conseguente rischio di contatto diretto, nonché potenziale alterazione del grado di protezione IP dichiarato dal costruttore.", pres: "Si prescrive la sostituzione dei pannelli danneggiati con elementi originali o equivalenti conformi alle caratteristiche costruttive del quadro, al fine di ripristinare il grado di protezione e le condizioni di sicurezza." },
+            { desc: "V2. Pannelli di chiusura danneggiati in qualche quadro (fratture/distacchi/mancanza di parti), con possibile riduzione del grado di protezione IP dichiarato dal costruttore e potenziale accessibilità a parti attive", pres: "Sostituire i pannelli danneggiati con elementi originali." },            
             { desc: "V3. Nodo equipotenziale non ispezionabile", pres: "Rendere accessibile il nodo equipotenziale." },
-            { desc: "V4. Rilevata la presenza di locali con condizioni di umidità significativa, tali da richiedere componenti idonei all’ambiente di installazione.", pres: "rilevata la presenza di locali con condizioni di umidità significativa, tali da richiedere componenti idonei all’ambiente di installazione." },
+            { desc: "V4. Locali quadri elettrici utilizzato impropriamente come deposito di materiali", pres: "Si consiglia la rimozione dei materiali depositati e il ripristino della destinazione d’uso del locale esclusivamente a servizio degli impianti elettrici, garantendo adeguate condizioni di accessibilità e sicurezza." },
             { desc: "V5. Nodo equipotenziale non ispezionabile", pres: "Rendere accessibile il nodo equipotenziale." },
             { desc: "V6. Quadri non accessibili", pres: "Rendere accessibili i quadri." },
-            { desc: "V7. Scarsa pulizia / polvere nel quadro", pres: "Eseguire accurata pulizia e verifica." },
-            { desc: "S1. Alcuni interruttori differenziali sono risultati non funzionanti; si evidenzia tuttavia una protezione differenziale a monte dell’impianto.", pres: "Sostituire i dispositivi non conformi al fine di ripristinare la protezione differenziale." },
-            { desc: "S2. Alcuni interruttori differenziali presentano tempi di intervento superiori ai limiti previsti.", pres: "Sostituire i dispositivi, verificando il coordinamento del sistema di protezione.." },
-            { desc: "S3. È stata rilevata l’assenza della protezione differenziale a valle del gruppo di misura dell’energia elettrica.", pres: "Installare idonea protezione differenziale conforme alle caratteristiche dell’impianto." },
-            { desc: "S4. È stata rilevata l’assenza della protezione differenziale su circuiti/utenze per i quali la stessa risulta necessaria.", pres: "Installare idonea protezione differenziale conforme alle caratteristiche dell’impianto." },
+            { desc: "V7. Scarsa pulizia nel quadro", pres: "Eseguire accurata pulizia e verifica." },
+            { desc: "V8. Locali con condizioni di umidità significativa, tali da richiedere componenti idonei all’ambiente di installazione.", pres: "Valutare installazione di componenti idonei all’ambiente." },
+            { desc: "S1. Interruttori differenziali non funzionanti; si evidenzia tuttavia una protezione differenziale a monte dell’impianto.", pres: "Sostituire i dispositivi non conformi al fine di ripristinare la protezione differenziale." },
+            { desc: "S2. Interruttori differenziali presentano tempi di intervento superiori ai limiti previsti.", pres: "Sostituire i dispositivi, verificando il coordinamento del sistema di protezione." },
+            { desc: "S3. Assenza della protezione differenziale a valle del gruppo di misura dell’energia elettrica.", pres: "Installare idonea protezione differenziale conforme alle caratteristiche dell’impianto." },
+            { desc: "S4. Assenza della protezione differenziale su circuiti/utenze per i quali la stessa risulta necessaria.", pres: "Installare idonea protezione differenziale conforme alle caratteristiche dell’impianto." },
         ];
     }
     popolaDatalistNC();
@@ -1057,11 +1058,11 @@ const mappaCampiPDF = {
 
     // --- 6. CAMPIONAMENTO E CONTINUITÀ ---
     "tipo_ambiente": "tipo_ambiente",
-    "perc_disp": "%.0",
-    "perc_coll": "%.1",
-    "perc_pe": "%.2",
-    "perc_masse_coll": "%.3",
-    "perc_masse_est": "%masse",
+    "perc_disp": "Terra_perc",
+    "perc_coll": "Collettori_perc",
+    "perc_pe": "PE_perc",
+    "perc_masse_coll": "Masse_Coll_perc",
+    "perc_masse_est": "Masse_esterne_perc",
     "presente_verifica": "committente delegato",
 
     // --- 7. ESAME STRUMENTALE ---
@@ -1178,8 +1179,9 @@ const mappaRadioCheckbox = {
 };
 
 // --- FUNZIONE DEFINITIVA PER ESPORTAZIONE XFDF ---
-function esportaXFDF(azione = 'download') { // <-- MODIFICA 1: Aggiunto parametro "azione"
+function esportaXFDF() {
     let dati = estraiDatiForm();
+    
     let xfdf = `<?xml version="1.0" encoding="UTF-8"?>\n<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">\n<fields>\n`;
 
     // ---> GESTIONE 4 CHECKBOX VERSO TENDINA A RANGE <---
@@ -1245,14 +1247,14 @@ function esportaXFDF(azione = 'download') { // <-- MODIFICA 1: Aggiunto parametr
                 let p = val.split('-'); val = `${p[2]}/${p[1]}/${p[0]}`;
             }
             
-            // CONVERSIONE PERCENTUALI PER XFDF (Rimessa la virgola al posto del punto per Acrobat ITA)
+            // CONVERSIONE PERCENTUALI PER XFDF (Sempre con il PUNTO per Acrobat)
             if (typeof val === 'string' && val.endsWith('%')) {
                 let numero = parseFloat(val.replace('%', ''));
                 if (!isNaN(numero)) {
-                    val = (numero / 100).toString().replace('.', ','); 
+                    // Acrobat XFDF vuole il punto decimale per interpretare correttamente la percentuale (es. 0.25)
+                    val = (numero / 100).toFixed(2); 
                 }
             }
-
             let suff = i !== undefined ? `_${i + 1}` : '';
             let nomeIndicizzato = `${nomeBasePDF}${suff}`;
             let safeKey = nomeIndicizzato.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -1269,68 +1271,29 @@ function esportaXFDF(azione = 'download') { // <-- MODIFICA 1: Aggiunto parametr
 
     xfdf += `</fields>\n</xfdf>`;
 
-// ===============================================
-    // LOGICA DI BIVIO: CONDIVISIONE vs DOWNLOAD
-    // ===============================================
+    // Nome del file definitivo
     let nomeFile = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".xfdf";
 
-    if (azione === 'share') {
-        if (navigator.share) {
-            try {
-                // Travestiamo in XML per bypassare i blocchi dei telefoni
-                let nomeCondivisione = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".xml";
-                let file = new File([xfdf], nomeCondivisione, {type: "text/xml"});
-
-                // Prova a condividere direttamente
-                navigator.share({
-                    title: 'Esportazione Dati VIT',
-                    files: [file]
-                }).catch(err => {
-                    // Se l'utente annulla o se c'è un blocco nativo, FORZA IL DOWNLOAD
-                    forzaDownload(xfdf, nomeFile);
-                });
-            } catch (e) {
-                // Se non riesce a creare il file (es. browser non compatibile), FORZA IL DOWNLOAD
-                forzaDownload(xfdf, nomeFile);
-            }
-        } else {
-            // Se non esiste proprio la funzione share (es. PC o browser non sicuro), FORZA IL DOWNLOAD
-            forzaDownload(xfdf, nomeFile);
-        }
-    } else {
-        // Se si è premuto il tasto scarica normalmente
-        forzaDownload(xfdf, nomeFile);
-    }
-} // <--- Fine della funzione esportaXFDF
-
-// ===============================================
-// FUNZIONI DI SUPPORTO E CONDIVISIONE
-// ===============================================
-
-// Mini-funzione corazzata per scaricare il file in ogni caso
-function forzaDownload(contenuto, nome) {
+    // Scarica direttamente il file senza passare per menu problematici
     try {
-        let blob = new Blob([contenuto], { type: 'application/vnd.adobe.xfdf' });
+        let blob = new Blob([xfdf], { type: 'application/vnd.adobe.xfdf' });
         let link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = nome;
+        link.download = nomeFile;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     } catch (e) {
-        alert("Errore tecnico durante il salvataggio del file: " + e.message);
+        alert("Errore tecnico durante il salvataggio: " + e.message);
     }
-}
+} // <--- Fine della funzione esportaXFDF
 
-// Il ponte collegato al tuo pulsante HTML
+// ===============================================
+// PULSANTE CONDIVIDI (Ora scarica l'XFDF)
+// ===============================================
 function condividiCSV() {
-    try {
-        esportaXFDF('share');
-    } catch (e) {
-        alert("Errore sul pulsante Condividi: " + e.message);
-    }
+    esportaXFDF();
 }
-
 
 
 // --- MOTORE JSON (ESTRAZIONE) ---
@@ -1531,28 +1494,23 @@ async function setModuloJSON(jsonString) {
 
 // 1. CREA E APRE IL POPUP PER I DIFFERENZIALI
 function apriPopupLibreriaDiff(btn) {
-    // Chiude eventuali popup vecchi
     let modalEsistente = document.getElementById('libreriaDiffModal');
     if(modalEsistente) modalEsistente.remove();
 
-    // Salva "in memoria" la riga del differenziale da cui stiamo cliccando
     window.rigaTargetLibreriaDiff = btn.closest('tr');
 
-    // Costruisce la lista di checkbox leggendo la libreria
     let listaCheckbox = libreriaNC_Dinamica.map((item, index) => {
     let codice = item.desc.substring(0, 2); 
-    // Rimuove il doppione del codice dalla frase
     let testoPulito = item.desc.substring(item.desc.indexOf('.') + 1).trim();
     let testoBreve = testoPulito.substring(0, 90) + "...";        return `
         <div class="form-check border-bottom py-2 m-0 d-flex align-items-center">
-            <input class="form-check-input check-libreria-diff me-2 shadow-sm border-success" type="checkbox" value="${index}" id="lib_diff_chk_${index}" style="width: 1.0rem; height: 1.0rem;">
+            <input class="form-check-input check-libreria-diff me-2 shadow-sm border-success" type="checkbox" value="${index}" id="lib_diff_chk_${index}" style="width: 0.8rem; height: 0.8rem;">
             <label class="form-check-label w-100 mt-1" for="lib_diff_chk_${index}" style="font-size: 0.7rem; cursor:pointer;">
                 <strong class="text-success">${codice}</strong> - ${testoBreve}
             </label>
         </div>`;
     }).join('');
 
-    // Crea il riquadro HTML del Popup
     const modalHtml = `
         <div class="modal fade show no-print" id="libreriaDiffModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" aria-modal="true" role="dialog">
           <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -1560,7 +1518,7 @@ function apriPopupLibreriaDiff(btn) {
               <div class="modal-header bg-success text-white py-2">
                 <h5 class="modal-title fw-bold m-0">📚 Scegli i rilievi ...</h5>
               </div>
-              <div class="modal-body p-2" style="max-height: 60vh; overflow-y: auto;">
+              <div class="modal-body p-2" style="max-height: 80vh; overflow-y: auto;">
                 ${listaCheckbox}
               </div>
               <div class="modal-footer py-2 justify-content-between bg-light">
@@ -1574,88 +1532,48 @@ function apriPopupLibreriaDiff(btn) {
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
-// 2. INCOLLA SOLO I CODICI NELLA CASELLA "NOTE" DEL DIFFERENZIALE
 function inserisciDaPopupDiff() {
-    // Prende tutte le checkbox spuntate
     let checkboxes = document.querySelectorAll('.check-libreria-diff:checked');
-    
     if (checkboxes.length === 0) {
         alert("Seleziona almeno una voce prima di inserire!");
         return;
     }
-
     let codiciScelti = [];
-
-    // Spazzola ogni spunta selezionata
     checkboxes.forEach(chk => {
         let index = chk.value;
         let item = libreriaNC_Dinamica[index];
-        
-        // 1. Salva SEMPRE le prime due lettere per i differenziali (es. "S1")
         codiciScelti.push(item.desc.substring(0, 2)); 
-        
-        // 2. CONTROLLO DUPLICATI NELLA TABELLA RILIEVI
         let esisteGia = false;
         let tutteLeDescrizioniNC = document.querySelectorAll('textarea[name="nc_descrizione[]"]');
-        
         tutteLeDescrizioniNC.forEach(areaDesc => {
-            // Controlla se il testo esatto è già presente in una delle righe
-            if (areaDesc.value.trim() === item.desc.trim()) {
-                esisteGia = true;
-            }
+            if (areaDesc.value.trim() === item.desc.trim()) { esisteGia = true; }
         });
-        
-        // 3. MAGIA: Aggiunge la riga SOLO se non esiste già
         if (!esisteGia) {
             addNCRow(); 
-            
-            // Va a pescare proprio quella riga appena creata
             let ncTable = document.getElementById('ncTable');
             let nuovaRigaNC = ncTable.lastElementChild;
-            
             if (nuovaRigaNC) {
                 let textDesc = nuovaRigaNC.querySelector('textarea[name="nc_descrizione[]"]');
                 let textNote = nuovaRigaNC.querySelector('textarea[name="nc_note[]"]');
-                
-                // Riempie la Descrizione
-                if (textDesc) {
-                    textDesc.value = item.desc;
-                    ridimensionaTextarea(textDesc);
-                }
-                
-                // Riempie le Note / Prescrizioni
-                if (textNote && item.pres) {
-                    textNote.value = item.pres;
-                    ridimensionaTextarea(textNote);
-                }
+                if (textDesc) { textDesc.value = item.desc; ridimensionaTextarea(textDesc); }
+                if (textNote && item.pres) { textNote.value = item.pres; ridimensionaTextarea(textNote); }
             }
         }
     });
-
-    // 4. Incolla i codici brevi nella casella Note del Differenziale
     let tr = window.rigaTargetLibreriaDiff;
     const textNoteDiff = tr.querySelector('textarea[name="diff_note[]"]');
-
     if (textNoteDiff) {
-        // Se c'è già testo, mette una virgola, poi unisce i codici (es: "S1, V2")
         textNoteDiff.value = (textNoteDiff.value ? textNoteDiff.value + ", " : "") + codiciScelti.join(", ");
-        
-        // Allarga la casella
         ridimensionaTextarea(textNoteDiff);
     }
-
-    // Chiude il popup
     document.getElementById('libreriaDiffModal').remove();
     salvataggioIntelligente();
 }
 
-// 1. CREA E APRE IL POPUP PER I RILIEVI (NC)
 function apriPopupLibreriaNC(btn) {
     let modalEsistente = document.getElementById('libreriaNCModal');
     if(modalEsistente) modalEsistente.remove();
-
     window.rigaTargetLibreriaNC = btn.closest('tr');
-
     let listaCheckbox = libreriaNC_Dinamica.map((item, index) => {
         let codice = item.desc.substring(0, 2); 
         let testoPulito = item.desc.substring(item.desc.indexOf('.') + 1).trim();
@@ -1663,12 +1581,11 @@ function apriPopupLibreriaNC(btn) {
         return `
         <div class="form-check border-bottom py-2 m-0 d-flex align-items-center">
             <input class="form-check-input check-libreria-nc me-2 shadow-sm border-primary" type="checkbox" value="${index}" id="lib_nc_chk_${index}" style="width: 0.8rem; height: 0.8rem;">
-            <label class="form-check-label w-100 mt-1" for="lib_nc_chk_${index}" style="font-size: 0.8rem; cursor:pointer;">
+            <label class="form-check-label w-100 mt-1" for="lib_nc_chk_${index}" style="font-size: 0.7rem; cursor:pointer;">
                 <strong class="text-primary">${codice}</strong> - ${testoBreve}
             </label>
         </div>`;
     }).join('');
-
     const modalHtml = `
         <div class="modal fade show no-print" id="libreriaNCModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" aria-modal="true" role="dialog">
           <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -1690,62 +1607,68 @@ function apriPopupLibreriaNC(btn) {
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
-// 2. INCOLLA I RILIEVI CREANDO LE RIGHE AUTOMATICAMENTE
 function inserisciDaPopupNC() {
     let checkboxes = document.querySelectorAll('.check-libreria-nc:checked');
-    
-    if (checkboxes.length === 0) {
-        alert("Seleziona almeno una voce prima di inserire!");
-        return;
-    }
-
+    if (checkboxes.length === 0) { alert("Seleziona almeno una voce prima di inserire!"); return; }
     let trIniziale = window.rigaTargetLibreriaNC;
     let textDescIniziale = trIniziale.querySelector('textarea[name="nc_descrizione[]"]');
     let textNoteIniziale = trIniziale.querySelector('textarea[name="nc_note[]"]');
-    
-    // Verifica se la riga da cui abbiamo cliccato è completamente vuota
     let rigaInizialeVuota = (textDescIniziale && textDescIniziale.value.trim() === "");
     let primoInserimentoFatto = false;
-
     checkboxes.forEach(chk => {
         let index = chk.value;
         let item = libreriaNC_Dinamica[index];
-        
-        // CONTROLLO DUPLICATI: Evita di rimettere difetti già presenti in altre righe
         let esisteGia = false;
         document.querySelectorAll('textarea[name="nc_descrizione[]"]').forEach(areaDesc => {
             if (areaDesc.value.trim() === item.desc.trim()) esisteGia = true;
         });
-
         if (!esisteGia) {
-            // Se la riga attuale è vuota, usiamo questa per la prima voce
             if (rigaInizialeVuota && !primoInserimentoFatto) {
                 textDescIniziale.value = item.desc;
                 ridimensionaTextarea(textDescIniziale);
-                
-                if (textNoteIniziale && item.pres) {
-                    textNoteIniziale.value = item.pres;
-                    ridimensionaTextarea(textNoteIniziale);
-                }
+                if (textNoteIniziale && item.pres) { textNoteIniziale.value = item.pres; ridimensionaTextarea(textNoteIniziale); }
                 primoInserimentoFatto = true;
-            } 
-            // Per le voci successive (o se la riga era già occupata), creiamo nuove righe
-            else {
+            } else {
                 addNCRow(); 
                 let ncTable = document.getElementById('ncTable');
                 let nuovaRigaNC = ncTable.lastElementChild;
-                
                 if (nuovaRigaNC) {
                     let d = nuovaRigaNC.querySelector('textarea[name="nc_descrizione[]"]');
                     let n = nuovaRigaNC.querySelector('textarea[name="nc_note[]"]');
-                    
                     if (d) { d.value = item.desc; ridimensionaTextarea(d); }
                     if (n && item.pres) { n.value = item.pres; ridimensionaTextarea(n); }
                 }
             }
         }
     });
-
     document.getElementById('libreriaNCModal').remove();
     salvataggioIntelligente();
+}
+
+async function esportaFoto() {
+    if (typeof JSZip === 'undefined') { alert("⚠️ Libreria JSZip non trovata!"); return; }
+    const canvases = document.querySelectorAll('canvas.foto-canvas');
+    let fotoTrovate = 0;
+    let nomeBase = getNomeFileEsportazione().replace(/[\/\\]/g, '-');
+    let zip = new JSZip();
+    let cartellaFoto = zip.folder("Foto_Verbale");
+    let btn = document.querySelector('button[onclick="esportaFoto()"]');
+    let testoOriginale = btn ? btn.innerHTML : '';
+    if (btn) btn.innerHTML = '⏳ Zippando...';
+    try {
+        for (let canvas of canvases) {
+            if (canvas.style.display !== 'none' && canvas.width > 0) {
+                fotoTrovate++;
+                let blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+                cartellaFoto.file(`${nomeBase}_Foto_${fotoTrovate}.jpg`, blob);
+            }
+        }
+        if (fotoTrovate === 0) { alert("📸 Non ci sono foto!"); if (btn) btn.innerHTML = testoOriginale; return; }
+        let zipContent = await zip.generateAsync({ type: "blob" });
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(zipContent);
+        link.download = `Foto_${nomeBase}.zip`;
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    } catch (e) { alert("❌ Errore ZIP: " + e.message); } 
+    finally { if (btn) btn.innerHTML = testoOriginale; }
 }
