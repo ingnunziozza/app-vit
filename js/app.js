@@ -233,9 +233,13 @@ function addDiffRow() {
         <td class="align-middle border-success"><input type="checkbox" name="diff_05[]" class="form-check-input m-0 border-success" onchange="salvataggioIntelligente()"></td>
         <td class="align-middle border-success"><input type="checkbox" name="diff_1[]" class="form-check-input m-0 border-success" onchange="salvataggioIntelligente()"></td>
         <td class="border-success p-1">
-            <div class="d-flex align-items-center gap-1">
-                <input type="text" name="diff_note[]" class="form-control border-0 bg-transparent w-100" oninput="salvataggioIntelligente()">
-                <button type="button" class="btn btn-sm btn-outline-danger border-0 no-print btn-cestino px-1 py-0" onclick="this.closest('tr').remove(); salvataggioIntelligente();">🗑️</button>
+            <div class="d-flex align-items-start gap-1 h-100">
+                <textarea name="diff_note[]" class="form-control border-0 bg-transparent flex-grow-1 auto-expand" placeholder="Note..." oninput="ridimensionaTextarea(this); salvataggioIntelligente()"></textarea>
+                
+                <div class="d-flex flex-column gap-1 no-print flex-shrink-0">
+                    <button type="button" class="btn border-success shadow-sm text-success p-0 text-center" style="width: 32px; height: 32px; font-size: 1.2rem; background-color: white;" title="Libreria Note" onclick="apriPopupLibreriaDiff(this)">📚</button>
+                    <button type="button" class="btn btn-outline-danger border-0 p-1 shadow-sm" style="width: 32px; height: 32px;" onclick="this.closest('tr').remove(); salvataggioIntelligente();">🗑️</button>
+                </div>
             </div>
         </td>
     `;
@@ -256,9 +260,8 @@ function addNCRow() {
                 <textarea name="nc_descrizione[]" class="form-control border-0 bg-transparent nc-textarea flex-grow-1 shadow-sm auto-expand" placeholder="Scrivi la descrizione..." oninput="ridimensionaTextarea(this); salvataggioIntelligente();"></textarea>
                 
                 <div class="d-flex flex-column gap-1 no-print flex-shrink-0">
-                    <select class="form-select border-primary shadow-sm text-primary p-0 text-center" style="width: 38px; height: 38px; cursor: pointer; appearance: none; font-size: 0.8rem;" title="Libreria NC" onchange="inserisciDaLibreria(this)">
-                        <option value="">📚</option>
-                    </select>
+                    <button type="button" class="btn border-primary shadow-sm text-primary p-0 text-center" style="width: 38px; height: 38px; font-size: 1.2rem; background-color: white;" title="Apri Libreria NC" onclick="apriPopupLibreriaNC(this)">📚</button>
+                    
                     <label class="btn btn-primary btn-nc-foto m-0 shadow-sm p-1" style="width: 38px; height: 38px;" title="Scatta Fotocamera">📸<input type="file" class="d-none" accept="image/*" capture="environment" onchange="gestisciFoto(this)"></label>
                     <label class="btn btn-outline-primary btn-nc-foto m-0 shadow-sm p-1" style="width: 38px; height: 38px;" title="Scegli dalla galleria">🖼️<input type="file" class="d-none" accept="image/*" onchange="gestisciFoto(this)"></label>
                 </div>
@@ -279,9 +282,6 @@ function addNCRow() {
         </td>
     `;
     tbody.appendChild(tr);
-    
-    // Popola subito la tendina della nuova riga appena creata
-    popolaSingolaTendina(tr.querySelector('select[title="Libreria NC"]'));
     salvataggioIntelligente();
 }
 
@@ -894,8 +894,8 @@ window.onload = async function() {
     if (backup && backup.trim().length > 20) {
         await setModuloJSON(backup);
     } else {
-        for(let i=0; i<3; i++) addDiffRow();
-        for(let i=0; i<2; i++) addNCRow();
+        for(let i=0; i<5; i++) addDiffRow();
+        for(let i=0; i<1; i++) addNCRow();
     }
 
     riattivaEventi();
@@ -957,25 +957,11 @@ function esportaCSV() {
 }
 
 function condividiCSV() {
-    let dati = estraiDatiForm();
-    let csvContent = "Campo;Valore\n";
-    for (let key in dati) {
-        let val = Array.isArray(dati[key]) ? dati[key].join(' | ') : dati[key];
-        if(val !== undefined && val !== null) csvContent += `"${key}";"${String(val).replace(/"/g, '""')}"\n`;
+    if (!navigator.share) {
+        esportaXFDF('download');
+        return;
     }
-    let nomeFile = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".csv";
-    let file = new File([csvContent], nomeFile, {type: "text/csv"});
-
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        navigator.share({
-            title: 'Dati Verbale VIT',
-            text: 'Dati esportati dal modulo Verifica 462/01',
-            files: [file]
-        }).catch(err => console.error("Errore condivisione:", err));
-    } else {
-        alert("⚠️ Condivisione nativa non supportata su questo browser. Verrà avviato il download normale.");
-        esportaCSV();
-    }
+    esportaXFDF('share');
 }
 
 // --- DIZIONARIO COLLEGAMENTO PDF ---
@@ -1192,7 +1178,7 @@ const mappaRadioCheckbox = {
 };
 
 // --- FUNZIONE DEFINITIVA PER ESPORTAZIONE XFDF ---
-function esportaXFDF() {
+function esportaXFDF(azione = 'download') { // <-- MODIFICA 1: Aggiunto parametro "azione"
     let dati = estraiDatiForm();
     let xfdf = `<?xml version="1.0" encoding="UTF-8"?>\n<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">\n<fields>\n`;
 
@@ -1283,14 +1269,48 @@ function esportaXFDF() {
 
     xfdf += `</fields>\n</xfdf>`;
 
-    let blob = new Blob([xfdf], { type: 'application/vnd.adobe.xfdf' });
+// ===============================================
+    // LOGICA DI BIVIO: CONDIVISIONE vs DOWNLOAD
+    // ===============================================
+    let nomeFile = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".xfdf";
+
+    if (azione === 'share') {
+        try {
+            // Travestiamo il file in XML. Il telefono lo accetta e Acrobat lo legge!
+            let nomeCondivisione = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".xml";
+            let file = new File([xfdf], nomeCondivisione, {type: "text/xml"});
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                // Esegue la condivisione istantaneamente senza interruzioni
+                navigator.share({
+                    title: 'Esportazione Dati VIT',
+                    files: [file]
+                }).catch(err => {
+                    // Se l'utente annulla la condivisione, non fare nulla (o scarica)
+                    console.log("Condivisione annullata.");
+                });
+            } else {
+                forzaDownload(xfdf, nomeFile);
+            }
+        } catch (e) {
+            forzaDownload(xfdf, nomeFile);
+        }
+    } else {
+        forzaDownload(xfdf, nomeFile);
+    }
+} // <--- Fine funzione esportaXFDF
+
+// Mini-funzione di supporto per scaricare il file senza ripetere codice
+function forzaDownload(contenuto, nome) {
+    let blob = new Blob([contenuto], { type: 'application/vnd.adobe.xfdf' });
     let link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = getNomeFileEsportazione().replace(/[\/\\]/g, '-') + ".xfdf";
+    link.download = nome;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 }
+
 
 // --- MOTORE JSON (ESTRAZIONE) ---
 function getModuloJSON() {
@@ -1486,4 +1506,225 @@ async function setModuloJSON(jsonString) {
         console.error("Errore parser JSON:", e);
         alert("Errore nel caricamento del file. I dati potrebbero essere corrotti.");
     }
+}
+
+// 1. CREA E APRE IL POPUP PER I DIFFERENZIALI
+function apriPopupLibreriaDiff(btn) {
+    // Chiude eventuali popup vecchi
+    let modalEsistente = document.getElementById('libreriaDiffModal');
+    if(modalEsistente) modalEsistente.remove();
+
+    // Salva "in memoria" la riga del differenziale da cui stiamo cliccando
+    window.rigaTargetLibreriaDiff = btn.closest('tr');
+
+    // Costruisce la lista di checkbox leggendo la libreria
+    let listaCheckbox = libreriaNC_Dinamica.map((item, index) => {
+    let codice = item.desc.substring(0, 2); 
+    // Rimuove il doppione del codice dalla frase
+    let testoPulito = item.desc.substring(item.desc.indexOf('.') + 1).trim();
+    let testoBreve = testoPulito.substring(0, 90) + "...";        return `
+        <div class="form-check border-bottom py-2 m-0 d-flex align-items-center">
+            <input class="form-check-input check-libreria-diff me-2 shadow-sm border-success" type="checkbox" value="${index}" id="lib_diff_chk_${index}" style="width: 1.0rem; height: 1.0rem;">
+            <label class="form-check-label w-100 mt-1" for="lib_diff_chk_${index}" style="font-size: 0.7rem; cursor:pointer;">
+                <strong class="text-success">${codice}</strong> - ${testoBreve}
+            </label>
+        </div>`;
+    }).join('');
+
+    // Crea il riquadro HTML del Popup
+    const modalHtml = `
+        <div class="modal fade show no-print" id="libreriaDiffModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" aria-modal="true" role="dialog">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content text-dark border-success">
+              <div class="modal-header bg-success text-white py-2">
+                <h5 class="modal-title fw-bold m-0">📚 Scegli i rilievi ...</h5>
+              </div>
+              <div class="modal-body p-2" style="max-height: 60vh; overflow-y: auto;">
+                ${listaCheckbox}
+              </div>
+              <div class="modal-footer py-2 justify-content-between bg-light">
+                <button type="button" class="btn btn-secondary shadow-sm" onclick="document.getElementById('libreriaDiffModal').remove()">Annulla</button>
+                <button type="button" class="btn btn-success fw-bold shadow-sm" onclick="inserisciDaPopupDiff()">✅ Inserisci</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+// 2. INCOLLA SOLO I CODICI NELLA CASELLA "NOTE" DEL DIFFERENZIALE
+function inserisciDaPopupDiff() {
+    // Prende tutte le checkbox spuntate
+    let checkboxes = document.querySelectorAll('.check-libreria-diff:checked');
+    
+    if (checkboxes.length === 0) {
+        alert("Seleziona almeno una voce prima di inserire!");
+        return;
+    }
+
+    let codiciScelti = [];
+
+    // Spazzola ogni spunta selezionata
+    checkboxes.forEach(chk => {
+        let index = chk.value;
+        let item = libreriaNC_Dinamica[index];
+        
+        // 1. Salva SEMPRE le prime due lettere per i differenziali (es. "S1")
+        codiciScelti.push(item.desc.substring(0, 2)); 
+        
+        // 2. CONTROLLO DUPLICATI NELLA TABELLA RILIEVI
+        let esisteGia = false;
+        let tutteLeDescrizioniNC = document.querySelectorAll('textarea[name="nc_descrizione[]"]');
+        
+        tutteLeDescrizioniNC.forEach(areaDesc => {
+            // Controlla se il testo esatto è già presente in una delle righe
+            if (areaDesc.value.trim() === item.desc.trim()) {
+                esisteGia = true;
+            }
+        });
+        
+        // 3. MAGIA: Aggiunge la riga SOLO se non esiste già
+        if (!esisteGia) {
+            addNCRow(); 
+            
+            // Va a pescare proprio quella riga appena creata
+            let ncTable = document.getElementById('ncTable');
+            let nuovaRigaNC = ncTable.lastElementChild;
+            
+            if (nuovaRigaNC) {
+                let textDesc = nuovaRigaNC.querySelector('textarea[name="nc_descrizione[]"]');
+                let textNote = nuovaRigaNC.querySelector('textarea[name="nc_note[]"]');
+                
+                // Riempie la Descrizione
+                if (textDesc) {
+                    textDesc.value = item.desc;
+                    ridimensionaTextarea(textDesc);
+                }
+                
+                // Riempie le Note / Prescrizioni
+                if (textNote && item.pres) {
+                    textNote.value = item.pres;
+                    ridimensionaTextarea(textNote);
+                }
+            }
+        }
+    });
+
+    // 4. Incolla i codici brevi nella casella Note del Differenziale
+    let tr = window.rigaTargetLibreriaDiff;
+    const textNoteDiff = tr.querySelector('textarea[name="diff_note[]"]');
+
+    if (textNoteDiff) {
+        // Se c'è già testo, mette una virgola, poi unisce i codici (es: "S1, V2")
+        textNoteDiff.value = (textNoteDiff.value ? textNoteDiff.value + ", " : "") + codiciScelti.join(", ");
+        
+        // Allarga la casella
+        ridimensionaTextarea(textNoteDiff);
+    }
+
+    // Chiude il popup
+    document.getElementById('libreriaDiffModal').remove();
+    salvataggioIntelligente();
+}
+
+// 1. CREA E APRE IL POPUP PER I RILIEVI (NC)
+function apriPopupLibreriaNC(btn) {
+    let modalEsistente = document.getElementById('libreriaNCModal');
+    if(modalEsistente) modalEsistente.remove();
+
+    window.rigaTargetLibreriaNC = btn.closest('tr');
+
+    let listaCheckbox = libreriaNC_Dinamica.map((item, index) => {
+        let codice = item.desc.substring(0, 2); 
+        let testoPulito = item.desc.substring(item.desc.indexOf('.') + 1).trim();
+        let testoBreve = testoPulito.substring(0, 130) + "...";
+        return `
+        <div class="form-check border-bottom py-2 m-0 d-flex align-items-center">
+            <input class="form-check-input check-libreria-nc me-2 shadow-sm border-primary" type="checkbox" value="${index}" id="lib_nc_chk_${index}" style="width: 0.8rem; height: 0.8rem;">
+            <label class="form-check-label w-100 mt-1" for="lib_nc_chk_${index}" style="font-size: 0.8rem; cursor:pointer;">
+                <strong class="text-primary">${codice}</strong> - ${testoBreve}
+            </label>
+        </div>`;
+    }).join('');
+
+    const modalHtml = `
+        <div class="modal fade show no-print" id="libreriaNCModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" aria-modal="true" role="dialog">
+          <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content text-dark border-primary">
+              <div class="modal-header bg-primary text-white py-2">
+                <h5 class="modal-title fw-bold m-0">📚 Seleziona i Rilievi</h5>
+              </div>
+              <div class="modal-body p-2" style="max-height: 80vh; overflow-y: auto;">
+                ${listaCheckbox}
+              </div>
+              <div class="modal-footer py-2 justify-content-between bg-light">
+                <button type="button" class="btn btn-secondary shadow-sm" onclick="document.getElementById('libreriaNCModal').remove()">Annulla</button>
+                <button type="button" class="btn btn-primary fw-bold shadow-sm" onclick="inserisciDaPopupNC()">✅ Inserisci</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+// 2. INCOLLA I RILIEVI CREANDO LE RIGHE AUTOMATICAMENTE
+function inserisciDaPopupNC() {
+    let checkboxes = document.querySelectorAll('.check-libreria-nc:checked');
+    
+    if (checkboxes.length === 0) {
+        alert("Seleziona almeno una voce prima di inserire!");
+        return;
+    }
+
+    let trIniziale = window.rigaTargetLibreriaNC;
+    let textDescIniziale = trIniziale.querySelector('textarea[name="nc_descrizione[]"]');
+    let textNoteIniziale = trIniziale.querySelector('textarea[name="nc_note[]"]');
+    
+    // Verifica se la riga da cui abbiamo cliccato è completamente vuota
+    let rigaInizialeVuota = (textDescIniziale && textDescIniziale.value.trim() === "");
+    let primoInserimentoFatto = false;
+
+    checkboxes.forEach(chk => {
+        let index = chk.value;
+        let item = libreriaNC_Dinamica[index];
+        
+        // CONTROLLO DUPLICATI: Evita di rimettere difetti già presenti in altre righe
+        let esisteGia = false;
+        document.querySelectorAll('textarea[name="nc_descrizione[]"]').forEach(areaDesc => {
+            if (areaDesc.value.trim() === item.desc.trim()) esisteGia = true;
+        });
+
+        if (!esisteGia) {
+            // Se la riga attuale è vuota, usiamo questa per la prima voce
+            if (rigaInizialeVuota && !primoInserimentoFatto) {
+                textDescIniziale.value = item.desc;
+                ridimensionaTextarea(textDescIniziale);
+                
+                if (textNoteIniziale && item.pres) {
+                    textNoteIniziale.value = item.pres;
+                    ridimensionaTextarea(textNoteIniziale);
+                }
+                primoInserimentoFatto = true;
+            } 
+            // Per le voci successive (o se la riga era già occupata), creiamo nuove righe
+            else {
+                addNCRow(); 
+                let ncTable = document.getElementById('ncTable');
+                let nuovaRigaNC = ncTable.lastElementChild;
+                
+                if (nuovaRigaNC) {
+                    let d = nuovaRigaNC.querySelector('textarea[name="nc_descrizione[]"]');
+                    let n = nuovaRigaNC.querySelector('textarea[name="nc_note[]"]');
+                    
+                    if (d) { d.value = item.desc; ridimensionaTextarea(d); }
+                    if (n && item.pres) { n.value = item.pres; ridimensionaTextarea(n); }
+                }
+            }
+        }
+    });
+
+    document.getElementById('libreriaNCModal').remove();
+    salvataggioIntelligente();
 }
